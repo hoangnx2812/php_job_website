@@ -7,10 +7,22 @@ Website tìm kiếm việc làm, tham khảo các trang như TopCV, VietnamWorks
 - **Backend**: PHP thuần (server-side), không dùng framework
 - **Database**: MySQL (chạy qua Docker Compose)
 - **Kiến trúc**: Monolithic, gọn nhẹ
-- **Frontend**: HTML + CSS đơn giản (có thể dùng Bootstrap CDN), không cần SPA
+- **Frontend**: Bootstrap 5 (CDN) + custom CSS để tinh chỉnh màu sắc / spacing / card / hover effect cho đẹp. Có thể dùng Bootstrap Icons hoặc Font Awesome CDN cho icon. Không SPA.
 - **File upload (CV)**: Lưu vào thư mục local trong project
 - **Chỉ chạy local**, không dùng git
 
+
+## Yêu cầu giao diện                                                                                                                                                                                               
+- Layout rộng rãi, có khoảng trắng hợp lý, không bị dí sát.                                                                                                                                                        
+- Dùng hệ màu chủ đạo nhất quán (ví dụ xanh dương / xanh ngọc cho nút và điểm nhấn).                                                                                                                               
+- Navbar đẹp, có logo/icon, active state rõ ràng.                                                                                                                                                                  
+- Trang chủ có hero banner đẹp mắt, ô search nổi bật.                                                                                                                                                              
+- Card job / card company có shadow nhẹ, bo góc, hover hiệu ứng nhấc lên.                                                                                                                                          
+- Badge trạng thái có màu phân biệt rõ (pending/accepted/rejected).                                                                                                                                                
+- Form nhập liệu có label rõ, input lớn, nút CTA nổi bật.                                                                                                                                                          
+- Bảng admin đẹp, có striping, hover row.                                                                                                                                                                          
+- Responsive tốt trên mobile (dùng grid của Bootstrap).                                                                                                                                                            
+- Font chữ dễ đọc (Inter / Be Vietnam Pro / Roboto qua Google Fonts).
 ## Roles & Permissions
 Mỗi user có đúng **1 role** (fix cứng permission, không cần phân quyền phức tạp):
 
