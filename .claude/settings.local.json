@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod -R 777 /home/hoangnx/Documents/code/php_job_website/uploads)"
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+services:
+  # MySQL database
+  mysql:
+    image: mysql:8.0
+    container_name: job_mysql
+    restart: unless-stopped
+    # Ép MySQL dùng utf8mb4 cho toàn bộ server để không bị lỗi tiếng Việt
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: job_website
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
+      LANG: C.UTF-8
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # Mỗi lần container tạo mới DB, file .sql trong thư mục này sẽ tự chạy
+      - ./script.sql:/docker-entrypoint-initdb.d/script.sql:ro
+
+  # PHP + Apache (chạy web PHP, không cần cài PHP trên máy host)
+  web:
+    image: php:8.2-apache
+    container_name: job_web
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public:/var/www/html
+      - ./src:/var/www/src
+      - ./uploads:/var/www/uploads
+    working_dir: /var/www/html
+    command: >
+      bash -c "docker-php-ext-install mysqli pdo pdo_mysql &&
+               a2enmod rewrite &&
+               apache2-foreground"
+
+volumes:
+  mysql_data:
