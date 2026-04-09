@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(chmod -R 777 /home/hoangnx/Documents/code/php_job_website/uploads)",
-      "Bash(git -C \"D:/github_code/php_job_website/.claude/worktrees/charming-pike\" status --short)"
+      "Bash(git -C \"D:/github_code/php_job_website/.claude/worktrees/charming-pike\" status --short)",
+      "Bash(git -C \"D:/github_code/php_job_website/.claude/worktrees/charming-pike\" log --oneline -5)",
+      "Bash(git -C \"D:/github_code/php_job_website/.claude/worktrees/charming-pike\" branch)",
+      "Bash(git -C \"D:/github_code/php_job_website\" log --oneline -3)",
+      "Bash(git -C \"D:/github_code/php_job_website\" status --short)",
+      "Bash(git -C \"D:/github_code/php_job_website/.claude/worktrees/charming-pike\" add -A)",
+      "Bash(git -C D:/github_code/php_job_website/.claude/worktrees/charming-pike commit -m ':*)"
     ]
   }
 }
