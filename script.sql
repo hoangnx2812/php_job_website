@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS saved_jobs;
 DROP TABLE IF EXISTS applications;
 DROP TABLE IF EXISTS jobs;
 DROP TABLE IF EXISTS companies;
+DROP TABLE IF EXISTS employer_requests;
 DROP TABLE IF EXISTS users;
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -132,3 +133,26 @@ INSERT INTO saved_jobs (user_id, job_id) VALUES
 (5, 1),
 (5, 3),
 (6, 2);
+
+-- ---------------------------------------------------------
+-- Bảng employer_requests: yêu cầu trở thành nhà tuyển dụng
+-- User gửi yêu cầu kèm thông tin công ty, admin duyệt hoặc từ chối
+-- ---------------------------------------------------------
+CREATE TABLE employer_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    company_name VARCHAR(200) NOT NULL,
+    company_description TEXT NULL,
+    company_location VARCHAR(200) NULL,
+    company_website VARCHAR(200) NULL,
+    status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+    admin_note VARCHAR(500) NULL,                -- lý do từ chối (tuỳ chọn)
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    reviewed_at DATETIME NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Seed: user1 (Lê Văn A) đang chờ duyệt, user2 (Phạm Thị B) bị từ chối
+INSERT INTO employer_requests (user_id, company_name, company_description, company_location, company_website, status) VALUES
+(5, 'Startup ABC', 'Công ty khởi nghiệp lĩnh vực EdTech.', 'Hà Nội', 'https://abc.vn', 'pending'),
+(6, 'XYZ Corp',    'Công ty logistics.',                    'Đà Nẵng', NULL,             'rejected');

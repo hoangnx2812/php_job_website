@@ -233,6 +233,12 @@ $currentPage = $_GET['page'] ?? 'home';
                             <i class="bi bi-heart"></i> Job đã lưu
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $currentPage === 'user/become_employer' ? 'active' : '' ?>"
+                           href="<?= e(url('user/become_employer')) ?>">
+                            <i class="bi bi-building-add"></i> Đăng ký NTD
+                        </a>
+                    </li>
                 <?php endif; ?>
                 <!-- Links cho role=employer -->
                 <?php if ($u && $u['role'] === 'employer'): ?>
@@ -257,10 +263,17 @@ $currentPage = $_GET['page'] ?? 'home';
                 <?php endif; ?>
                 <!-- Links cho role=admin -->
                 <?php if ($u && $u['role'] === 'admin'): ?>
+                    <?php
+                    // Đếm request đang chờ để hiển thị badge
+                    $navPendingNtd = (int)db()->query("SELECT COUNT(*) FROM employer_requests WHERE status='pending'")->fetchColumn();
+                    ?>
                     <li class="nav-item">
                         <a class="nav-link <?= str_starts_with($currentPage, 'admin/') ? 'active' : '' ?>"
                            href="<?= e(url('admin/dashboard')) ?>">
                             <i class="bi bi-shield-lock"></i> Admin
+                            <?php if ($navPendingNtd > 0): ?>
+                                <span class="badge bg-danger rounded-pill ms-1"><?= $navPendingNtd ?></span>
+                            <?php endif; ?>
                         </a>
                     </li>
                 <?php endif; ?>

@@ -4,10 +4,11 @@ require_role('admin');
 $pdo = db();
 
 $stats = [
-    'users'        => (int)$pdo->query('SELECT COUNT(*) FROM users')->fetchColumn(),
-    'jobs'         => (int)$pdo->query('SELECT COUNT(*) FROM jobs WHERE is_active = 1')->fetchColumn(),
-    'companies'    => (int)$pdo->query('SELECT COUNT(*) FROM companies')->fetchColumn(),
-    'applications' => (int)$pdo->query('SELECT COUNT(*) FROM applications')->fetchColumn(),
+    'users'           => (int)$pdo->query('SELECT COUNT(*) FROM users')->fetchColumn(),
+    'jobs'            => (int)$pdo->query('SELECT COUNT(*) FROM jobs WHERE is_active = 1')->fetchColumn(),
+    'companies'       => (int)$pdo->query('SELECT COUNT(*) FROM companies')->fetchColumn(),
+    'applications'    => (int)$pdo->query('SELECT COUNT(*) FROM applications')->fetchColumn(),
+    'pending_employers' => (int)$pdo->query("SELECT COUNT(*) FROM employer_requests WHERE status='pending'")->fetchColumn(),
 ];
 
 // Dữ liệu biểu đồ 1: Số job tạo mới theo ngày (7 ngày gần nhất)
@@ -68,6 +69,17 @@ require __DIR__ . '/../../layout/header.php';
 
 <!-- Thống kê tổng quan -->
 <div class="row g-3 mb-4">
+    <?php if ($stats['pending_employers'] > 0): ?>
+    <div class="col-12">
+        <a href="<?= e(url('admin/employer_requests')) ?>" class="alert alert-warning d-flex align-items-center mb-0 text-decoration-none">
+            <i class="bi bi-person-exclamation fs-4 me-3"></i>
+            <div>
+                Có <strong><?= $stats['pending_employers'] ?> yêu cầu</strong> trở thành nhà tuyển dụng đang chờ bạn duyệt.
+                <span class="text-decoration-underline ms-1">Xem ngay →</span>
+            </div>
+        </a>
+    </div>
+    <?php endif; ?>
     <div class="col-md-3">
         <div class="card border-0 shadow-sm rounded-3 h-100"
              style="border-left: 4px solid #1a56db !important; border-left-color:#1a56db!important">
@@ -136,6 +148,14 @@ require __DIR__ . '/../../layout/header.php';
     </a>
     <a href="<?= e(url('admin/applications')) ?>" class="btn btn-outline-primary btn-sm">
         <i class="bi bi-file-earmark-person me-1"></i>Quản lý CV
+    </a>
+    <a href="<?= e(url('admin/employer_requests')) ?>" class="btn btn-outline-warning btn-sm position-relative">
+        <i class="bi bi-person-check me-1"></i>Duyệt nhà tuyển dụng
+        <?php if ($stats['pending_employers'] > 0): ?>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                <?= $stats['pending_employers'] ?>
+            </span>
+        <?php endif; ?>
     </a>
 </div>
 

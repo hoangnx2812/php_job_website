@@ -40,8 +40,9 @@ $routes = [
     'admin/user_delete'       => 'admin/user_delete.php',
     'admin/jobs'              => 'admin/jobs.php',
     'admin/job_delete'        => 'admin/job_delete.php',
-    'admin/companies'         => 'admin/companies.php',
-    'admin/applications'      => 'admin/applications.php',
+    'admin/companies'             => 'admin/companies.php',
+    'admin/applications'          => 'admin/applications.php',
+    'admin/employer_requests'     => 'admin/employer_requests.php',
 ];
 
 $page = $_GET['page'] ?? 'home';
