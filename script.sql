@@ -11,6 +11,7 @@ ALTER DATABASE job_website CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE job_website;
 
 SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS saved_jobs;
 DROP TABLE IF EXISTS applications;
 DROP TABLE IF EXISTS jobs;
 DROP TABLE IF EXISTS companies;
@@ -33,16 +34,17 @@ CREATE TABLE users (
 
 -- Mật khẩu gốc của toàn bộ user seed: 123456
 -- Dùng prefix PLAIN: để code PHP nhận biết và tự hash lại khi login lần đầu.
--- (Cách này giúp seed SQL không cần hard-code bcrypt hash.)
 INSERT INTO users (email, password, full_name, role, phone) VALUES
-('admin@example.com',    'PLAIN:123456', 'Quản trị viên',  'admin',    '0900000001'),
-('employer1@example.com','PLAIN:123456', 'Nguyễn HR FPT',  'employer', '0900000002'),
-('employer2@example.com','PLAIN:123456', 'Trần HR VNG',    'employer', '0900000003'),
-('user1@example.com',    'PLAIN:123456', 'Lê Văn A',       'user',     '0900000004'),
-('user2@example.com',    'PLAIN:123456', 'Phạm Thị B',     'user',     '0900000005');
+('admin@example.com',    'PLAIN:123456', 'Quản trị viên',   'admin',    '0900000001'),
+('employer1@example.com','PLAIN:123456', 'Nguyễn HR FPT',   'employer', '0900000002'),
+('employer2@example.com','PLAIN:123456', 'Trần HR VNG',     'employer', '0900000003'),
+('employer3@example.com','PLAIN:123456', 'Lê HR Tiki',      'employer', '0900000006'),
+('user1@example.com',    'PLAIN:123456', 'Lê Văn A',        'user',     '0900000004'),
+('user2@example.com',    'PLAIN:123456', 'Phạm Thị B',      'user',     '0900000005');
 
 -- ---------------------------------------------------------
--- Bảng companies: công ty, mỗi employer gắn với 1 company
+-- Bảng companies: công ty, mỗi employer gắn với đúng 1 company
+-- Ràng buộc UNIQUE(owner_id) đảm bảo quan hệ 1-1 employer↔company
 -- ---------------------------------------------------------
 CREATE TABLE companies (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -51,17 +53,20 @@ CREATE TABLE companies (
     description TEXT NULL,
     location VARCHAR(200) NULL,
     website VARCHAR(200) NULL,
+    logo VARCHAR(255) NULL,                     -- tên file logo lưu trong uploads/logos/
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_company_owner (owner_id),     -- mỗi employer chỉ có 1 công ty
     FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO companies (owner_id, name, description, location, website) VALUES
-(2, 'FPT Software',   'Công ty phần mềm hàng đầu Việt Nam, chuyên outsource cho thị trường Nhật và Mỹ.', 'Hà Nội',       'https://fptsoftware.com'),
-(3, 'VNG Corporation','Công ty công nghệ với các sản phẩm Zalo, ZaloPay, game online.',                 'TP. Hồ Chí Minh','https://vng.com.vn'),
-(2, 'FPT Telecom',    'Nhà cung cấp dịch vụ Internet và truyền hình.',                                  'Hà Nội',       'https://fpt.vn');
+(2, 'FPT Software',   'Công ty phần mềm hàng đầu Việt Nam, chuyên outsource cho thị trường Nhật và Mỹ.', 'Hà Nội',         'https://fptsoftware.com'),
+(3, 'VNG Corporation','Công ty công nghệ với các sản phẩm Zalo, ZaloPay, game online.',                  'TP. Hồ Chí Minh','https://vng.com.vn'),
+(4, 'Tiki',           'Sàn thương mại điện tử hàng đầu Việt Nam.',                                       'TP. Hồ Chí Minh','https://tiki.vn');
 
 -- ---------------------------------------------------------
 -- Bảng jobs: bài đăng tuyển dụng
+-- salary_min / salary_max: lương dạng số nguyên (đơn vị: triệu VND)
 -- ---------------------------------------------------------
 CREATE TABLE jobs (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -71,7 +76,8 @@ CREATE TABLE jobs (
     description TEXT NOT NULL,
     requirements TEXT NULL,
     location VARCHAR(200) NULL,
-    salary VARCHAR(100) NULL,                   -- để dạng text cho linh hoạt: "15-25 triệu"
+    salary_min INT NULL,                        -- lương tối thiểu (triệu VND), NULL = thỏa thuận
+    salary_max INT NULL,                        -- lương tối đa (triệu VND)
     job_type ENUM('full-time','part-time','intern','contract') NOT NULL DEFAULT 'full-time',
     is_active TINYINT(1) NOT NULL DEFAULT 1,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -79,11 +85,12 @@ CREATE TABLE jobs (
     FOREIGN KEY (employer_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO jobs (company_id, employer_id, title, description, requirements, location, salary, job_type) VALUES
-(1, 2, 'PHP Backend Developer',   'Phát triển backend cho các dự án thương mại điện tử.',   'Thành thạo PHP, MySQL, có kinh nghiệm Laravel là lợi thế.', 'Hà Nội',          '15-25 triệu', 'full-time'),
-(1, 2, 'Java Fresher',             'Tham gia phát triển dự án ngân hàng cho khách hàng Nhật.','Tốt nghiệp CNTT, biết Java cơ bản, tiếng Anh đọc hiểu.',    'Hà Nội',          '8-12 triệu',  'full-time'),
-(2, 3, 'Frontend ReactJS',         'Xây dựng giao diện sản phẩm Zalo Mini App.',              '2+ năm kinh nghiệm React, hiểu TypeScript.',                'TP. Hồ Chí Minh', '20-35 triệu', 'full-time'),
-(3, 2, 'Nhân viên hỗ trợ kỹ thuật','Hỗ trợ khách hàng sử dụng dịch vụ Internet.',             'Giao tiếp tốt, chịu được áp lực.',                          'Hà Nội',          '8-10 triệu',  'part-time');
+INSERT INTO jobs (company_id, employer_id, title, description, requirements, location, salary_min, salary_max, job_type) VALUES
+(1, 2, 'PHP Backend Developer',    'Phát triển backend cho các dự án thương mại điện tử.',   'Thành thạo PHP, MySQL, có kinh nghiệm Laravel là lợi thế.', 'Hà Nội',          15, 25, 'full-time'),
+(1, 2, 'Java Fresher',              'Tham gia phát triển dự án ngân hàng cho khách hàng Nhật.','Tốt nghiệp CNTT, biết Java cơ bản, tiếng Anh đọc hiểu.',    'Hà Nội',          8,  12, 'full-time'),
+(2, 3, 'Frontend ReactJS',          'Xây dựng giao diện sản phẩm Zalo Mini App.',              '2+ năm kinh nghiệm React, hiểu TypeScript.',                'TP. Hồ Chí Minh', 20, 35, 'full-time'),
+(3, 4, 'Mobile Developer iOS',      'Phát triển ứng dụng Tiki trên nền tảng iOS.',             '2+ năm Swift/SwiftUI, có app trên AppStore là lợi thế.',    'TP. Hồ Chí Minh', 18, 30, 'full-time'),
+(3, 4, 'Data Analyst Intern',       'Phân tích dữ liệu bán hàng, lập báo cáo tuần.',           'Sinh viên năm 3-4 CNTT/Kinh tế, biết SQL và Excel.',        'TP. Hồ Chí Minh', 4,  7,  'intern');
 
 -- ---------------------------------------------------------
 -- Bảng applications: đơn ứng tuyển của user vào job
@@ -101,6 +108,27 @@ CREATE TABLE applications (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO applications (job_id, user_id, cv_file, cover_letter, status) VALUES
-(1, 4, 'sample_cv_1.pdf', 'Em rất quan tâm vị trí PHP Backend của quý công ty.', 'pending'),
-(2, 4, 'sample_cv_1.pdf', 'Em là sinh viên mới ra trường, mong được học hỏi.',   'accepted'),
-(3, 5, 'sample_cv_2.pdf', 'Tôi có 3 năm kinh nghiệm React và muốn thử sức tại VNG.','pending');
+(1, 5, 'sample_cv_1.pdf', 'Em rất quan tâm vị trí PHP Backend của quý công ty.',    'pending'),
+(2, 5, 'sample_cv_1.pdf', 'Em là sinh viên mới ra trường, mong được học hỏi.',      'accepted'),
+(3, 6, 'sample_cv_2.pdf', 'Tôi có 3 năm kinh nghiệm React và muốn thử sức tại VNG.','pending'),
+(4, 5, 'sample_cv_1.pdf', 'Tôi muốn ứng tuyển vị trí iOS Developer tại Tiki.',     'rejected');
+
+-- ---------------------------------------------------------
+-- Bảng saved_jobs: lưu job yêu thích của user
+-- UNIQUE(user_id, job_id) đảm bảo không lưu trùng
+-- ---------------------------------------------------------
+CREATE TABLE saved_jobs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    job_id INT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_saved (user_id, job_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Seed: user1 lưu job 1 và job 3
+INSERT INTO saved_jobs (user_id, job_id) VALUES
+(5, 1),
+(5, 3),
+(6, 2);

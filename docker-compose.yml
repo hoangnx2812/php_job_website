@@ -41,5 +41,20 @@ services:
                a2enmod rewrite &&
                apache2-foreground"
 
+  # phpMyAdmin: giao diện quản lý DB trực quan, truy cập http://localhost:8081
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: job_phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: app
+      PMA_PASSWORD: app
+    ports:
+      - "8081:80"
+
 volumes:
   mysql_data:

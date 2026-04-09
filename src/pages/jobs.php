@@ -1,11 +1,37 @@
 <?php
-// Danh sách việc làm + tìm kiếm theo tên và địa điểm
+// Danh sách việc làm + tìm kiếm + lọc nâng cao + phân trang + nút lưu
 $q        = trim($_GET['q'] ?? '');
 $location = trim($_GET['location'] ?? '');
+$jobType  = $_GET['job_type'] ?? '';
+$salMin   = (int)($_GET['salary_min'] ?? 0);
+$salMax   = (int)($_GET['salary_max'] ?? 0);
+$page     = max(1, (int)($_GET['p'] ?? 1));
+$perPage  = 10;
 
-$sql = "SELECT j.*, c.name AS company_name
-        FROM jobs j JOIN companies c ON c.id = j.company_id
-        WHERE j.is_active = 1";
+// Xử lý lưu/bỏ lưu job (toggle save)
+$u = current_user();
+if ($u && $u['role'] === 'user' && is_post() && isset($_POST['job_id'])) {
+    $saveJobId = (int)$_POST['job_id'];
+    // Kiểm tra đã lưu chưa
+    $stmt = db()->prepare('SELECT id FROM saved_jobs WHERE user_id = ? AND job_id = ?');
+    $stmt->execute([$u['id'], $saveJobId]);
+    if ($stmt->fetch()) {
+        // Đã lưu → bỏ lưu
+        db()->prepare('DELETE FROM saved_jobs WHERE user_id = ? AND job_id = ?')->execute([$u['id'], $saveJobId]);
+    } else {
+        // Chưa lưu → lưu
+        db()->prepare('INSERT IGNORE INTO saved_jobs (user_id, job_id) VALUES (?,?)')->execute([$u['id'], $saveJobId]);
+    }
+    // Redirect lại trang hiện tại để tránh resubmit form
+    $params = array_filter(compact('q', 'location', 'jobType', 'salMin', 'salMax'));
+    if ($page > 1) $params['p'] = $page;
+    redirect('jobs', $params);
+}
+
+// Build query đếm tổng (để phân trang)
+$sql    = "SELECT j.*, c.name AS company_name, c.logo AS company_logo
+           FROM jobs j JOIN companies c ON c.id = j.company_id
+           WHERE j.is_active = 1";
 $params = [];
 if ($q !== '') {
     $sql .= " AND (j.title LIKE ? OR j.description LIKE ?)";
@@ -16,40 +42,172 @@ if ($location !== '') {
     $sql .= " AND j.location LIKE ?";
     $params[] = "%$location%";
 }
-$sql .= " ORDER BY j.created_at DESC";
+if ($jobType && in_array($jobType, ['full-time','part-time','intern','contract'], true)) {
+    $sql .= " AND j.job_type = ?";
+    $params[] = $jobType;
+}
+// Filter salary: job.salary_min >= filter.salary_min VÀ salary_max <= filter.salary_max
+if ($salMin > 0) {
+    $sql .= " AND (j.salary_min IS NULL OR j.salary_min >= ?)";
+    $params[] = $salMin;
+}
+if ($salMax > 0) {
+    $sql .= " AND (j.salary_max IS NULL OR j.salary_max <= ?)";
+    $params[] = $salMax;
+}
 
+// Đếm tổng bản ghi để tính số trang
+$countSql  = str_replace('SELECT j.*, c.name AS company_name, c.logo AS company_logo', 'SELECT COUNT(*)', $sql);
+$countStmt = db()->prepare($countSql);
+$countStmt->execute($params);
+$total = (int)$countStmt->fetchColumn();
+
+// Query lấy dữ liệu trang hiện tại
+$sql .= " ORDER BY j.created_at DESC LIMIT $perPage OFFSET " . (($page - 1) * $perPage);
 $stmt = db()->prepare($sql);
 $stmt->execute($params);
 $jobs = $stmt->fetchAll();
 
+// Lấy danh sách job đã lưu của user để hiển thị trạng thái nút tim
+$savedJobIds = [];
+if ($u && $u['role'] === 'user') {
+    $sStmt = db()->prepare('SELECT job_id FROM saved_jobs WHERE user_id = ?');
+    $sStmt->execute([$u['id']]);
+    $savedJobIds = array_column($sStmt->fetchAll(), 'job_id');
+}
+
+// Build base URL cho pagination (không có p=)
+$baseParams = array_filter(compact('q', 'location', 'jobType', 'salMin', 'salMax'), fn($v) => $v !== '' && $v !== 0);
+$baseUrl    = BASE_URL . '?' . http_build_query(array_merge(['page' => 'jobs'], $baseParams));
+
 $pageTitle = 'Việc làm';
 require __DIR__ . '/../layout/header.php';
 ?>
-<h3>Danh sách việc làm</h3>
-<form method="get" class="row g-2 mb-4">
-    <input type="hidden" name="page" value="jobs">
-    <div class="col-md-5"><input name="q" value="<?= e($q) ?>" class="form-control" placeholder="Từ khoá..."></div>
-    <div class="col-md-4"><input name="location" value="<?= e($location) ?>" class="form-control" placeholder="Địa điểm"></div>
-    <div class="col-md-3"><button class="btn btn-primary w-100">Tìm kiếm</button></div>
-</form>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-700 mb-0"><i class="bi bi-search me-2 text-primary"></i>Danh sách việc làm</h4>
+    <span class="text-muted small"><?= $total ?> kết quả</span>
+</div>
+
+<!-- Filter bar -->
+<div class="card border-0 shadow-sm rounded-3 mb-4">
+    <div class="card-body p-3">
+        <form method="get">
+            <input type="hidden" name="page" value="jobs">
+            <div class="row g-2">
+                <div class="col-md-3">
+                    <input name="q" value="<?= e($q) ?>" class="form-control" placeholder="Từ khoá...">
+                </div>
+                <div class="col-md-2">
+                    <input name="location" value="<?= e($location) ?>" class="form-control" placeholder="Địa điểm">
+                </div>
+                <div class="col-md-2">
+                    <select name="job_type" class="form-select">
+                        <option value="">-- Loại --</option>
+                        <?php foreach (['full-time','part-time','intern','contract'] as $t): ?>
+                            <option value="<?= $t ?>" <?= $jobType === $t ? 'selected' : '' ?>>
+                                <?= $t ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <div class="input-group">
+                        <span class="input-group-text" style="font-size:0.8rem">Min</span>
+                        <input type="number" name="salary_min" value="<?= $salMin ?: '' ?>"
+                               class="form-control" placeholder="tr/tháng" min="0">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="input-group">
+                        <span class="input-group-text" style="font-size:0.8rem">Max</span>
+                        <input type="number" name="salary_max" value="<?= $salMax ?: '' ?>"
+                               class="form-control" placeholder="tr/tháng" min="0">
+                    </div>
+                </div>
+                <div class="col-md-1 d-flex gap-1">
+                    <button class="btn btn-primary flex-grow-1">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <?php if ($q || $location || $jobType || $salMin || $salMax): ?>
+                        <a href="<?= e(url('jobs')) ?>" class="btn btn-outline-secondary" title="Xóa filter">
+                            <i class="bi bi-x"></i>
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 <?php if (!$jobs): ?>
-    <div class="alert alert-info">Không tìm thấy việc làm phù hợp.</div>
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>Không tìm thấy việc làm phù hợp.
+    </div>
 <?php endif; ?>
 
-<div class="row g-3">
+<div class="row g-3 mb-4">
 <?php foreach ($jobs as $j): ?>
+    <?php $isSaved = in_array($j['id'], $savedJobIds); ?>
     <div class="col-md-6">
-        <div class="card job-card shadow-sm h-100">
-            <div class="card-body">
-                <h5><a href="<?= e(url('job_detail', ['id' => $j['id']])) ?>"><?= e($j['title']) ?></a></h5>
-                <div class="text-muted"><?= e($j['company_name']) ?> • <?= e($j['location']) ?></div>
-                <p class="mt-2 mb-2 small text-truncate"><?= e($j['description']) ?></p>
-                <span class="badge bg-success"><?= e($j['salary']) ?></span>
-                <span class="badge bg-secondary"><?= e($j['job_type']) ?></span>
+        <div class="card job-card h-100 position-relative">
+            <div class="card-body p-3">
+                <div class="d-flex align-items-start gap-3">
+                    <!-- Logo -->
+                    <?php if ($j['company_logo']): ?>
+                        <img src="/uploads/logos/<?= e($j['company_logo']) ?>"
+                             alt="<?= e($j['company_name']) ?>"
+                             class="company-logo flex-shrink-0">
+                    <?php else: ?>
+                        <div class="company-logo-placeholder flex-shrink-0">
+                            <i class="bi bi-building"></i>
+                        </div>
+                    <?php endif; ?>
+                    <div class="flex-grow-1 min-w-0">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h6 class="fw-600 mb-1 me-2">
+                                <a href="<?= e(url('job_detail', ['id' => $j['id']])) ?>"
+                                   class="text-decoration-none text-dark stretched-link">
+                                    <?= e($j['title']) ?>
+                                </a>
+                            </h6>
+                            <!-- Nút tim (chỉ hiện khi đã login + role=user) -->
+                            <?php if ($u && $u['role'] === 'user'): ?>
+                                <form method="post" class="position-relative" style="z-index:2">
+                                    <input type="hidden" name="job_id" value="<?= $j['id'] ?>">
+                                    <?php foreach ($baseParams as $k => $v): ?>
+                                        <?php if ($k !== 'p'): ?>
+                                            <input type="hidden" name="<?= e($k) ?>" value="<?= e($v) ?>">
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                    <?php if ($page > 1): ?>
+                                        <input type="hidden" name="p" value="<?= $page ?>">
+                                    <?php endif; ?>
+                                    <button class="btn-save-job <?= $isSaved ? 'saved' : '' ?>"
+                                            title="<?= $isSaved ? 'Bỏ lưu' : 'Lưu job' ?>">
+                                        <i class="bi bi-heart<?= $isSaved ? '-fill' : '' ?>"></i>
+                                    </button>
+                                </form>
+                            <?php endif; ?>
+                        </div>
+                        <div class="text-muted small mb-2">
+                            <i class="bi bi-building me-1"></i><?= e($j['company_name']) ?>
+                            <span class="mx-1">•</span>
+                            <i class="bi bi-geo-alt me-1"></i><?= e($j['location']) ?>
+                        </div>
+                        <div class="d-flex flex-wrap gap-1">
+                            <span class="badge-salary"><?= e(format_salary($j['salary_min'], $j['salary_max'])) ?></span>
+                            <span class="badge-type"><?= e($j['job_type']) ?></span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 <?php endforeach; ?>
 </div>
+
+<!-- Phân trang -->
+<?= render_pagination($total, $perPage, $page, $baseUrl) ?>
+
 <?php require __DIR__ . '/../layout/footer.php';

@@ -17,17 +17,22 @@ $routes = [
     'jobs'                    => 'jobs.php',
     'job_detail'              => 'job_detail.php',
     'companies'               => 'companies.php',
+    'download_cv'             => 'download_cv.php',
 
-    // User
+    // User (ứng viên)
     'user/apply'              => 'user/apply.php',
     'user/my_applications'    => 'user/my_applications.php',
+    'user/profile'            => 'user/profile.php',
+    'user/saved_jobs'         => 'user/saved_jobs.php',
+    'user/become_employer'    => 'user/become_employer.php',
 
-    // Employer
+    // Employer (nhà tuyển dụng)
     'employer/dashboard'      => 'employer/dashboard.php',
     'employer/jobs'           => 'employer/jobs.php',
     'employer/job_form'       => 'employer/job_form.php',
     'employer/job_delete'     => 'employer/job_delete.php',
     'employer/applications'   => 'employer/applications.php',
+    'employer/company'        => 'employer/company.php',
 
     // Admin
     'admin/dashboard'         => 'admin/dashboard.php',

@@ -13,6 +13,9 @@ define('DB_PASS', 'app');
 // Thư mục lưu file CV (mount từ host qua docker-compose)
 define('UPLOAD_DIR', '/var/www/uploads/cv');
 
+// Thư mục lưu logo công ty
+define('LOGO_UPLOAD_DIR', '/var/www/uploads/logos');
+
 // URL gốc của app (để build link)
 define('BASE_URL', '/index.php');
 

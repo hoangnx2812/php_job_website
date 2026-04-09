@@ -1,40 +1,147 @@
 <?php
-// Trang chủ: hero + vài job mới nhất
-$latest = db()->query("
-    SELECT j.*, c.name AS company_name
+// Trang chủ: hero + job mới nhất + stats
+$pdo = db();
+
+// Lấy 6 job mới nhất kèm logo công ty
+$latest = $pdo->query("
+    SELECT j.*, c.name AS company_name, c.logo AS company_logo, c.location AS company_location
     FROM jobs j JOIN companies c ON c.id = j.company_id
     WHERE j.is_active = 1
     ORDER BY j.created_at DESC
     LIMIT 6
 ")->fetchAll();
 
+// Thống kê tổng quan để hiện ở hero section
+$statsJobs = (int)$pdo->query('SELECT COUNT(*) FROM jobs WHERE is_active = 1')->fetchColumn();
+$statsCompanies = (int)$pdo->query('SELECT COUNT(*) FROM companies')->fetchColumn();
+$statsUsers = (int)$pdo->query("SELECT COUNT(*) FROM users WHERE role = 'user'")->fetchColumn();
+
+$u = current_user();
 $pageTitle = 'Trang chủ';
 require __DIR__ . '/../layout/header.php';
 ?>
-<div class="p-5 mb-4 bg-white rounded shadow-sm text-center">
-    <h1 class="display-6">Tìm công việc mơ ước của bạn</h1>
-    <p class="text-muted">Hàng ngàn việc làm IT, marketing, kinh doanh... đang chờ bạn.</p>
-    <form action="<?= e(BASE_URL) ?>" method="get" class="row g-2 justify-content-center mt-3">
-        <input type="hidden" name="page" value="jobs">
-        <div class="col-md-5"><input name="q" class="form-control" placeholder="Tên công việc, kỹ năng..."></div>
-        <div class="col-md-3"><input name="location" class="form-control" placeholder="Địa điểm"></div>
-        <div class="col-md-2"><button class="btn btn-primary w-100">Tìm kiếm</button></div>
-    </form>
+
+<!-- Hero Section -->
+<div class="hero-section rounded-4 mb-5 p-5 text-white text-center position-relative overflow-hidden"
+     style="background: linear-gradient(135deg, #1a56db 0%, #0d3b8e 60%, #1e1b4b 100%); min-height: 340px;">
+    <!-- Decorative circles -->
+    <div style="position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,0.05);"></div>
+    <div style="position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.05);"></div>
+
+    <div class="position-relative">
+        <h1 class="display-5 fw-700 mb-2">Tìm công việc mơ ước</h1>
+        <p class="lead mb-4 opacity-85">Hàng ngàn việc làm IT, marketing, kinh doanh đang chờ bạn</p>
+
+        <!-- Search box nổi bật -->
+        <form action="<?= e(BASE_URL) ?>" method="get" class="row g-2 justify-content-center">
+            <input type="hidden" name="page" value="jobs">
+            <div class="col-md-5">
+                <input name="q" class="form-control form-control-lg"
+                       style="border-radius:10px;border:none;font-size:1rem;"
+                       placeholder="Tên công việc, kỹ năng...">
+            </div>
+            <div class="col-md-3">
+                <input name="location" class="form-control form-control-lg"
+                       style="border-radius:10px;border:none;font-size:1rem;"
+                       placeholder="Địa điểm">
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-warning fw-600 btn-lg" style="border-radius:10px;padding:0.6rem 1.5rem;">
+                    <i class="bi bi-search me-1"></i> Tìm kiếm
+                </button>
+            </div>
+        </form>
+
+        <!-- Stats counter -->
+        <div class="row justify-content-center mt-4 g-3">
+            <div class="col-auto">
+                <div class="px-3 py-2 rounded-3" style="background:rgba(255,255,255,0.12)">
+                    <span class="fw-700 fs-5"><?= $statsJobs ?>+</span>
+                    <span class="ms-1 opacity-85 small">Việc làm</span>
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="px-3 py-2 rounded-3" style="background:rgba(255,255,255,0.12)">
+                    <span class="fw-700 fs-5"><?= $statsCompanies ?>+</span>
+                    <span class="ms-1 opacity-85 small">Công ty</span>
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="px-3 py-2 rounded-3" style="background:rgba(255,255,255,0.12)">
+                    <span class="fw-700 fs-5"><?= $statsUsers ?>+</span>
+                    <span class="ms-1 opacity-85 small">Ứng viên</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<h4 class="mb-3">Việc làm mới nhất</h4>
-<div class="row g-3">
+<!-- Job mới nhất -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-700 mb-0">
+        <i class="bi bi-lightning-fill text-warning me-1"></i> Việc làm mới nhất
+    </h4>
+    <a href="<?= e(url('jobs')) ?>" class="btn btn-outline-primary btn-sm">
+        Xem tất cả <i class="bi bi-arrow-right"></i>
+    </a>
+</div>
+
+<div class="row g-3 mb-5">
 <?php foreach ($latest as $j): ?>
-    <div class="col-md-6">
-        <div class="card job-card shadow-sm h-100">
-            <div class="card-body">
-                <h5><a href="<?= e(url('job_detail', ['id' => $j['id']])) ?>"><?= e($j['title']) ?></a></h5>
-                <div class="text-muted"><?= e($j['company_name']) ?> • <?= e($j['location']) ?></div>
-                <div class="mt-2"><span class="badge bg-success"><?= e($j['salary']) ?></span>
-                    <span class="badge bg-secondary"><?= e($j['job_type']) ?></span></div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card job-card h-100">
+            <div class="card-body p-3">
+                <!-- Logo + tên công ty -->
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <?php if ($j['company_logo']): ?>
+                        <img src="/uploads/logos/<?= e($j['company_logo']) ?>"
+                             alt="<?= e($j['company_name']) ?>"
+                             class="company-logo">
+                    <?php else: ?>
+                        <div class="company-logo-placeholder">
+                            <i class="bi bi-building"></i>
+                        </div>
+                    <?php endif; ?>
+                    <div>
+                        <div class="fw-600 small"><?= e($j['company_name']) ?></div>
+                        <div class="text-muted" style="font-size:0.78rem">
+                            <i class="bi bi-geo-alt-fill me-1"></i><?= e($j['location']) ?>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tiêu đề job -->
+                <h6 class="fw-600 mb-2">
+                    <a href="<?= e(url('job_detail', ['id' => $j['id']])) ?>"
+                       class="text-decoration-none text-dark stretched-link">
+                        <?= e($j['title']) ?>
+                    </a>
+                </h6>
+                <!-- Badges -->
+                <div class="d-flex flex-wrap gap-1 mt-auto">
+                    <span class="badge-salary"><?= e(format_salary($j['salary_min'], $j['salary_max'])) ?></span>
+                    <span class="badge-type"><?= e($j['job_type']) ?></span>
+                </div>
             </div>
         </div>
     </div>
 <?php endforeach; ?>
 </div>
+
+<!-- CTA section -->
+<?php if (!$u): ?>
+<div class="card border-0 shadow-sm rounded-4 text-center p-5"
+     style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+    <h4 class="fw-700 mb-2">Bắt đầu hành trình sự nghiệp của bạn</h4>
+    <p class="text-muted mb-4">Đăng ký miễn phí để ứng tuyển, lưu việc làm yêu thích và nhận thông báo job mới</p>
+    <div class="d-flex gap-2 justify-content-center">
+        <a href="<?= e(url('register')) ?>" class="btn btn-primary btn-lg px-4">
+            <i class="bi bi-person-plus me-1"></i> Đăng ký ngay
+        </a>
+        <a href="<?= e(url('jobs')) ?>" class="btn btn-outline-primary btn-lg px-4">
+            <i class="bi bi-search me-1"></i> Duyệt việc làm
+        </a>
+    </div>
+</div>
+<?php endif; ?>
+
 <?php require __DIR__ . '/../layout/footer.php';

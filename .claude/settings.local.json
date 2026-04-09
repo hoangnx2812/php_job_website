@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(chmod -R 777 /home/hoangnx/Documents/code/php_job_website/uploads)"
+      "Bash(chmod -R 777 /home/hoangnx/Documents/code/php_job_website/uploads)",
+      "Bash(git -C \"D:/github_code/php_job_website/.claude/worktrees/charming-pike\" status --short)"
     ]
   }
 }
