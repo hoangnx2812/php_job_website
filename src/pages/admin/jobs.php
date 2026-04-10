@@ -1,6 +1,14 @@
 <?php
-// Admin: xem toàn bộ bài đăng, có phân trang
+// Admin: xem toàn bộ bài đăng, có phân trang + toggle is_active
 require_role('admin');
+
+// Toggle ẩn/hiện job
+if (is_post() && ($_POST['action'] ?? '') === 'toggle_active') {
+    $jid = (int)($_POST['job_id'] ?? 0);
+    db()->prepare('UPDATE jobs SET is_active = 1 - is_active WHERE id = ?')->execute([$jid]);
+    flash_set('success', 'Đã cập nhật trạng thái bài đăng.');
+    redirect('admin/jobs');
+}
 
 $page    = max(1, (int)($_GET['p'] ?? 1));
 $perPage = 15;
@@ -40,8 +48,9 @@ require __DIR__ . '/../../layout/header.php';
                 <th>Địa điểm</th>
                 <th>Lương</th>
                 <th>Loại</th>
+                <th class="text-center">Trạng thái</th>
                 <th>Ngày đăng</th>
-                <th></th>
+                <th class="text-center">Thao tác</th>
             </tr>
             </thead>
             <tbody>
@@ -59,13 +68,30 @@ require __DIR__ . '/../../layout/header.php';
                         <span class="badge-salary"><?= e(format_salary($j['salary_min'], $j['salary_max'])) ?></span>
                     </td>
                     <td><span class="badge-type"><?= e($j['job_type']) ?></span></td>
+                    <td class="text-center">
+                        <?php if ($j['is_active']): ?>
+                            <span class="badge bg-success">Đang hiện</span>
+                        <?php else: ?>
+                            <span class="badge bg-secondary">Đã ẩn</span>
+                        <?php endif; ?>
+                    </td>
                     <td class="small text-muted"><?= date('d/m/Y', strtotime($j['created_at'])) ?></td>
-                    <td>
-                        <a href="<?= e(url('admin/job_delete', ['id' => $j['id']])) ?>"
-                           class="btn btn-sm btn-danger"
-                           onclick="return confirm('Xoá bài đăng này?')">
-                            <i class="bi bi-trash"></i>
-                        </a>
+                    <td class="text-center">
+                        <div class="d-flex gap-1 justify-content-center">
+                            <form method="post" class="d-inline">
+                                <input type="hidden" name="action" value="toggle_active">
+                                <input type="hidden" name="job_id" value="<?= $j['id'] ?>">
+                                <button class="btn btn-sm <?= $j['is_active'] ? 'btn-outline-secondary' : 'btn-outline-success' ?>"
+                                        title="<?= $j['is_active'] ? 'Ẩn bài' : 'Hiện bài' ?>">
+                                    <i class="bi bi-<?= $j['is_active'] ? 'eye-slash' : 'eye' ?>"></i>
+                                </button>
+                            </form>
+                            <a href="<?= e(url('admin/job_delete', ['id' => $j['id']])) ?>"
+                               class="btn btn-sm btn-danger" title="Xoá"
+                               onclick="return confirm('Xoá bài đăng này?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>

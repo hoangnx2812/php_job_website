@@ -17,6 +17,7 @@ $routes = [
     'jobs'                    => 'jobs.php',
     'job_detail'              => 'job_detail.php',
     'companies'               => 'companies.php',
+    'company_detail'          => 'company_detail.php',
     'download_cv'             => 'download_cv.php',
 
     // User (ứng viên)

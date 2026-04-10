@@ -23,6 +23,10 @@ $currentPage = $_GET['page'] ?? 'home';
             background: #f0f4f8;
             color: #1a202c;
         }
+        /* Font-weight utilities (Bootstrap chỉ có fw-bold, thiếu các mức trung gian) */
+        .fw-500 { font-weight: 500 !important; }
+        .fw-600 { font-weight: 600 !important; }
+        .fw-700 { font-weight: 700 !important; }
         /* ===== Navbar ===== */
         .navbar-main {
             background: linear-gradient(135deg, #1a56db 0%, #0d3b8e 100%);

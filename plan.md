@@ -10,7 +10,7 @@ Mục tiêu: **đồ án qua môn**, giữ đơn giản, không đi sâu bảo m
 
 ---
 
-## ✅ Đã hoàn thành
+## ✅ Đã hoàn thành (kể cả nâng cấp UI)
 
 - ✅ Refactor employer ↔ company (1-1), UNIQUE owner_id
 - ✅ Download / xem CV (kiểm tra quyền theo role)
@@ -21,6 +21,12 @@ Mục tiêu: **đồ án qua môn**, giữ đơn giản, không đi sâu bảo m
 - ✅ Logo công ty (upload + hiển thị)
 - ✅ Thống kê admin bằng Chart.js
 - ✅ phpMyAdmin trong docker-compose (port 8081)
+- ✅ Fix fw-500/fw-600/fw-700 CSS utility classes
+- ✅ Trang chi tiết công ty (`company_detail.php`) — xem info + tất cả job của công ty
+- ✅ Toggle ẩn/hiện job cho employer và admin (nút mắt bên cạnh nút xoá)
+- ✅ Related jobs trên job_detail.php — "Vị trí khác tại công ty này"
+- ✅ Footer đẹp hơn (4 cột: brand, ứng viên, nhà tuyển dụng, tìm kiếm nhanh)
+- ✅ Home.php: section "Top công ty tuyển dụng" với logo
 
 ---
 

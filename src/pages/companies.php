@@ -70,7 +70,12 @@ require __DIR__ . '/../layout/header.php';
                         </div>
                     <?php endif; ?>
                     <div class="flex-grow-1">
-                        <h6 class="fw-600 mb-1"><?= e($c['name']) ?></h6>
+                        <h6 class="fw-600 mb-1">
+                            <a href="<?= e(url('company_detail', ['id' => $c['id']])) ?>"
+                               class="text-decoration-none text-dark stretched-link">
+                                <?= e($c['name']) ?>
+                            </a>
+                        </h6>
                         <?php if ($c['location']): ?>
                             <div class="text-muted small mb-2">
                                 <i class="bi bi-geo-alt me-1"></i><?= e($c['location']) ?>

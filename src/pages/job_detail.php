@@ -42,6 +42,15 @@ if ($u && $u['role'] === 'user') {
     $hasApplied = (bool)$stmt->fetch();
 }
 
+// Lấy tối đa 3 job khác từ cùng công ty (không tính job hiện tại)
+$relatedStmt = db()->prepare("
+    SELECT * FROM jobs
+    WHERE company_id = ? AND id != ? AND is_active = 1
+    ORDER BY created_at DESC LIMIT 3
+");
+$relatedStmt->execute([$j['company_id'], $id]);
+$relatedJobs = $relatedStmt->fetchAll();
+
 $pageTitle = $j['title'];
 require __DIR__ . '/../layout/header.php';
 ?>
@@ -153,7 +162,12 @@ require __DIR__ . '/../layout/header.php';
                              alt="<?= e($j['company_name']) ?>"
                              style="width:44px;height:44px;object-fit:contain;border-radius:8px;border:1px solid #e2e8f0;padding:4px;background:#fff">
                     <?php endif; ?>
-                    <h6 class="fw-600 mb-0"><?= e($j['company_name']) ?></h6>
+                    <h6 class="fw-600 mb-0">
+                    <a href="<?= e(url('company_detail', ['id' => $j['company_id']])) ?>"
+                       class="text-decoration-none text-dark">
+                        <?= e($j['company_name']) ?>
+                    </a>
+                </h6>
                 </div>
                 <?php if ($j['company_location']): ?>
                     <div class="small text-muted mb-2">
@@ -172,5 +186,37 @@ require __DIR__ . '/../layout/header.php';
         </div>
     </div>
 </div>
+
+<?php if ($relatedJobs): ?>
+<!-- Jobs khác từ cùng công ty -->
+<div class="mt-5">
+    <h5 class="fw-700 mb-3">
+        <i class="bi bi-building me-2 text-primary"></i>Vị trí khác tại <?= e($j['company_name']) ?>
+    </h5>
+    <div class="row g-3">
+        <?php foreach ($relatedJobs as $r): ?>
+            <div class="col-md-4">
+                <div class="card job-card border-0 h-100">
+                    <div class="card-body p-3">
+                        <h6 class="fw-600 mb-1">
+                            <a href="<?= e(url('job_detail', ['id' => $r['id']])) ?>"
+                               class="text-decoration-none text-dark">
+                                <?= e($r['title']) ?>
+                            </a>
+                        </h6>
+                        <div class="text-muted small mb-2">
+                            <i class="bi bi-geo-alt me-1"></i><?= e($r['location'] ?: 'Không xác định') ?>
+                        </div>
+                        <div class="d-flex flex-wrap gap-1">
+                            <span class="badge-salary"><?= e(format_salary($r['salary_min'], $r['salary_max'])) ?></span>
+                            <span class="badge-type"><?= e($r['job_type']) ?></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<?php endif; ?>
 
 <?php require __DIR__ . '/../layout/footer.php';

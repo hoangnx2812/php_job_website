@@ -16,6 +16,16 @@ $statsJobs = (int)$pdo->query('SELECT COUNT(*) FROM jobs WHERE is_active = 1')->
 $statsCompanies = (int)$pdo->query('SELECT COUNT(*) FROM companies')->fetchColumn();
 $statsUsers = (int)$pdo->query("SELECT COUNT(*) FROM users WHERE role = 'user'")->fetchColumn();
 
+// Top công ty: lấy 6 công ty có nhiều job đang hoạt động nhất
+$topCompanies = $pdo->query("
+    SELECT c.*, COUNT(j.id) AS job_count
+    FROM companies c
+    LEFT JOIN jobs j ON j.company_id = c.id AND j.is_active = 1
+    GROUP BY c.id
+    ORDER BY job_count DESC, c.name ASC
+    LIMIT 6
+")->fetchAll();
+
 $u = current_user();
 $pageTitle = 'Trang chủ';
 require __DIR__ . '/../layout/header.php';
@@ -126,6 +136,44 @@ require __DIR__ . '/../layout/header.php';
     </div>
 <?php endforeach; ?>
 </div>
+
+<!-- Top công ty -->
+<?php if ($topCompanies): ?>
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-700 mb-0">
+            <i class="bi bi-building-fill text-primary me-1"></i> Top công ty tuyển dụng
+        </h4>
+        <a href="<?= e(url('companies')) ?>" class="btn btn-outline-primary btn-sm">
+            Xem tất cả <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+    <div class="row g-3">
+        <?php foreach ($topCompanies as $tc): ?>
+            <div class="col-md-4 col-lg-2">
+                <a href="<?= e(url('company_detail', ['id' => $tc['id']])) ?>"
+                   class="card company-card border-0 h-100 text-decoration-none text-dark text-center p-3 d-flex flex-column align-items-center justify-content-center">
+                    <?php if ($tc['logo']): ?>
+                        <img src="/uploads/logos/<?= e($tc['logo']) ?>"
+                             alt="<?= e($tc['name']) ?>"
+                             style="width:56px;height:56px;object-fit:contain;border-radius:10px;border:1px solid #e2e8f0;padding:4px;background:#fff;margin-bottom:0.5rem">
+                    <?php else: ?>
+                        <div style="width:56px;height:56px;border-radius:10px;border:1px solid #e2e8f0;
+                                    background:#f1f5f9;display:flex;align-items:center;justify-content:center;
+                                    color:#94a3b8;font-size:1.5rem;margin-bottom:0.5rem">
+                            <i class="bi bi-building"></i>
+                        </div>
+                    <?php endif; ?>
+                    <div class="fw-600 small text-center" style="line-height:1.3"><?= e($tc['name']) ?></div>
+                    <div class="text-muted mt-1" style="font-size:0.75rem">
+                        <?= (int)$tc['job_count'] ?> việc làm
+                    </div>
+                </a>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<?php endif; ?>
 
 <!-- CTA section -->
 <?php if (!$u): ?>

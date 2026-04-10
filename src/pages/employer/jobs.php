@@ -4,9 +4,17 @@ $u      = require_role('employer');
 $page   = max(1, (int)($_GET['p'] ?? 1));
 $perPage = 10;
 
+// Xử lý toggle is_active
+if (is_post() && ($_POST['action'] ?? '') === 'toggle_active') {
+    $jid = (int)($_POST['job_id'] ?? 0);
+    // Chỉ cho toggle bài của chính mình
+    $stmt = db()->prepare('UPDATE jobs SET is_active = 1 - is_active WHERE id = ? AND employer_id = ?');
+    $stmt->execute([$jid, $u['id']]);
+    flash_set('success', 'Đã cập nhật trạng thái bài đăng.');
+    redirect('employer/jobs');
+}
+
 // Đếm tổng
-$total = (int)db()->prepare('SELECT COUNT(*) FROM jobs WHERE employer_id = ?')
-    ->execute([$u['id']]) ? 0 : 0;
 $countStmt = db()->prepare('SELECT COUNT(*) FROM jobs WHERE employer_id = ?');
 $countStmt->execute([$u['id']]);
 $total = (int)$countStmt->fetchColumn();
@@ -48,11 +56,11 @@ require __DIR__ . '/../../layout/header.php';
             <thead>
             <tr>
                 <th>Vị trí</th>
-                <th>Công ty</th>
                 <th>Địa điểm</th>
                 <th>Lương</th>
                 <th>Loại</th>
                 <th class="text-center">Đơn</th>
+                <th class="text-center">Trạng thái</th>
                 <th>Ngày đăng</th>
                 <th class="text-center">Thao tác</th>
             </tr>
@@ -64,7 +72,6 @@ require __DIR__ . '/../../layout/header.php';
                         <a href="<?= e(url('job_detail', ['id' => $j['id']])) ?>"
                            class="fw-600 text-decoration-none"><?= e($j['title']) ?></a>
                     </td>
-                    <td class="small"><?= e($j['company_name']) ?></td>
                     <td class="small text-muted"><?= e($j['location']) ?></td>
                     <td class="small">
                         <span class="badge-salary"><?= e(format_salary($j['salary_min'], $j['salary_max'])) ?></span>
@@ -75,15 +82,31 @@ require __DIR__ . '/../../layout/header.php';
                             <?= (int)$j['app_count'] ?>
                         </span>
                     </td>
+                    <td class="text-center">
+                        <?php if ($j['is_active']): ?>
+                            <span class="badge bg-success">Đang hiện</span>
+                        <?php else: ?>
+                            <span class="badge bg-secondary">Đã ẩn</span>
+                        <?php endif; ?>
+                    </td>
                     <td class="small text-muted"><?= date('d/m/Y', strtotime($j['created_at'])) ?></td>
                     <td class="text-center">
                         <div class="d-flex gap-1 justify-content-center">
                             <a href="<?= e(url('employer/job_form', ['id' => $j['id']])) ?>"
-                               class="btn btn-sm btn-warning">
+                               class="btn btn-sm btn-warning" title="Sửa">
                                 <i class="bi bi-pencil"></i>
                             </a>
+                            <!-- Toggle hiện/ẩn -->
+                            <form method="post" class="d-inline">
+                                <input type="hidden" name="action" value="toggle_active">
+                                <input type="hidden" name="job_id" value="<?= $j['id'] ?>">
+                                <button class="btn btn-sm <?= $j['is_active'] ? 'btn-outline-secondary' : 'btn-outline-success' ?>"
+                                        title="<?= $j['is_active'] ? 'Ẩn bài' : 'Hiện bài' ?>">
+                                    <i class="bi bi-<?= $j['is_active'] ? 'eye-slash' : 'eye' ?>"></i>
+                                </button>
+                            </form>
                             <a href="<?= e(url('employer/job_delete', ['id' => $j['id']])) ?>"
-                               class="btn btn-sm btn-danger"
+                               class="btn btn-sm btn-danger" title="Xoá"
                                onclick="return confirm('Xoá bài đăng này?')">
                                 <i class="bi bi-trash"></i>
                             </a>
