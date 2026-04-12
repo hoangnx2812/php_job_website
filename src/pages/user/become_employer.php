@@ -15,17 +15,38 @@ if (is_post() && (!$existing || $existing['status'] === 'rejected')) {
     $companyDesc = trim($_POST['company_description'] ?? '');
     $companyLoc  = trim($_POST['company_location'] ?? '');
     $companyWeb  = trim($_POST['company_website'] ?? '');
+    $logoFilename = null;
 
     if (!$companyName) {
         $error = 'Vui lòng nhập tên công ty.';
     } else {
-        $stmt = db()->prepare('
-            INSERT INTO employer_requests (user_id, company_name, company_description, company_location, company_website)
-            VALUES (?, ?, ?, ?, ?)
-        ');
-        $stmt->execute([$u['id'], $companyName, $companyDesc ?: null, $companyLoc ?: null, $companyWeb ?: null]);
-        flash_set('success', 'Yêu cầu của bạn đã được gửi. Vui lòng chờ admin duyệt.');
-        redirect('user/become_employer');
+        // Xử lý upload logo nếu có
+        $f = $_FILES['company_logo'] ?? null;
+        if ($f && $f['error'] === UPLOAD_ERR_OK && $f['size'] > 0) {
+            $ext = strtolower(pathinfo($f['name'], PATHINFO_EXTENSION));
+            if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'], true)) {
+                $error = 'Logo chỉ chấp nhận JPG, PNG, GIF, WEBP.';
+            } elseif ($f['size'] > 2 * 1024 * 1024) {
+                $error = 'Logo tối đa 2MB.';
+            } else {
+                if (!is_dir(LOGO_UPLOAD_DIR)) @mkdir(LOGO_UPLOAD_DIR, 0777, true);
+                // Đặt tên file tạm theo user_id + timestamp
+                $logoFilename = 'req_' . $u['id'] . '_' . time() . '.' . $ext;
+                if (!move_uploaded_file($f['tmp_name'], LOGO_UPLOAD_DIR . '/' . $logoFilename)) {
+                    $logoFilename = null; // Upload thất bại → bỏ qua logo
+                }
+            }
+        }
+
+        if (!$error) {
+            $stmt = db()->prepare('
+                INSERT INTO employer_requests (user_id, company_name, company_description, company_location, company_website, company_logo)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ');
+            $stmt->execute([$u['id'], $companyName, $companyDesc ?: null, $companyLoc ?: null, $companyWeb ?: null, $logoFilename]);
+            flash_set('success', 'Yêu cầu của bạn đã được gửi. Vui lòng chờ admin duyệt.');
+            redirect('user/become_employer');
+        }
     }
 }
 
@@ -76,7 +97,7 @@ require __DIR__ . '/../../layout/header.php';
 
                     <?php if ($error): ?><div class="alert alert-danger"><?= e($error) ?></div><?php endif; ?>
 
-                    <form method="post">
+                    <form method="post" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label class="form-label fw-500">Tên công ty <span class="text-danger">*</span></label>
                             <input name="company_name" class="form-control"
@@ -98,6 +119,21 @@ require __DIR__ . '/../../layout/header.php';
                             </div>
                         </div>
                         <div class="mb-3">
+                            <label class="form-label fw-500">Logo công ty</label>
+                            <!-- Preview logo trước khi upload -->
+                            <div id="logoPreviewWrap" class="mb-2 d-none">
+                                <img id="logoPreview"
+                                     src="" alt="preview"
+                                     style="width:80px;height:80px;object-fit:contain;border-radius:12px;
+                                            border:2px solid var(--border-color);padding:6px;background:var(--bg-card)">
+                            </div>
+                            <input type="file" name="company_logo" id="company_logo"
+                                   class="form-control"
+                                   accept=".jpg,.jpeg,.png,.gif,.webp"
+                                   onchange="previewLogo(this)">
+                            <div class="form-text">JPG, PNG, WEBP — tối đa 2MB. Không bắt buộc.</div>
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label fw-500">Mô tả công ty</label>
                             <textarea name="company_description" class="form-control" rows="4"
                                       placeholder="Giới thiệu ngắn về công ty..."><?= e($_POST['company_description'] ?? '') ?></textarea>
@@ -106,6 +142,19 @@ require __DIR__ . '/../../layout/header.php';
                             <i class="bi bi-send me-1"></i> Gửi yêu cầu
                         </button>
                     </form>
+                    <script>
+                    function previewLogo(input) {
+                        const wrap = document.getElementById('logoPreviewWrap');
+                        const img  = document.getElementById('logoPreview');
+                        if (input.files && input.files[0]) {
+                            const reader = new FileReader();
+                            reader.onload = e => { img.src = e.target.result; wrap.classList.remove('d-none'); };
+                            reader.readAsDataURL(input.files[0]);
+                        } else {
+                            wrap.classList.add('d-none');
+                        }
+                    }
+                    </script>
                 </div>
             </div>
         <?php endif; ?>

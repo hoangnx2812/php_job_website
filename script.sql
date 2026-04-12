@@ -90,18 +90,18 @@ CREATE TABLE companies (
     FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO companies (owner_id, name, description, location, website) VALUES
+INSERT INTO companies (owner_id, name, description, location, website, logo) VALUES
 -- Công ty gốc (3 công ty)
-(2, 'FPT Software',       'Công ty phần mềm hàng đầu Việt Nam, chuyên outsource cho thị trường Nhật và Mỹ.',    'Hà Nội',          'https://fptsoftware.com'),
-(3, 'VNG Corporation',    'Công ty công nghệ với các sản phẩm Zalo, ZaloPay, game online.',                     'TP. Hồ Chí Minh', 'https://vng.com.vn'),
-(4, 'Tiki',               'Sàn thương mại điện tử hàng đầu Việt Nam.',                                          'TP. Hồ Chí Minh', 'https://tiki.vn'),
+(2, 'FPT Software',       'Công ty phần mềm hàng đầu Việt Nam, chuyên outsource cho thị trường Nhật và Mỹ.',    'Hà Nội',          'https://fptsoftware.com',  'logo_1_1700000000.png'),
+(3, 'VNG Corporation',    'Công ty công nghệ với các sản phẩm Zalo, ZaloPay, game online.',                     'TP. Hồ Chí Minh', 'https://vng.com.vn',       NULL),
+(4, 'Tiki',               'Sàn thương mại điện tử hàng đầu Việt Nam.',                                          'TP. Hồ Chí Minh', 'https://tiki.vn',          'logo_3_1700000000.png'),
 -- Công ty mới (6 công ty nổi tiếng VN)
-(5, 'Shopee Vietnam',     'Nền tảng thương mại điện tử hàng đầu Đông Nam Á, vận hành tại Việt Nam.',            'TP. Hồ Chí Minh', 'https://shopee.vn'),
-(6, 'Grab Vietnam',       'Ứng dụng gọi xe và giao đồ ăn lớn nhất Đông Nam Á.',                                 'TP. Hồ Chí Minh', 'https://grab.com'),
-(7, 'MoMo',               'Ví điện tử MoMo - nền tảng thanh toán di động phổ biến nhất Việt Nam.',              'TP. Hồ Chí Minh', 'https://momo.vn'),
-(8, 'VNPT',               'Tập đoàn Bưu chính Viễn thông Việt Nam, cung cấp dịch vụ CNTT và viễn thông.',       'Hà Nội',          'https://vnpt.vn'),
-(9, 'Viettel',            'Tập đoàn Công nghiệp Viễn thông Quân đội, mạng di động lớn nhất Việt Nam.',          'Hà Nội',          'https://viettel.vn'),
-(10, 'Sacombank',         'Ngân hàng thương mại cổ phần Sài Gòn Thương Tín, TOP 5 ngân hàng tư nhân VN.',       'TP. Hồ Chí Minh', 'https://sacombank.com.vn');
+(5, 'Shopee Vietnam',     'Nền tảng thương mại điện tử hàng đầu Đông Nam Á, vận hành tại Việt Nam.',            'TP. Hồ Chí Minh', 'https://shopee.vn',        'logo_4_1700000000.png'),
+(6, 'Grab Vietnam',       'Ứng dụng gọi xe và giao đồ ăn lớn nhất Đông Nam Á.',                                 'TP. Hồ Chí Minh', 'https://grab.com',         'logo_5_1700000000.png'),
+(7, 'MoMo',               'Ví điện tử MoMo - nền tảng thanh toán di động phổ biến nhất Việt Nam.',              'TP. Hồ Chí Minh', 'https://momo.vn',          'logo_6_1700000000.png'),
+(8, 'VNPT',               'Tập đoàn Bưu chính Viễn thông Việt Nam, cung cấp dịch vụ CNTT và viễn thông.',       'Hà Nội',          'https://vnpt.vn',          'logo_7_1700000000.png'),
+(9, 'Viettel',            'Tập đoàn Công nghiệp Viễn thông Quân đội, mạng di động lớn nhất Việt Nam.',          'Hà Nội',          'https://viettel.vn',       'logo_8_1700000000.png'),
+(10, 'Sacombank',         'Ngân hàng thương mại cổ phần Sài Gòn Thương Tín, TOP 5 ngân hàng tư nhân VN.',       'TP. Hồ Chí Minh', 'https://sacombank.com.vn', NULL);
 
 -- ---------------------------------------------------------
 -- Bảng jobs: bài đăng tuyển dụng
@@ -496,6 +496,7 @@ CREATE TABLE employer_requests (
     company_description TEXT NULL,
     company_location VARCHAR(200) NULL,
     company_website VARCHAR(200) NULL,
+    company_logo VARCHAR(255) NULL,              -- tên file logo tải lên khi đăng ký
     status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
     admin_note VARCHAR(500) NULL,                -- lý do từ chối (tuỳ chọn)
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

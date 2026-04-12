@@ -138,7 +138,7 @@ require __DIR__ . '/../layout/header.php';
     </div>
 <?php else: ?>
 
-    <div class="row g-4 mb-4">
+    <div class="row g-4 g-md-5 mb-4">
     <?php foreach ($rows as $c):
         // Chọn màu gradient cho banner theo ID
         $pal = $palettes[$c['id'] % count($palettes)];
@@ -181,35 +181,35 @@ require __DIR__ . '/../layout/header.php';
 
                 <!-- Nội dung card -->
                 <div class="card-body d-flex flex-column"
-                     style="padding: 2.75rem 1.25rem 1.25rem">
+                     style="padding: 2.8rem 1.4rem 1.4rem">
 
                     <!-- Tên công ty (link bao phủ toàn card) -->
-                    <h6 class="fw-700 mb-1 lh-sm" style="font-size:1rem">
+                    <h6 class="fw-700 mb-2 lh-sm" style="font-size:1rem">
                         <a href="<?= e(url('company_detail', ['id' => $c['id']])) ?>"
                            class="text-decoration-none stretched-link"
                            style="color:var(--text-main)"><?= e($c['name']) ?></a>
                     </h6>
 
                     <!-- Địa điểm -->
-                    <div class="text-muted small mb-2 d-flex align-items-center gap-1">
+                    <div class="text-muted small mb-3 d-flex align-items-center gap-1">
                         <i class="bi bi-geo-alt-fill" style="font-size:0.75rem;color:<?= $pal[0] ?>"></i>
                         <?= e($c['location'] ?: 'Chưa cập nhật') ?>
                     </div>
 
                     <!-- Mô tả ngắn (2 dòng, text-clamp) -->
                     <?php if (!empty($c['description'])): ?>
-                        <p class="small flex-grow-1 mb-3"
-                           style="color:var(--text-muted);line-height:1.6;
+                        <p class="small flex-grow-1 mb-4"
+                           style="color:var(--text-muted);line-height:1.65;
                                   display:-webkit-box;-webkit-line-clamp:2;
                                   -webkit-box-orient:vertical;overflow:hidden">
                             <?= e($c['description']) ?>
                         </p>
                     <?php else: ?>
-                        <div class="flex-grow-1 mb-3"></div>
+                        <div class="flex-grow-1 mb-4"></div>
                     <?php endif; ?>
 
                     <!-- Footer card: việc làm + website -->
-                    <div class="d-flex justify-content-between align-items-center pt-2"
+                    <div class="d-flex justify-content-between align-items-center pt-3"
                          style="border-top:1px solid var(--border-color)">
                         <?php if ($cnt > 0): ?>
                             <span class="badge-type">

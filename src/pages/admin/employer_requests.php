@@ -21,14 +21,15 @@ if (is_post()) {
                     $pdo->prepare('UPDATE users SET role = \'employer\' WHERE id = ?')
                         ->execute([$req['user_id']]);
 
-                    // Tạo công ty từ thông tin trong request
-                    $pdo->prepare('INSERT INTO companies (owner_id, name, description, location, website) VALUES (?,?,?,?,?)')
+                    // Tạo công ty từ thông tin trong request (bao gồm logo nếu có)
+                    $pdo->prepare('INSERT INTO companies (owner_id, name, description, location, website, logo) VALUES (?,?,?,?,?,?)')
                         ->execute([
                             $req['user_id'],
                             $req['company_name'],
                             $req['company_description'],
                             $req['company_location'],
                             $req['company_website'],
+                            $req['company_logo'] ?? null,   // logo đã upload khi đăng ký
                         ]);
 
                     // Cập nhật trạng thái request
@@ -115,7 +116,14 @@ require __DIR__ . '/../../layout/header.php';
 
                     <!-- Thông tin công ty -->
                     <div class="col-md-4">
-                        <div class="fw-600 text-primary"><i class="bi bi-building me-1"></i><?= e($r['company_name']) ?></div>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <?php if (!empty($r['company_logo'])): ?>
+                                <img src="/uploads/logos/<?= e($r['company_logo']) ?>"
+                                     alt="logo" style="width:36px;height:36px;object-fit:contain;
+                                     border-radius:8px;border:1px solid var(--border-color);padding:3px;background:#fff">
+                            <?php endif; ?>
+                            <div class="fw-600 text-primary"><i class="bi bi-building me-1"></i><?= e($r['company_name']) ?></div>
+                        </div>
                         <?php if ($r['company_location']): ?>
                             <div class="small"><i class="bi bi-geo-alt me-1"></i><?= e($r['company_location']) ?></div>
                         <?php endif; ?>
