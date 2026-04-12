@@ -220,6 +220,51 @@ $currentPage = $_GET['page'] ?? 'home';
         .badge-deadline.urgent  { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
         .badge-deadline.warning { background: #fef9c3; color: #b45309; border: 1px solid #fde68a; }
         .badge-deadline.normal  { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+        /* ===== Badge lĩnh vực (category) - màu indigo/purple ===== */
+        .badge-category {
+            background: #f5f3ff;
+            color: #6d28d9;
+            border: 1px solid #ddd6fe;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.28em 0.65em;
+            border-radius: 6px;
+        }
+        /* ===== Job card HOT: thêm đường viền trái màu xanh ===== */
+        .job-card.hot {
+            border-left: 3px solid #1a56db !important;
+        }
+        /* ===== Category card: hiển thị lĩnh vực trên trang chủ ===== */
+        .category-card {
+            background: var(--cat-bg, #eff6ff);
+            border-radius: 14px;
+            padding: 1.25rem 1rem;
+            text-align: center;
+            transition: transform 0.18s, box-shadow 0.18s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+        }
+        .category-card-icon {
+            font-size: 2rem;
+            color: var(--cat-color, #1a56db);
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+        .category-card-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 0.2rem;
+        }
+        .category-card-count {
+            font-size: 0.78rem;
+            color: #64748b;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>

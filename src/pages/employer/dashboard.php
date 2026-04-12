@@ -1,5 +1,5 @@
 <?php
-// Trang dashboard của nhà tuyển dụng: vài con số tóm tắt
+// Trang dashboard của nhà tuyển dụng: thống kê + đơn ứng tuyển gần đây
 $u = require_role('employer');
 
 $jobCount = db()->prepare('SELECT COUNT(*) FROM jobs WHERE employer_id = ?');
@@ -14,10 +14,31 @@ $pendingCount = db()->prepare('SELECT COUNT(*) FROM applications a JOIN jobs j O
 $pendingCount->execute([$u['id'], 'pending']);
 $pendingCount = (int)$pendingCount->fetchColumn();
 
+// Tổng lượt xem của tất cả job thuộc employer này
+$totalViews = db()->prepare('SELECT COALESCE(SUM(views), 0) FROM jobs WHERE employer_id = ?');
+$totalViews->execute([$u['id']]);
+$totalViews = (int)$totalViews->fetchColumn();
+
 // Lấy thông tin công ty
 $companyStmt = db()->prepare('SELECT * FROM companies WHERE owner_id = ?');
 $companyStmt->execute([$u['id']]);
 $company = $companyStmt->fetch();
+
+// Lấy 5 đơn ứng tuyển mới nhất vào các bài đăng của employer này
+$recentApps = db()->prepare("
+    SELECT a.id, a.status, a.created_at,
+           u.full_name AS applicant_name,
+           u.email     AS applicant_email,
+           j.title     AS job_title
+    FROM applications a
+    JOIN jobs j ON j.id = a.job_id
+    JOIN users u ON u.id = a.user_id
+    WHERE j.employer_id = ?
+    ORDER BY a.created_at DESC
+    LIMIT 5
+");
+$recentApps->execute([$u['id']]);
+$recentApps = $recentApps->fetchAll();
 
 $pageTitle = 'Bảng điều khiển';
 require __DIR__ . '/../../layout/header.php';
@@ -44,9 +65,9 @@ require __DIR__ . '/../../layout/header.php';
     <?php endif; ?>
 </div>
 
-<!-- Stats -->
+<!-- Stats: 5 ô thống kê -->
 <div class="row g-3 mb-4">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card border-0 shadow-sm rounded-3 h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
@@ -59,7 +80,7 @@ require __DIR__ . '/../../layout/header.php';
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card border-0 shadow-sm rounded-3 h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
@@ -72,7 +93,7 @@ require __DIR__ . '/../../layout/header.php';
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card border-0 shadow-sm rounded-3 h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
@@ -85,10 +106,23 @@ require __DIR__ . '/../../layout/header.php';
             </div>
         </div>
     </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-muted fw-500">Tổng lượt xem</div>
+                        <div class="fs-2 fw-700 text-info"><?= number_format($totalViews) ?></div>
+                    </div>
+                    <div class="fs-1 text-info opacity-25"><i class="bi bi-eye"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Quick links -->
-<div class="d-flex gap-2 flex-wrap">
+<div class="d-flex gap-2 flex-wrap mb-4">
     <a href="<?= e(url('employer/jobs')) ?>" class="btn btn-outline-primary">
         <i class="bi bi-list-ul me-1"></i> Bài đăng của tôi
     </a>
@@ -113,6 +147,50 @@ require __DIR__ . '/../../layout/header.php';
         Bạn chưa có công ty. <a href="<?= e(url('employer/company')) ?>" class="alert-link">Tạo ngay</a>
         để có thể đăng bài tuyển dụng.
     </div>
+<?php endif; ?>
+
+<!-- Bảng đơn ứng tuyển gần đây -->
+<?php if ($recentApps): ?>
+<div class="card border-0 shadow-sm rounded-3 mt-2">
+    <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-3">
+        <h6 class="fw-700 mb-0">
+            <i class="bi bi-clock-history me-2 text-primary"></i>Đơn ứng tuyển gần đây
+        </h6>
+        <a href="<?= e(url('employer/applications')) ?>" class="btn btn-sm btn-outline-primary">
+            Xem tất cả <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-admin mb-0">
+            <thead>
+                <tr>
+                    <th>Ứng viên</th>
+                    <th>Vị trí ứng tuyển</th>
+                    <th>Trạng thái</th>
+                    <th>Thời gian</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($recentApps as $a): ?>
+                <?php
+                // Map status sang badge class và label hiển thị
+                $badgeCls    = ['pending'=>'badge-status-pending','accepted'=>'badge-status-accepted','rejected'=>'badge-status-rejected'][$a['status']] ?? 'badge-status-pending';
+                $statusLabel = ['pending'=>'Chờ duyệt','accepted'=>'Đã nhận','rejected'=>'Từ chối'][$a['status']] ?? $a['status'];
+                ?>
+                <tr>
+                    <td>
+                        <div class="fw-600 small"><?= e($a['applicant_name']) ?></div>
+                        <div class="text-muted" style="font-size:0.78rem"><?= e($a['applicant_email']) ?></div>
+                    </td>
+                    <td class="small fw-500"><?= e($a['job_title']) ?></td>
+                    <td><span class="<?= $badgeCls ?>"><?= $statusLabel ?></span></td>
+                    <td class="small text-muted"><?= time_ago($a['created_at']) ?></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
 <?php endif; ?>
 
 <?php require __DIR__ . '/../../layout/footer.php';

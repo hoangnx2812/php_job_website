@@ -3,11 +3,15 @@
 $q        = trim($_GET['q'] ?? '');
 $location = trim($_GET['location'] ?? '');
 $jobType  = $_GET['job_type'] ?? '';
+$category = $_GET['category'] ?? '';
 $salMin   = (int)($_GET['salary_min'] ?? 0);
 $salMax   = (int)($_GET['salary_max'] ?? 0);
 $sort     = $_GET['sort'] ?? 'newest';
 $page     = max(1, (int)($_GET['p'] ?? 1));
 $perPage  = 10;
+
+// Danh sách lĩnh vực hợp lệ
+$validCategories = ['Công nghệ thông tin', 'Marketing', 'Thiết kế', 'Tài chính', 'HR', 'Bán hàng', 'Vận hành', 'Khác'];
 
 // Xử lý lưu/bỏ lưu job (toggle save)
 $u = current_user();
@@ -24,7 +28,7 @@ if ($u && $u['role'] === 'user' && is_post() && isset($_POST['job_id'])) {
         db()->prepare('INSERT IGNORE INTO saved_jobs (user_id, job_id) VALUES (?,?)')->execute([$u['id'], $saveJobId]);
     }
     // Redirect lại trang hiện tại để tránh resubmit form
-    $params = array_filter(compact('q', 'location', 'jobType', 'salMin', 'salMax', 'sort'));
+    $params = array_filter(compact('q', 'location', 'jobType', 'category', 'salMin', 'salMax', 'sort'));
     if ($page > 1) $params['p'] = $page;
     redirect('jobs', $params);
 }
@@ -46,6 +50,11 @@ if ($location !== '') {
 if ($jobType && in_array($jobType, ['full-time','part-time','intern','contract'], true)) {
     $sql .= " AND j.job_type = ?";
     $params[] = $jobType;
+}
+// Lọc theo lĩnh vực
+if ($category && in_array($category, $validCategories, true)) {
+    $sql .= " AND j.category = ?";
+    $params[] = $category;
 }
 // Filter salary: job.salary_min >= filter.salary_min VÀ salary_max <= filter.salary_max
 if ($salMin > 0) {
@@ -85,7 +94,10 @@ if ($u && $u['role'] === 'user') {
 }
 
 // Build base URL cho pagination (không có p=)
-$baseParams = array_filter(compact('q', 'location', 'jobType', 'salMin', 'salMax', 'sort'), fn($v) => $v !== '' && $v !== 0 && $v !== 'newest');
+$baseParams = array_filter(
+    compact('q', 'location', 'jobType', 'category', 'salMin', 'salMax', 'sort'),
+    fn($v) => $v !== '' && $v !== 0 && $v !== 'newest'
+);
 $baseUrl    = BASE_URL . '?' . http_build_query(array_merge(['page' => 'jobs'], $baseParams));
 
 $pageTitle = 'Việc làm';
@@ -109,6 +121,17 @@ require __DIR__ . '/../layout/header.php';
                 <div class="col-md-2">
                     <input name="location" value="<?= e($location) ?>" class="form-control" placeholder="Địa điểm">
                 </div>
+                <!-- Dropdown lĩnh vực -->
+                <div class="col-md-2">
+                    <select name="category" class="form-select">
+                        <option value="">-- Lĩnh vực --</option>
+                        <?php foreach ($validCategories as $cat): ?>
+                            <option value="<?= e($cat) ?>" <?= $category === $cat ? 'selected' : '' ?>>
+                                <?= e($cat) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
                 <div class="col-md-2">
                     <select name="job_type" class="form-select">
                         <option value="">-- Loại --</option>
@@ -119,32 +142,26 @@ require __DIR__ . '/../layout/header.php';
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <div class="input-group">
-                        <span class="input-group-text" style="font-size:0.8rem">Min</span>
-                        <input type="number" name="salary_min" value="<?= $salMin ?: '' ?>"
-                               class="form-control" placeholder="tr/tháng" min="0">
-                    </div>
+                <div class="col-md-1">
+                    <input type="number" name="salary_min" value="<?= $salMin ?: '' ?>"
+                           class="form-control" placeholder="Lmin" min="0" title="Lương tối thiểu (tr/tháng)">
                 </div>
-                <div class="col-md-2">
-                    <div class="input-group">
-                        <span class="input-group-text" style="font-size:0.8rem">Max</span>
-                        <input type="number" name="salary_max" value="<?= $salMax ?: '' ?>"
-                               class="form-control" placeholder="tr/tháng" min="0">
-                    </div>
+                <div class="col-md-1">
+                    <input type="number" name="salary_max" value="<?= $salMax ?: '' ?>"
+                           class="form-control" placeholder="Lmax" min="0" title="Lương tối đa (tr/tháng)">
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <select name="sort" class="form-select">
                         <option value="newest" <?= $sort === 'newest' ? 'selected' : '' ?>>Mới nhất</option>
-                        <option value="salary_desc" <?= $sort === 'salary_desc' ? 'selected' : '' ?>>Lương cao nhất</option>
-                        <option value="views_desc" <?= $sort === 'views_desc' ? 'selected' : '' ?>>Nhiều lượt xem</option>
+                        <option value="salary_desc" <?= $sort === 'salary_desc' ? 'selected' : '' ?>>Lương cao</option>
+                        <option value="views_desc" <?= $sort === 'views_desc' ? 'selected' : '' ?>>Nhiều view</option>
                     </select>
                 </div>
                 <div class="col-auto d-flex gap-1">
                     <button class="btn btn-primary">
                         <i class="bi bi-search"></i>
                     </button>
-                    <?php if ($q || $location || $jobType || $salMin || $salMax): ?>
+                    <?php if ($q || $location || $jobType || $category || $salMin || $salMax): ?>
                         <a href="<?= e(url('jobs')) ?>" class="btn btn-outline-secondary" title="Xóa filter">
                             <i class="bi bi-x"></i>
                         </a>
@@ -165,7 +182,7 @@ require __DIR__ . '/../layout/header.php';
 <?php foreach ($jobs as $j): ?>
     <?php $isSaved = in_array($j['id'], $savedJobIds); ?>
     <div class="col-md-6">
-        <div class="card job-card h-100 position-relative">
+        <div class="card job-card h-100 position-relative <?= $j['is_hot'] ? 'hot' : '' ?>">
             <div class="card-body p-3">
                 <div class="d-flex align-items-start gap-3">
                     <!-- Logo -->
@@ -216,6 +233,9 @@ require __DIR__ . '/../layout/header.php';
                         <div class="d-flex flex-wrap gap-1 align-items-center">
                             <span class="badge-salary"><?= e(format_salary($j['salary_min'], $j['salary_max'])) ?></span>
                             <span class="badge-type"><?= e($j['job_type']) ?></span>
+                            <?php if (!empty($j['category'])): ?>
+                                <span class="badge-category"><?= e($j['category']) ?></span>
+                            <?php endif; ?>
                             <?= deadline_badge($j['expired_at'] ?? null) ?>
                         </div>
                         <div class="text-muted mt-2 d-flex gap-3" style="font-size:0.75rem">
