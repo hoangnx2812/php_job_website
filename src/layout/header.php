@@ -561,37 +561,51 @@ $currentPage = $_GET['page'] ?? 'home';
         }
         [data-theme="dark"] .page-header { background: linear-gradient(135deg, #1e293b 0%, #172554 100%); }
 
-        /* ===== TASK 6: Company card nâng cấp với banner + logo nổi ===== */
+        /* ===== Company card: banner + logo nổi ===== */
         .company-card {
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border-radius: 18px;
+            transition: transform 0.22s cubic-bezier(.34,1.56,.64,1), box-shadow 0.22s, border-color 0.18s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
             background: var(--bg-card);
+            overflow: visible;    /* để logo-wrap nổi lên không bị cắt */
+        }
+        /* clip nội dung bên trong (banner góc tròn) mà không ảnh hưởng logo nổi */
+        .company-card .company-banner {
+            height: 80px;
+            position: relative;
+            border-radius: 18px 18px 0 0;
             overflow: hidden;
         }
+        .company-card .company-banner::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.08);
+            opacity: 0;
+            transition: opacity 0.18s;
+        }
+        .company-card:hover .company-banner::after { opacity: 1; }
         .company-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(26,86,219,0.14);
+            transform: translateY(-6px);
+            box-shadow: 0 16px 36px rgba(26,86,219,0.16);
             border-color: #bfdbfe;
         }
-        .company-card .company-banner {
-            height: 60px;
-            background: linear-gradient(135deg, #1a56db 0%, #7c3aed 100%);
-            position: relative;
-        }
+        [data-theme="dark"] .company-card:hover { border-color: #334155; }
         .company-card .company-logo-wrap {
             position: absolute;
-            bottom: -24px;
+            bottom: -30px;
             left: 1.25rem;
-            width: 52px; height: 52px;
+            width: 62px; height: 62px;
             background: var(--bg-card);
-            border-radius: 12px;
-            border: 2px solid var(--bg-card);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            border-radius: 14px;
+            border: 3px solid var(--bg-card);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.14);
             display: flex; align-items: center; justify-content: center;
             overflow: hidden;
+            z-index: 1;
         }
+        /* Đảm bảo phần nội dung card không bị overflow:hidden cắt logo */
+        .company-card > .card-body { overflow: visible; }
 
         /* ===== TASK 7: Footer nâng cấp ===== */
         .site-footer {
