@@ -80,5 +80,92 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ===== Toast Notification System ===== -->
+<!-- Container cố định góc phải dưới màn hình -->
+<div id="toast-container" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:0.5rem;max-width:320px"></div>
+
+<style>
+/* Toast slide-in animation từ phải vào */
+@keyframes toastSlideIn {
+    from { opacity: 0; transform: translateX(100%); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes toastSlideOut {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(100%); }
+}
+.toast-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #fff;
+    animation: toastSlideIn 0.3s ease forwards;
+    min-width: 240px;
+    line-height: 1.4;
+    position: relative;
+}
+/* Màu nền theo type */
+.toast-item.toast-success { background: #16a34a; }
+.toast-item.toast-danger  { background: #dc2626; }
+.toast-item.toast-warning { background: #d97706; color: #fff; }
+.toast-item.toast-info    { background: #0ea5e9; }
+/* Nút đóng X */
+.toast-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.8);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.toast-close:hover { color: #fff; }
+</style>
+
+<script>
+// Hiển thị 1 toast thông báo
+// msg: nội dung; type: success|danger|warning|info
+function showToast(msg, type) {
+    var container = document.getElementById('toast-container');
+    var toast = document.createElement('div');
+    toast.className = 'toast-item toast-' + (type || 'info');
+
+    // Icon theo type
+    var icons = { success: 'bi-check-circle-fill', danger: 'bi-x-circle-fill', warning: 'bi-exclamation-triangle-fill', info: 'bi-info-circle-fill' };
+    var iconClass = icons[type] || 'bi-info-circle-fill';
+
+    toast.innerHTML =
+        '<i class="bi ' + iconClass + '" style="font-size:1.1rem;flex-shrink:0;margin-top:1px"></i>' +
+        '<span style="flex:1">' + msg + '</span>' +
+        '<button class="toast-close" onclick="removeToast(this.parentElement)" title="Đóng">&times;</button>';
+
+    container.appendChild(toast);
+
+    // Tự động xóa sau 4 giây
+    setTimeout(function() { removeToast(toast); }, 4000);
+}
+
+// Xóa toast với animation slide-out
+function removeToast(el) {
+    if (!el || !el.parentElement) return;
+    el.style.animation = 'toastSlideOut 0.3s ease forwards';
+    setTimeout(function() { if (el.parentElement) el.parentElement.removeChild(el); }, 280);
+}
+
+// Render flash messages từ PHP thành toasts khi trang load xong
+document.addEventListener('DOMContentLoaded', function() {
+    <?php foreach (flash_get() as $f): ?>
+    showToast(<?= json_encode($f['msg']) ?>, <?= json_encode($f['type']) ?>);
+    <?php endforeach; ?>
+});
+</script>
 </body>
 </html>

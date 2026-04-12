@@ -32,6 +32,15 @@ if (is_post() && !$existing) {
             if (move_uploaded_file($f['tmp_name'], $dest)) {
                 $stmt = db()->prepare('INSERT INTO applications (job_id, user_id, cv_file, cover_letter) VALUES (?,?,?,?)');
                 $stmt->execute([$jobId, $u['id'], $newName, $letter]);
+
+                // Thông báo cho employer: có đơn ứng tuyển mới vào bài đăng của họ
+                notify(
+                    (int)$job['employer_id'],
+                    'new_application',
+                    "Có đơn ứng tuyển mới cho bài «{$job['title']}» từ {$u['full_name']}",
+                    url('employer/applications', ['job_id' => $jobId])
+                );
+
                 flash_set('success', 'Đã gửi đơn ứng tuyển.');
                 redirect('user/my_applications');
             } else {

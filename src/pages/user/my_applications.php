@@ -24,6 +24,58 @@ $baseUrl   = BASE_URL . '?page=user/my_applications';
 $pageTitle = 'Đơn ứng tuyển của tôi';
 require __DIR__ . '/../../layout/header.php';
 ?>
+<!-- CSS cho timeline ứng tuyển -->
+<style>
+/* Timeline 3 bước nằm ngang: Đã nộp → Đang xét → Kết quả */
+.app-timeline {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    min-width: 160px;
+}
+.tl-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+/* Vòng tròn step */
+.tl-dot {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700;
+    background: #e2e8f0; color: #94a3b8;
+    border: 2px solid #e2e8f0;
+    transition: background 0.2s, color 0.2s;
+}
+.tl-label {
+    font-size: 0.65rem;
+    color: #94a3b8;
+    font-weight: 500;
+    white-space: nowrap;
+}
+/* Step active (xanh) */
+.tl-step.active .tl-dot {
+    background: #1a56db; color: #fff; border-color: #1a56db;
+}
+.tl-step.active .tl-label { color: #1a56db; }
+/* Step reject (đỏ) */
+.tl-step.reject .tl-dot {
+    background: #dc2626; color: #fff; border-color: #dc2626;
+}
+.tl-step.reject .tl-label { color: #dc2626; }
+/* Đường nối giữa các step */
+.tl-line {
+    flex: 1; height: 2px;
+    background: #e2e8f0;
+    min-width: 18px;
+    transition: background 0.2s;
+}
+.tl-line.active { background: #1a56db; }
+.tl-line.reject { background: #dc2626; }
+</style>
+
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="fw-700 mb-0">
         <i class="bi bi-file-earmark-text me-2 text-primary"></i>Đơn ứng tuyển của tôi
@@ -49,7 +101,7 @@ require __DIR__ . '/../../layout/header.php';
                 <th>Công ty</th>
                 <th>Địa điểm</th>
                 <th>CV</th>
-                <th>Trạng thái</th>
+                <th>Tiến trình</th>
                 <th>Ngày gửi</th>
             </tr>
             </thead>
@@ -58,6 +110,14 @@ require __DIR__ . '/../../layout/header.php';
                 <?php
                 $badgeCls    = ['pending'=>'badge-status-pending','accepted'=>'badge-status-accepted','rejected'=>'badge-status-rejected'][$r['status']] ?? 'badge-status-pending';
                 $statusLabel = ['pending'=>'Chờ duyệt','accepted'=>'Đã nhận','rejected'=>'Từ chối'][$r['status']] ?? $r['status'];
+
+                // Tính trạng thái từng bước timeline
+                // Bước 1 (Đã nộp): luôn active
+                // Bước 2 (Đang xem xét): active khi != pending
+                // Bước 3 (Kết quả): active=accepted (xanh), fail=rejected (đỏ), inactive=pending
+                $step2Active  = in_array($r['status'], ['accepted', 'rejected']);
+                $step3Accept  = $r['status'] === 'accepted';
+                $step3Reject  = $r['status'] === 'rejected';
                 ?>
                 <tr>
                     <td>
@@ -72,7 +132,37 @@ require __DIR__ . '/../../layout/header.php';
                             <i class="bi bi-download me-1"></i>Tải CV
                         </a>
                     </td>
-                    <td><span class="<?= $badgeCls ?>"><?= $statusLabel ?></span></td>
+                    <td>
+                        <!-- Badge trạng thái -->
+                        <span class="<?= $badgeCls ?> d-block mb-2"><?= $statusLabel ?></span>
+
+                        <!-- Timeline 3 bước: Đã nộp → Đang xem xét → Kết quả -->
+                        <div class="app-timeline">
+                            <!-- Bước 1: luôn active -->
+                            <div class="tl-step active">
+                                <div class="tl-dot"><i class="bi bi-check-lg"></i></div>
+                                <div class="tl-label">Đã nộp</div>
+                            </div>
+                            <!-- Đường line nối bước 1 và 2 -->
+                            <div class="tl-line <?= $step2Active ? 'active' : '' ?>"></div>
+                            <!-- Bước 2: active nếu không còn pending -->
+                            <div class="tl-step <?= $step2Active ? 'active' : '' ?>">
+                                <div class="tl-dot"><?= $step2Active ? '<i class="bi bi-check-lg"></i>' : '2' ?></div>
+                                <div class="tl-label">Đang xét</div>
+                            </div>
+                            <!-- Đường line nối bước 2 và 3 -->
+                            <div class="tl-line <?= ($step3Accept || $step3Reject) ? ($step3Accept ? 'active' : 'reject') : '' ?>"></div>
+                            <!-- Bước 3: xanh nếu accepted, đỏ nếu rejected, xám nếu pending -->
+                            <div class="tl-step <?= $step3Accept ? 'active' : ($step3Reject ? 'reject' : '') ?>">
+                                <div class="tl-dot">
+                                    <?php if ($step3Accept): ?><i class="bi bi-check-lg"></i>
+                                    <?php elseif ($step3Reject): ?><i class="bi bi-x-lg"></i>
+                                    <?php else: ?>3<?php endif; ?>
+                                </div>
+                                <div class="tl-label">Kết quả</div>
+                            </div>
+                        </div>
+                    </td>
                     <td class="small text-muted"><?= date('d/m/Y', strtotime($r['created_at'])) ?></td>
                 </tr>
             <?php endforeach; ?>

@@ -23,6 +23,7 @@ $routes = [
     // User (ứng viên)
     'user/apply'              => 'user/apply.php',
     'user/my_applications'    => 'user/my_applications.php',
+    'user/notifications'      => 'user/notifications.php',
     'user/profile'            => 'user/profile.php',
     'user/saved_jobs'         => 'user/saved_jobs.php',
     'user/become_employer'    => 'user/become_employer.php',

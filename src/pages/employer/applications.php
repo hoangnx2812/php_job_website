@@ -11,6 +11,17 @@ if (is_post()) {
     $action   = $_POST['action'] ?? '';
     $newStatus = in_array($action, ['accepted', 'rejected', 'pending'], true) ? $action : null;
     if ($appId && $newStatus) {
+        // Lấy thông tin đơn để gửi thông báo cho ứng viên
+        $appInfoStmt = db()->prepare("
+            SELECT a.user_id, j.title AS job_title, c.name AS company_name
+            FROM applications a
+            JOIN jobs j ON j.id = a.job_id
+            JOIN companies c ON c.id = j.company_id
+            WHERE a.id = ? AND j.employer_id = ?
+        ");
+        $appInfoStmt->execute([$appId, $u['id']]);
+        $appInfo = $appInfoStmt->fetch();
+
         // Chỉ cập nhật đơn thuộc bài của chính employer này
         $stmt = db()->prepare("
             UPDATE applications a
@@ -19,6 +30,18 @@ if (is_post()) {
             WHERE a.id = ? AND j.employer_id = ?
         ");
         $stmt->execute([$newStatus, $appId, $u['id']]);
+
+        // Thông báo cho ứng viên: trạng thái đơn đã được cập nhật
+        if ($appInfo) {
+            $statusLabel = ['pending' => 'Chờ xét', 'accepted' => 'Được chấp nhận', 'rejected' => 'Từ chối'];
+            notify(
+                (int)$appInfo['user_id'],
+                'status_changed',
+                "Đơn ứng tuyển «{$appInfo['job_title']}» tại {$appInfo['company_name']} đã được cập nhật: {$statusLabel[$newStatus]}",
+                url('user/my_applications')
+            );
+        }
+
         flash_set('success', 'Đã cập nhật trạng thái đơn.');
         // Giữ nguyên filter khi redirect
         $redirectParams = $filterJobId ? ['job_id' => $filterJobId] : [];

@@ -505,3 +505,21 @@ INSERT INTO employer_requests (user_id, company_name, company_description, compa
 (28, 'Green Energy VN',     'Startup năng lượng tái tạo, phát triển giải pháp điện mặt trời cho hộ gia đình.','TP. Hồ Chí Minh', 'https://greenev.vn', 'pending',  NULL),
 (29, 'HealthTech Solutions','Công ty y tế số, xây dựng ứng dụng kết nối bệnh nhân với bác sĩ.',               'TP. Hồ Chí Minh', 'https://healthtech.vn','pending', NULL),
 (30, 'Digital Agency ABC',  'Agency truyền thông số, cung cấp dịch vụ SEO, Social Media và Content.',          'Hà Nội',          'https://agencyabc.vn','approved', NULL);
+
+-- ---------------------------------------------------------
+-- Bảng notifications: thông báo in-app cho từng user
+-- type: 'new_application' | 'status_changed'
+-- is_read: 0=chưa đọc, 1=đã đọc
+-- link: URL để click vào (nullable)
+-- ---------------------------------------------------------
+DROP TABLE IF EXISTS notifications;
+CREATE TABLE notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    message TEXT NOT NULL,
+    link VARCHAR(300) NULL,
+    is_read TINYINT(1) NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

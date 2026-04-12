@@ -175,7 +175,7 @@ require __DIR__ . '/../layout/header.php';
                 <?php endif; ?>
 
                 <!-- Actions -->
-                <div class="d-flex gap-2 align-items-center">
+                <div class="d-flex gap-2 align-items-center flex-wrap">
                     <?php if ($u && $u['role'] === 'user'): ?>
                         <?php if ($hasApplied): ?>
                             <button class="btn btn-secondary btn-lg" disabled>
@@ -200,7 +200,45 @@ require __DIR__ . '/../layout/header.php';
                             <i class="bi bi-box-arrow-in-right me-1"></i> Đăng nhập để ứng tuyển
                         </a>
                     <?php endif; ?>
+
+                    <!-- Nút chia sẻ job: dropdown với các lựa chọn -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary btn-lg" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-share me-1"></i> Chia sẻ
+                        </button>
+                        <ul class="dropdown-menu shadow-sm">
+                            <li>
+                                <a class="dropdown-item" href="#" onclick="copyJobLink(); return false;">
+                                    <i class="bi bi-clipboard me-2 text-secondary"></i>Copy link
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" target="_blank" rel="noopener"
+                                   href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode(BASE_URL . '?page=job_detail&id=' . $j['id']) ?>">
+                                    <i class="bi bi-facebook me-2" style="color:#1877f2"></i>Facebook
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" target="_blank" rel="noopener"
+                                   href="https://www.linkedin.com/shareArticle?mini=true&url=<?= urlencode(BASE_URL . '?page=job_detail&id=' . $j['id']) ?>&title=<?= urlencode($j['title']) ?>">
+                                    <i class="bi bi-linkedin me-2" style="color:#0a66c2"></i>LinkedIn
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
+                <script>
+                // Copy link trang hiện tại vào clipboard, hiển thị toast nếu có
+                function copyJobLink() {
+                    navigator.clipboard.writeText(window.location.href).then(function() {
+                        if (typeof showToast === 'function') showToast('Đã copy link!', 'success');
+                        else alert('Đã copy link!');
+                    }).catch(function() {
+                        // Fallback cho trình duyệt không hỗ trợ clipboard API
+                        if (typeof showToast === 'function') showToast('Không thể copy tự động. Hãy copy URL trên thanh địa chỉ.', 'warning');
+                    });
+                }
+                </script>
             </div>
         </div>
     </div>

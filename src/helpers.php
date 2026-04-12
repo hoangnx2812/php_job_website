@@ -143,3 +143,19 @@ function format_views(int $views): string
     if ($views >= 1000) return round($views / 1000, 1) . 'k';
     return (string)$views;
 }
+
+// Tạo thông báo in-app cho user
+// userId: ID người nhận; type: loại thông báo; message: nội dung; link: URL khi click (nullable)
+function notify(int $userId, string $type, string $message, ?string $link = null): void
+{
+    $stmt = db()->prepare("INSERT INTO notifications (user_id, type, message, link) VALUES (?,?,?,?)");
+    $stmt->execute([$userId, $type, $message, $link]);
+}
+
+// Lấy số thông báo chưa đọc của user
+function unread_notif_count(int $userId): int
+{
+    $stmt = db()->prepare("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0");
+    $stmt->execute([$userId]);
+    return (int)$stmt->fetchColumn();
+}

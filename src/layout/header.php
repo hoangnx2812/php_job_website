@@ -16,13 +16,64 @@ $currentPage = $_GET['page'] ?? 'home';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <!-- Google Font: Be Vietnam Pro -->
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Script khởi tạo dark mode sớm nhất có thể, tránh FOUC (flash of unstyled content) -->
+    <script>(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})()</script>
     <style>
+        /* ===== CSS Variables cho Dark Mode ===== */
+        :root {
+            --bg-main: #f0f4f8;
+            --bg-card: #ffffff;
+            --text-main: #1a202c;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --navbar-bg: linear-gradient(135deg, #1a56db 0%, #0d3b8e 100%);
+            --table-hover-bg: #f8faff;
+            --input-bg: #ffffff;
+            --footer-bg: #1e293b;
+        }
+        /* Dark mode: ghi đè biến màu */
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --navbar-bg: linear-gradient(135deg, #1e3a8a 0%, #1e3a8a 100%);
+            --table-hover-bg: #263350;
+            --input-bg: #1e293b;
+            --footer-bg: #0f172a;
+        }
         /* ===== Global ===== */
         body {
             font-family: 'Be Vietnam Pro', sans-serif;
-            background: #f0f4f8;
-            color: #1a202c;
+            background: var(--bg-main);
+            color: var(--text-main);
+            transition: background 0.2s, color 0.2s;
         }
+        /* Áp dụng biến màu lên card và các element chính */
+        .card {
+            background: var(--bg-card) !important;
+            border-color: var(--border-color) !important;
+        }
+        .table-admin tbody tr:hover { background: var(--table-hover-bg); }
+        .form-control, .form-select {
+            background-color: var(--input-bg) !important;
+            color: var(--text-main) !important;
+            border-color: var(--border-color) !important;
+        }
+        .text-muted { color: var(--text-muted) !important; }
+        .text-secondary { color: var(--text-muted) !important; }
+        /* Dark mode: card-header, table header */
+        [data-theme="dark"] .card-header { background: #1e293b !important; border-color: var(--border-color) !important; }
+        [data-theme="dark"] .table-admin thead th { background: #263350 !important; color: #94a3b8 !important; border-color: var(--border-color) !important; }
+        [data-theme="dark"] .table { color: var(--text-main) !important; border-color: var(--border-color); }
+        [data-theme="dark"] .table td, [data-theme="dark"] .table th { border-color: var(--border-color); }
+        [data-theme="dark"] .modal-content { background: var(--bg-card); color: var(--text-main); }
+        [data-theme="dark"] .dropdown-menu { background: var(--bg-card); border-color: var(--border-color); }
+        [data-theme="dark"] .dropdown-item { color: var(--text-main); }
+        [data-theme="dark"] .dropdown-item:hover { background: #334155; }
+        /* Dark mode navbar */
+        .navbar-main { background: var(--navbar-bg); }
         /* Font-weight utilities (Bootstrap chỉ có fw-bold, thiếu các mức trung gian) */
         .fw-500 { font-weight: 500 !important; }
         .fw-600 { font-weight: 600 !important; }
@@ -357,8 +408,27 @@ $currentPage = $_GET['page'] ?? 'home';
                 <?php endif; ?>
             </ul>
             <!-- Links bên phải: user actions -->
-            <ul class="navbar-nav">
+            <ul class="navbar-nav align-items-lg-center">
                 <?php if ($u): ?>
+                    <!-- Bell icon thông báo: chỉ hiện khi đã đăng nhập -->
+                    <?php $unreadCount = unread_notif_count($u['id']); ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $currentPage === 'user/notifications' ? 'active' : '' ?>"
+                           href="<?= e(url('user/notifications')) ?>"
+                           title="Thông báo"
+                           style="position:relative;padding-right:0.9rem !important">
+                            <i class="bi bi-bell-fill"></i>
+                            <?php if ($unreadCount > 0): ?>
+                                <!-- Badge số thông báo chưa đọc -->
+                                <span style="position:absolute;top:4px;right:2px;background:#ef4444;color:#fff;
+                                             font-size:0.62rem;font-weight:700;min-width:16px;height:16px;
+                                             border-radius:999px;display:flex;align-items:center;
+                                             justify-content:center;padding:0 3px;line-height:1">
+                                    <?= $unreadCount > 99 ? '99+' : $unreadCount ?>
+                                </span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link <?= in_array($currentPage, ['user/profile']) ? 'active' : '' ?>"
                            href="<?= e(url('user/profile')) ?>">
@@ -386,14 +456,42 @@ $currentPage = $_GET['page'] ?? 'home';
                         </a>
                     </li>
                 <?php endif; ?>
+                <!-- Nút chuyển đổi Dark/Light mode -->
+                <li class="nav-item">
+                    <button id="theme-toggle" class="nav-link btn btn-link border-0" title="Chuyển dark/light mode"
+                            style="background:none;padding:0.5rem 0.6rem !important">
+                        <i id="theme-icon" class="bi bi-moon-stars-fill"></i>
+                    </button>
+                </li>
             </ul>
         </div>
     </div>
 </nav>
 <main class="container py-4">
-<?php foreach (flash_get() as $f): ?>
-    <div class="alert alert-<?= e($f['type']) ?> alert-dismissible fade show" role="alert">
-        <?= e($f['msg']) ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-<?php endforeach; ?>
+<!-- Flash messages được render thành toast ở footer.php -->
+<script>
+// Khởi tạo icon đúng theo theme hiện tại
+(function() {
+    var theme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+    // Cập nhật icon sau khi DOM load xong
+    document.addEventListener('DOMContentLoaded', function() {
+        var icon = document.getElementById('theme-icon');
+        if (icon) icon.className = theme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+    });
+})();
+
+// Xử lý click toggle dark/light mode
+document.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+        var curr = document.documentElement.getAttribute('data-theme') || 'light';
+        var next = curr === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        var icon = document.getElementById('theme-icon');
+        if (icon) icon.className = next === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+    });
+});
+</script>

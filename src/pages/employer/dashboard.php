@@ -24,6 +24,29 @@ $companyStmt = db()->prepare('SELECT * FROM companies WHERE owner_id = ?');
 $companyStmt->execute([$u['id']]);
 $company = $companyStmt->fetch();
 
+// Top 5 jobs theo lượt xem (cho bar chart ngang)
+$topViewsStmt = db()->prepare("
+    SELECT title, views FROM jobs
+    WHERE employer_id = ? AND is_active = 1
+    ORDER BY views DESC LIMIT 5
+");
+$topViewsStmt->execute([$u['id']]);
+$topViewsJobs = $topViewsStmt->fetchAll();
+
+// Số đơn ứng tuyển phân loại theo trạng thái (cho doughnut chart)
+$appStatsStmt = db()->prepare("
+    SELECT a.status, COUNT(*) AS cnt
+    FROM applications a
+    JOIN jobs j ON j.id = a.job_id
+    WHERE j.employer_id = ?
+    GROUP BY a.status
+");
+$appStatsStmt->execute([$u['id']]);
+$appStats = [];
+foreach ($appStatsStmt->fetchAll() as $row) {
+    $appStats[$row['status']] = (int)$row['cnt'];
+}
+
 // Lấy 5 đơn ứng tuyển mới nhất vào các bài đăng của employer này
 $recentApps = db()->prepare("
     SELECT a.id, a.status, a.created_at,
@@ -120,6 +143,91 @@ require __DIR__ . '/../../layout/header.php';
         </div>
     </div>
 </div>
+
+<!-- ===== Analytics Charts ===== -->
+<?php if ($topViewsJobs || array_sum($appStats) > 0): ?>
+<div class="row g-4 mb-4">
+    <!-- Chart 1: Top jobs theo lượt xem (bar chart ngang) -->
+    <div class="col-md-7">
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-body p-3">
+                <h6 class="fw-600 mb-3">
+                    <i class="bi bi-bar-chart me-2 text-primary"></i>Top việc làm theo lượt xem
+                </h6>
+                <?php if ($topViewsJobs): ?>
+                    <canvas id="chartViews" height="200"></canvas>
+                <?php else: ?>
+                    <div class="text-muted small text-center py-4">Chưa có dữ liệu lượt xem</div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    <!-- Chart 2: Đơn ứng tuyển theo trạng thái (doughnut chart) -->
+    <div class="col-md-5">
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-body p-3">
+                <h6 class="fw-600 mb-3">
+                    <i class="bi bi-pie-chart me-2 text-primary"></i>Trạng thái đơn ứng tuyển
+                </h6>
+                <?php if (array_sum($appStats) > 0): ?>
+                    <canvas id="chartApps" height="200"></canvas>
+                <?php else: ?>
+                    <div class="text-muted small text-center py-4">Chưa có đơn ứng tuyển nào</div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js CDN + khởi tạo charts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+<?php if ($topViewsJobs): ?>
+// Chart 1: bar chart ngang hiển thị top jobs theo lượt xem
+new Chart(document.getElementById('chartViews'), {
+    type: 'bar',
+    data: {
+        labels: <?= json_encode(array_column($topViewsJobs, 'title'), JSON_UNESCAPED_UNICODE) ?>,
+        datasets: [{
+            label: 'Lượt xem',
+            data: <?= json_encode(array_column($topViewsJobs, 'views')) ?>,
+            backgroundColor: 'rgba(26,86,219,0.7)',
+            borderRadius: 6,
+            borderSkipped: false
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        plugins: { legend: { display: false } },
+        scales: { x: { beginAtZero: true, ticks: { precision: 0 } } }
+    }
+});
+<?php endif; ?>
+
+<?php if (array_sum($appStats) > 0): ?>
+// Chart 2: doughnut chart hiển thị tỉ lệ trạng thái đơn ứng tuyển
+new Chart(document.getElementById('chartApps'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Chờ xét', 'Chấp nhận', 'Từ chối'],
+        datasets: [{
+            data: [
+                <?= (int)($appStats['pending'] ?? 0) ?>,
+                <?= (int)($appStats['accepted'] ?? 0) ?>,
+                <?= (int)($appStats['rejected'] ?? 0) ?>
+            ],
+            backgroundColor: ['#fbbf24', '#34d399', '#f87171'],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        plugins: { legend: { position: 'bottom' } },
+        cutout: '65%'
+    }
+});
+<?php endif; ?>
+</script>
+<?php endif; ?>
 
 <!-- Quick links -->
 <div class="d-flex gap-2 flex-wrap mb-4">
