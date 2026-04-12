@@ -79,6 +79,29 @@
     </div>
 </footer>
 
+<!-- Nút Back to Top: xuất hiện khi scroll xuống > 300px -->
+<button id="back-to-top" title="Lên đầu trang"
+  style="position:fixed;bottom:5rem;right:1.5rem;z-index:998;width:42px;height:42px;
+         border-radius:50%;background:var(--bs-primary,#1a56db);color:#fff;border:none;
+         box-shadow:0 2px 8px rgba(26,86,219,0.35);opacity:0;transition:opacity 0.25s;
+         display:flex;align-items:center;justify-content:center;cursor:pointer;pointer-events:none">
+  <i class="bi bi-arrow-up-short" style="font-size:1.3rem"></i>
+</button>
+<script>
+(function() {
+    var btn = document.getElementById('back-to-top');
+    if (!btn) return;
+    // Hiện/ẩn nút theo vị trí scroll
+    window.addEventListener('scroll', function() {
+        var visible = window.scrollY > 300;
+        btn.style.opacity = visible ? '1' : '0';
+        btn.style.pointerEvents = visible ? 'auto' : 'none';
+    });
+    // Scroll mượt lên đầu trang khi click
+    btn.onclick = function() { window.scrollTo({ top: 0, behavior: 'smooth' }); };
+})();
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- ===== Toast Notification System ===== -->

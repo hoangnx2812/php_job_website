@@ -19,6 +19,7 @@ $job = [
     'company_id'   => $company ? $company['id'] : 0,
     'expired_at'   => '',
     'is_hot'       => 0,
+    'tags'         => '',
 ];
 
 if ($id) {
@@ -45,18 +46,19 @@ if (is_post()) {
             'company_id'   => $company['id'],
             'is_hot'       => isset($_POST['is_hot']) ? 1 : 0,
             'expired_at'   => trim($_POST['expired_at'] ?? '') ?: null,
+            'tags'         => trim($_POST['tags'] ?? '') ?: null,
         ];
 
         if (!$data['title'] || !$data['description']) {
             $error = 'Vui lòng điền đủ tiêu đề và mô tả.';
         } else {
             if ($id) {
-                $stmt = db()->prepare("UPDATE jobs SET title=?, description=?, requirements=?, location=?, salary_min=?, salary_max=?, job_type=?, company_id=?, is_hot=?, expired_at=? WHERE id=? AND employer_id=?");
-                $stmt->execute([$data['title'], $data['description'], $data['requirements'], $data['location'], $data['salary_min'], $data['salary_max'], $data['job_type'], $data['company_id'], $data['is_hot'], $data['expired_at'], $id, $u['id']]);
+                $stmt = db()->prepare("UPDATE jobs SET title=?, description=?, requirements=?, location=?, salary_min=?, salary_max=?, job_type=?, company_id=?, is_hot=?, expired_at=?, tags=? WHERE id=? AND employer_id=?");
+                $stmt->execute([$data['title'], $data['description'], $data['requirements'], $data['location'], $data['salary_min'], $data['salary_max'], $data['job_type'], $data['company_id'], $data['is_hot'], $data['expired_at'], $data['tags'], $id, $u['id']]);
                 flash_set('success', 'Đã cập nhật bài đăng.');
             } else {
-                $stmt = db()->prepare("INSERT INTO jobs (company_id, employer_id, title, description, requirements, location, salary_min, salary_max, job_type, is_hot, expired_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
-                $stmt->execute([$data['company_id'], $u['id'], $data['title'], $data['description'], $data['requirements'], $data['location'], $data['salary_min'], $data['salary_max'], $data['job_type'], $data['is_hot'], $data['expired_at']]);
+                $stmt = db()->prepare("INSERT INTO jobs (company_id, employer_id, title, description, requirements, location, salary_min, salary_max, job_type, is_hot, expired_at, tags) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+                $stmt->execute([$data['company_id'], $u['id'], $data['title'], $data['description'], $data['requirements'], $data['location'], $data['salary_min'], $data['salary_max'], $data['job_type'], $data['is_hot'], $data['expired_at'], $data['tags']]);
                 flash_set('success', 'Đã tạo bài đăng mới.');
             }
             redirect('employer/jobs');
@@ -146,6 +148,11 @@ require __DIR__ . '/../../layout/header.php';
                                value="<?= e($job['expired_at'] ? date('Y-m-d', strtotime($job['expired_at'])) : '') ?>"
                                class="form-control">
                     </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-500">Kỹ năng / Tags <span class="text-muted small fw-400">(phân cách bằng dấu phẩy)</span></label>
+                    <input name="tags" value="<?= e($job['tags'] ?? '') ?>" class="form-control"
+                           placeholder="PHP, MySQL, Laravel...">
                 </div>
                 <div class="mb-3">
                     <div class="form-check form-switch">

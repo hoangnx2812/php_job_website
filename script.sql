@@ -30,6 +30,10 @@ CREATE TABLE users (
     full_name VARCHAR(150) NOT NULL,
     role ENUM('admin','employer','user') NOT NULL DEFAULT 'user',
     phone VARCHAR(30) NULL,
+    bio TEXT NULL,                               -- giới thiệu bản thân
+    skills VARCHAR(500) NULL,                    -- kỹ năng (comma-separated)
+    experience_years TINYINT NULL,               -- số năm kinh nghiệm
+    avatar VARCHAR(255) NULL,                    -- tên file ảnh đại diện (lưu trong uploads/avatars/)
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -120,256 +124,257 @@ CREATE TABLE jobs (
     views INT NOT NULL DEFAULT 0,               -- lượt xem
     expired_at DATETIME NULL,                   -- hạn nộp hồ sơ (NULL = không giới hạn)
     category VARCHAR(50) NOT NULL DEFAULT 'Công nghệ thông tin',  -- lĩnh vực: IT, Marketing, v.v.
+    tags VARCHAR(300) NULL,                     -- kỹ năng yêu cầu, phân cách bằng dấu phẩy
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,
     FOREIGN KEY (employer_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Jobs gốc (5 bài)
-INSERT INTO jobs (company_id, employer_id, title, description, requirements, location, salary_min, salary_max, job_type, is_hot, views, expired_at, category) VALUES
+INSERT INTO jobs (company_id, employer_id, title, description, requirements, location, salary_min, salary_max, job_type, is_hot, views, expired_at, category, tags) VALUES
 (1, 2, 'PHP Backend Developer',
  'Phát triển backend cho các dự án thương mại điện tử quy mô lớn.',
  'Thành thạo PHP, MySQL, có kinh nghiệm Laravel là lợi thế.',
- 'Hà Nội', 15, 25, 'full-time', 1, 320, DATE_ADD(NOW(), INTERVAL 30 DAY), 'Công nghệ thông tin'),
+ 'Hà Nội', 15, 25, 'full-time', 1, 320, DATE_ADD(NOW(), INTERVAL 30 DAY), 'Công nghệ thông tin', 'PHP, MySQL, Laravel, REST API'),
 
 (1, 2, 'Java Fresher',
  'Tham gia phát triển dự án ngân hàng cho khách hàng Nhật.',
  'Tốt nghiệp CNTT, biết Java cơ bản, tiếng Anh đọc hiểu.',
- 'Hà Nội', 8, 12, 'full-time', 0, 185, DATE_ADD(NOW(), INTERVAL 14 DAY), 'Công nghệ thông tin'),
+ 'Hà Nội', 8, 12, 'full-time', 0, 185, DATE_ADD(NOW(), INTERVAL 14 DAY), 'Công nghệ thông tin', 'Java, Spring Boot, SQL, OOP'),
 
 (2, 3, 'Frontend ReactJS',
  'Xây dựng giao diện sản phẩm Zalo Mini App.',
  '2+ năm kinh nghiệm React, hiểu TypeScript.',
- 'TP. Hồ Chí Minh', 20, 35, 'full-time', 1, 512, DATE_ADD(NOW(), INTERVAL 45 DAY), 'Công nghệ thông tin'),
+ 'TP. Hồ Chí Minh', 20, 35, 'full-time', 1, 512, DATE_ADD(NOW(), INTERVAL 45 DAY), 'Công nghệ thông tin', 'ReactJS, TypeScript, HTML, CSS'),
 
 (3, 4, 'Mobile Developer iOS',
  'Phát triển ứng dụng Tiki trên nền tảng iOS.',
  '2+ năm Swift/SwiftUI, có app trên AppStore là lợi thế.',
- 'TP. Hồ Chí Minh', 18, 30, 'full-time', 0, 230, DATE_ADD(NOW(), INTERVAL 20 DAY), 'Công nghệ thông tin'),
+ 'TP. Hồ Chí Minh', 18, 30, 'full-time', 0, 230, DATE_ADD(NOW(), INTERVAL 20 DAY), 'Công nghệ thông tin', 'Swift, SwiftUI, Xcode, REST API'),
 
 (3, 4, 'Data Analyst Intern',
  'Phân tích dữ liệu bán hàng, lập báo cáo tuần.',
  'Sinh viên năm 3-4 CNTT/Kinh tế, biết SQL và Excel.',
- 'TP. Hồ Chí Minh', 4, 7, 'intern', 0, 98, DATE_ADD(NOW(), INTERVAL 7 DAY), 'Công nghệ thông tin');
+ 'TP. Hồ Chí Minh', 4, 7, 'intern', 0, 98, DATE_ADD(NOW(), INTERVAL 7 DAY), 'Công nghệ thông tin', 'SQL, Excel, Power BI, Python');
 
 -- Jobs mới (15 bài đa dạng lĩnh vực, địa điểm, lương)
-INSERT INTO jobs (company_id, employer_id, title, description, requirements, location, salary_min, salary_max, job_type, is_hot, views, expired_at, category) VALUES
+INSERT INTO jobs (company_id, employer_id, title, description, requirements, location, salary_min, salary_max, job_type, is_hot, views, expired_at, category, tags) VALUES
 
 -- Shopee: IT + Marketing
 (4, 5, 'Senior Java Backend Engineer',
  'Xây dựng hệ thống backend phục vụ hàng triệu người dùng trên nền tảng Shopee.',
  '4+ năm Java, Spring Boot, kinh nghiệm microservices, hiểu Kafka/Redis.',
- 'TP. Hồ Chí Minh', 35, 60, 'full-time', 1, 890, DATE_ADD(NOW(), INTERVAL 60 DAY), 'Công nghệ thông tin'),
+ 'TP. Hồ Chí Minh', 35, 60, 'full-time', 1, 890, DATE_ADD(NOW(), INTERVAL 60 DAY), 'Công nghệ thông tin', 'Java, Spring Boot, Kafka, Redis'),
 
 (4, 5, 'Digital Marketing Executive',
  'Lên kế hoạch và triển khai các chiến dịch marketing online cho Shopee tại thị trường Việt Nam.',
  '2+ năm kinh nghiệm digital marketing, thành thạo Facebook Ads, Google Ads, TikTok Ads.',
- 'TP. Hồ Chí Minh', 15, 22, 'full-time', 0, 310, DATE_ADD(NOW(), INTERVAL 25 DAY), 'Marketing'),
+ 'TP. Hồ Chí Minh', 15, 22, 'full-time', 0, 310, DATE_ADD(NOW(), INTERVAL 25 DAY), 'Marketing', 'Facebook Ads, Google Ads, SEO, Content'),
 
 -- Grab: IT + Vận hành
 (5, 6, 'Android Developer',
  'Phát triển tính năng mới cho ứng dụng Grab trên nền tảng Android.',
  '3+ năm Kotlin/Java Android, kinh nghiệm làm việc với API REST, hiểu về CI/CD.',
- 'TP. Hồ Chí Minh', 25, 45, 'full-time', 1, 620, DATE_ADD(NOW(), INTERVAL 40 DAY), 'Công nghệ thông tin'),
+ 'TP. Hồ Chí Minh', 25, 45, 'full-time', 1, 620, DATE_ADD(NOW(), INTERVAL 40 DAY), 'Công nghệ thông tin', 'Kotlin, Android, REST API, CI/CD'),
 
 (5, 6, 'Nhân viên Vận hành Đối tác Tài xế',
  'Hỗ trợ, đào tạo và quản lý đối tác tài xế trong khu vực TP.HCM.',
  'Tốt nghiệp đại học, giao tiếp tốt, chịu được áp lực, có kinh nghiệm operations là lợi thế.',
- 'TP. Hồ Chí Minh', 10, 15, 'full-time', 0, 145, DATE_ADD(NOW(), INTERVAL 15 DAY), 'Vận hành'),
+ 'TP. Hồ Chí Minh', 10, 15, 'full-time', 0, 145, DATE_ADD(NOW(), INTERVAL 15 DAY), 'Vận hành', NULL),
 
 -- MoMo: IT + Tài chính + Thiết kế
 (6, 7, 'UI/UX Designer',
  'Thiết kế giao diện và trải nghiệm người dùng cho ứng dụng ví điện tử MoMo.',
  '3+ năm kinh nghiệm UI/UX, thành thạo Figma, có portfolio thực tế.',
- 'TP. Hồ Chí Minh', 20, 35, 'full-time', 1, 480, DATE_ADD(NOW(), INTERVAL 50 DAY), 'Thiết kế'),
+ 'TP. Hồ Chí Minh', 20, 35, 'full-time', 1, 480, DATE_ADD(NOW(), INTERVAL 50 DAY), 'Thiết kế', 'Figma, Adobe XD, UI/UX, Prototyping'),
 
 (6, 7, 'Business Analyst - Fintech',
  'Phân tích yêu cầu nghiệp vụ, làm cầu nối giữa business và team IT cho sản phẩm thanh toán.',
  '3+ năm làm BA trong môi trường fintech/ngân hàng, biết SQL, thành thạo viết BRS/SRS.',
- 'TP. Hồ Chí Minh', 18, 28, 'full-time', 0, 200, DATE_ADD(NOW(), INTERVAL 20 DAY), 'Tài chính'),
+ 'TP. Hồ Chí Minh', 18, 28, 'full-time', 0, 200, DATE_ADD(NOW(), INTERVAL 20 DAY), 'Tài chính', 'SQL, BRS, SRS, Jira'),
 
 -- VNPT: IT + HR
 (7, 8, 'DevOps Engineer',
  'Xây dựng và vận hành hạ tầng cloud cho các sản phẩm VNPT, đảm bảo uptime 99.9%.',
  '3+ năm DevOps, thành thạo Docker/Kubernetes, AWS hoặc GCP, CI/CD pipelines.',
- 'Hà Nội', 25, 40, 'full-time', 0, 275, DATE_ADD(NOW(), INTERVAL 30 DAY), 'Công nghệ thông tin'),
+ 'Hà Nội', 25, 40, 'full-time', 0, 275, DATE_ADD(NOW(), INTERVAL 30 DAY), 'Công nghệ thông tin', 'Docker, Kubernetes, AWS, CI/CD'),
 
 (7, 8, 'Chuyên viên Tuyển dụng (IT Recruiter)',
  'Tuyển dụng nhân sự kỹ thuật cho các phòng ban CNTT của VNPT trên toàn quốc.',
  '2+ năm kinh nghiệm tuyển dụng IT, hiểu biết về các vị trí kỹ thuật, thành thạo LinkedIn.',
- 'Hà Nội', 12, 18, 'full-time', 0, 110, DATE_ADD(NOW(), INTERVAL 10 DAY), 'HR'),
+ 'Hà Nội', 12, 18, 'full-time', 0, 110, DATE_ADD(NOW(), INTERVAL 10 DAY), 'HR', NULL),
 
 -- Viettel: IT + Bán hàng
 (8, 9, 'Data Engineer',
  'Xây dựng và duy trì data pipeline phục vụ phân tích dữ liệu viễn thông quy mô lớn.',
  '3+ năm Data Engineering, thành thạo Spark/Hadoop, Python, SQL, kinh nghiệm BigData.',
- 'Hà Nội', 22, 38, 'full-time', 1, 430, DATE_ADD(NOW(), INTERVAL 45 DAY), 'Công nghệ thông tin'),
+ 'Hà Nội', 22, 38, 'full-time', 1, 430, DATE_ADD(NOW(), INTERVAL 45 DAY), 'Công nghệ thông tin', 'Python, SQL, Spark, Hadoop'),
 
 (8, 9, 'Nhân viên Kinh doanh B2B',
  'Phát triển khách hàng doanh nghiệp cho dịch vụ viễn thông và giải pháp CNTT của Viettel.',
  'Tốt nghiệp đại học khối kinh tế/kỹ thuật, kỹ năng bán hàng tốt, có xe máy đi lại.',
- 'Hà Nội', 8, 20, 'full-time', 0, 155, DATE_ADD(NOW(), INTERVAL 3 DAY), 'Bán hàng'),
+ 'Hà Nội', 8, 20, 'full-time', 0, 155, DATE_ADD(NOW(), INTERVAL 3 DAY), 'Bán hàng', NULL),
 
 -- Sacombank: Tài chính + HR + Marketing
 (9, 10, 'Chuyên viên Tín dụng Cá nhân',
  'Tư vấn và xử lý hồ sơ vay vốn cá nhân, thẩm định tín dụng cho khách hàng.',
  'Tốt nghiệp Tài chính/Ngân hàng/Kinh tế, năng động, có khả năng phát triển khách hàng.',
- 'TP. Hồ Chí Minh', 10, 18, 'full-time', 0, 190, DATE_ADD(NOW(), INTERVAL 20 DAY), 'Tài chính'),
+ 'TP. Hồ Chí Minh', 10, 18, 'full-time', 0, 190, DATE_ADD(NOW(), INTERVAL 20 DAY), 'Tài chính', NULL),
 
 (9, 10, 'Graphic Designer',
  'Thiết kế ấn phẩm truyền thông, banner quảng cáo và nội dung mạng xã hội cho Sacombank.',
  '2+ năm thiết kế đồ họa, thành thạo Photoshop/Illustrator, có tư duy thẩm mỹ tốt.',
- 'TP. Hồ Chí Minh', 12, 18, 'full-time', 0, 80, DATE_ADD(NOW(), INTERVAL 12 DAY), 'Thiết kế'),
+ 'TP. Hồ Chí Minh', 12, 18, 'full-time', 0, 80, DATE_ADD(NOW(), INTERVAL 12 DAY), 'Thiết kế', 'Figma, Adobe XD, UI/UX'),
 
 (9, 10, 'HR Intern',
  'Hỗ trợ phòng nhân sự trong công tác tuyển dụng, đào tạo và quản lý hồ sơ nhân viên.',
  'Sinh viên năm cuối Quản trị Nhân lực/Kinh tế, năng động, cẩn thận, biết Excel.',
- 'TP. Hồ Chí Minh', 3, 5, 'intern', 0, 62, DATE_ADD(NOW(), INTERVAL 30 DAY), 'HR'),
+ 'TP. Hồ Chí Minh', 3, 5, 'intern', 0, 62, DATE_ADD(NOW(), INTERVAL 30 DAY), 'HR', NULL),
 
 -- FPT: thêm 1 job part-time
 (1, 2, 'Content Marketing Part-time',
  'Viết bài blog, case study và nội dung mạng xã hội cho FPT Software.',
  'Giỏi viết lách tiếng Việt, hiểu về công nghệ thông tin, sáng tạo, có thể làm remote.',
- 'Hà Nội', 5, 8, 'part-time', 0, 95, DATE_ADD(NOW(), INTERVAL 25 DAY), 'Marketing'),
+ 'Hà Nội', 5, 8, 'part-time', 0, 95, DATE_ADD(NOW(), INTERVAL 25 DAY), 'Marketing', 'Facebook Ads, Google Ads, SEO, Content'),
 
 -- VNG: job đã hết hạn (để test deadline badge)
 (2, 3, 'Game Backend Developer',
  'Phát triển server-side cho các sản phẩm game online của VNG.',
  '3+ năm C++/Go, kinh nghiệm game server, hiểu network programming.',
- 'TP. Hồ Chí Minh', 28, 45, 'full-time', 0, 340, DATE_SUB(NOW(), INTERVAL 5 DAY), 'Công nghệ thông tin');
+ 'TP. Hồ Chí Minh', 28, 45, 'full-time', 0, 340, DATE_SUB(NOW(), INTERVAL 5 DAY), 'Công nghệ thông tin', 'C++, Go, gRPC, WebSocket');
 
 -- ===== Bổ sung thêm jobs đa dạng =====
-INSERT INTO jobs (company_id, employer_id, title, description, requirements, location, salary_min, salary_max, job_type, is_hot, views, expired_at, category) VALUES
+INSERT INTO jobs (company_id, employer_id, title, description, requirements, location, salary_min, salary_max, job_type, is_hot, views, expired_at, category, tags) VALUES
 
 -- FPT Software: 3 bài thêm
 (1, 2, 'Python AI/ML Engineer',
  'Nghiên cứu và xây dựng các mô hình AI/ML cho hệ thống gợi ý sản phẩm và phân tích dữ liệu khách hàng.',
  '3+ năm Python, kinh nghiệm với TensorFlow hoặc PyTorch, hiểu biết về MLOps.',
- 'Hà Nội', 25, 45, 'full-time', 1, 670, DATE_ADD(NOW(), INTERVAL 45 DAY), 'Công nghệ thông tin'),
+ 'Hà Nội', 25, 45, 'full-time', 1, 670, DATE_ADD(NOW(), INTERVAL 45 DAY), 'Công nghệ thông tin', 'Python, SQL, TensorFlow, Pandas'),
 
 (1, 2, 'QA Engineer (Automation)',
  'Thiết kế và thực thi test automation cho các dự án outsource, đảm bảo chất lượng phần mềm.',
  '2+ năm kinh nghiệm automation testing, thành thạo Selenium/Cypress, hiểu API testing.',
- 'Hà Nội', 15, 22, 'full-time', 0, 210, DATE_ADD(NOW(), INTERVAL 30 DAY), 'Công nghệ thông tin'),
+ 'Hà Nội', 15, 22, 'full-time', 0, 210, DATE_ADD(NOW(), INTERVAL 30 DAY), 'Công nghệ thông tin', 'Selenium, Cypress, Postman, JIRA'),
 
 (1, 2, 'Scrum Master / Agile Coach',
  'Hỗ trợ và huấn luyện các team phát triển áp dụng Agile/Scrum hiệu quả trong môi trường outsource.',
  'CSM hoặc PSM certificate, 3+ năm làm Scrum Master, kinh nghiệm làm việc với khách hàng Nhật/Mỹ.',
- 'Hà Nội', 20, 35, 'contract', 0, 155, DATE_ADD(NOW(), INTERVAL 20 DAY), 'Vận hành'),
+ 'Hà Nội', 20, 35, 'contract', 0, 155, DATE_ADD(NOW(), INTERVAL 20 DAY), 'Vận hành', NULL),
 
 -- VNG Corporation: 3 bài thêm
 (2, 3, 'Senior Go Developer',
  'Xây dựng microservices hiệu năng cao cho nền tảng Zalo với hàng chục triệu người dùng đồng thời.',
  '4+ năm Go, kinh nghiệm microservices và distributed systems, hiểu gRPC và Kafka.',
- 'TP. Hồ Chí Minh', 35, 55, 'full-time', 1, 720, DATE_ADD(NOW(), INTERVAL 60 DAY), 'Công nghệ thông tin'),
+ 'TP. Hồ Chí Minh', 35, 55, 'full-time', 1, 720, DATE_ADD(NOW(), INTERVAL 60 DAY), 'Công nghệ thông tin', 'Go, gRPC, Kafka, Microservices'),
 
 (2, 3, 'Product Manager - ZaloPay',
  'Định hướng sản phẩm và roadmap cho ZaloPay, phối hợp với các team kỹ thuật và kinh doanh.',
  '4+ năm Product Management, kinh nghiệm fintech/payment, kỹ năng phân tích dữ liệu tốt.',
- 'TP. Hồ Chí Minh', 30, 50, 'full-time', 1, 540, DATE_ADD(NOW(), INTERVAL 40 DAY), 'Vận hành'),
+ 'TP. Hồ Chí Minh', 30, 50, 'full-time', 1, 540, DATE_ADD(NOW(), INTERVAL 40 DAY), 'Vận hành', NULL),
 
 (2, 3, 'Community Manager - Game',
  'Quản lý cộng đồng người chơi game của VNG trên các kênh mạng xã hội và forum.',
  '2+ năm community management, đam mê game online, kỹ năng viết content tốt, tiếng Anh khá.',
- 'TP. Hồ Chí Minh', 12, 18, 'full-time', 0, 180, DATE_ADD(NOW(), INTERVAL 15 DAY), 'Marketing'),
+ 'TP. Hồ Chí Minh', 12, 18, 'full-time', 0, 180, DATE_ADD(NOW(), INTERVAL 15 DAY), 'Marketing', 'Facebook Ads, Google Ads, SEO, Content'),
 
 -- Tiki: 3 bài thêm
 (3, 4, 'Senior Data Scientist',
  'Xây dựng mô hình dự đoán hành vi mua sắm, hệ thống gợi ý sản phẩm và phát hiện gian lận.',
  '4+ năm Data Science, thành thạo Python/R, kinh nghiệm với mô hình recommendation systems.',
- 'TP. Hồ Chí Minh', 35, 55, 'full-time', 1, 610, DATE_ADD(NOW(), INTERVAL 35 DAY), 'Công nghệ thông tin'),
+ 'TP. Hồ Chí Minh', 35, 55, 'full-time', 1, 610, DATE_ADD(NOW(), INTERVAL 35 DAY), 'Công nghệ thông tin', 'Python, SQL, TensorFlow, Pandas'),
 
 (3, 4, 'Supply Chain Analyst',
  'Phân tích và tối ưu hoá chuỗi cung ứng, theo dõi KPI kho vận và logistics của Tiki.',
  '2+ năm kinh nghiệm supply chain/logistics, thành thạo Excel/SQL, tư duy phân tích tốt.',
- 'TP. Hồ Chí Minh', 14, 22, 'full-time', 0, 195, DATE_ADD(NOW(), INTERVAL 25 DAY), 'Vận hành'),
+ 'TP. Hồ Chí Minh', 14, 22, 'full-time', 0, 195, DATE_ADD(NOW(), INTERVAL 25 DAY), 'Vận hành', NULL),
 
 (3, 4, 'Seller Account Manager',
  'Quản lý và phát triển mối quan hệ với các nhà bán hàng trên sàn Tiki, hỗ trợ họ tăng trưởng doanh số.',
  '2+ năm kinh nghiệm account management hoặc business development, kỹ năng đàm phán tốt.',
- 'TP. Hồ Chí Minh', 13, 20, 'full-time', 0, 260, DATE_ADD(NOW(), INTERVAL 20 DAY), 'Bán hàng'),
+ 'TP. Hồ Chí Minh', 13, 20, 'full-time', 0, 260, DATE_ADD(NOW(), INTERVAL 20 DAY), 'Bán hàng', NULL),
 
 -- Shopee: 3 bài thêm
 (4, 5, 'Machine Learning Engineer',
  'Nghiên cứu và triển khai các mô hình ML vào hệ thống gợi ý, tìm kiếm và phát hiện gian lận trên Shopee.',
  '4+ năm Machine Learning, thành thạo Python, kinh nghiệm scale model lên production.',
- 'TP. Hồ Chí Minh', 40, 70, 'full-time', 1, 850, DATE_ADD(NOW(), INTERVAL 50 DAY), 'Công nghệ thông tin'),
+ 'TP. Hồ Chí Minh', 40, 70, 'full-time', 1, 850, DATE_ADD(NOW(), INTERVAL 50 DAY), 'Công nghệ thông tin', 'Python, SQL, TensorFlow, Pandas'),
 
 (4, 5, 'Customer Service Team Lead',
  'Quản lý team CSKH, đảm bảo chất lượng dịch vụ và giải quyết các vấn đề phức tạp của người dùng.',
  '3+ năm customer service, 1+ năm kinh nghiệm team lead, kỹ năng giao tiếp và xử lý tình huống tốt.',
- 'TP. Hồ Chí Minh', 18, 28, 'full-time', 0, 315, DATE_ADD(NOW(), INTERVAL 18 DAY), 'Vận hành'),
+ 'TP. Hồ Chí Minh', 18, 28, 'full-time', 0, 315, DATE_ADD(NOW(), INTERVAL 18 DAY), 'Vận hành', NULL),
 
 (4, 5, 'Brand Marketing Manager',
  'Lập kế hoạch và thực thi chiến lược xây dựng thương hiệu Shopee tại thị trường Việt Nam.',
  '5+ năm brand marketing, kinh nghiệm FMCG hoặc e-commerce, có khả năng làm việc độc lập cao.',
- 'TP. Hồ Chí Minh', 30, 50, 'full-time', 1, 490, DATE_ADD(NOW(), INTERVAL 40 DAY), 'Marketing'),
+ 'TP. Hồ Chí Minh', 30, 50, 'full-time', 1, 490, DATE_ADD(NOW(), INTERVAL 40 DAY), 'Marketing', 'Facebook Ads, Google Ads, SEO, Content'),
 
 -- Grab: 3 bài thêm
 (5, 6, 'Data Scientist - Pricing',
  'Xây dựng mô hình định giá động cho dịch vụ GrabCar và GrabFood dựa trên dữ liệu thực tế.',
  '3+ năm Data Science, kinh nghiệm với A/B testing, mô hình hóa giá, Python/R thành thạo.',
- 'TP. Hồ Chí Minh', 30, 50, 'full-time', 1, 580, DATE_ADD(NOW(), INTERVAL 45 DAY), 'Công nghệ thông tin'),
+ 'TP. Hồ Chí Minh', 30, 50, 'full-time', 1, 580, DATE_ADD(NOW(), INTERVAL 45 DAY), 'Công nghệ thông tin', 'Python, SQL, TensorFlow, Pandas'),
 
 (5, 6, 'Growth Marketing Executive',
  'Thiết kế và triển khai các chương trình khuyến mãi, referral program để tăng trưởng người dùng mới.',
  '2+ năm growth marketing hoặc digital marketing, hiểu về funnel conversion, analytics.',
- 'TP. Hồ Chí Minh', 16, 24, 'full-time', 0, 270, DATE_ADD(NOW(), INTERVAL 22 DAY), 'Marketing'),
+ 'TP. Hồ Chí Minh', 16, 24, 'full-time', 0, 270, DATE_ADD(NOW(), INTERVAL 22 DAY), 'Marketing', 'Facebook Ads, Google Ads, SEO, Content'),
 
 (5, 6, 'Flutter Developer',
  'Phát triển ứng dụng cross-platform cho Grab bằng Flutter, đảm bảo hiệu năng trên cả iOS và Android.',
  '2+ năm Flutter/Dart, kinh nghiệm với state management (Bloc/Riverpod), tích hợp REST API.',
- 'TP. Hồ Chí Minh', 22, 38, 'full-time', 0, 390, DATE_ADD(NOW(), INTERVAL 30 DAY), 'Công nghệ thông tin'),
+ 'TP. Hồ Chí Minh', 22, 38, 'full-time', 0, 390, DATE_ADD(NOW(), INTERVAL 30 DAY), 'Công nghệ thông tin', 'Flutter, Dart, REST API, Firebase'),
 
 -- MoMo: 2 bài thêm
 (6, 7, 'Backend Engineer - Kotlin',
  'Phát triển và tối ưu hóa các microservices xử lý giao dịch thanh toán điện tử với tần suất cao.',
  '3+ năm Kotlin/Java, kinh nghiệm Spring Boot, hiểu biết về payment systems và bảo mật giao dịch.',
- 'TP. Hồ Chí Minh', 28, 45, 'full-time', 1, 520, DATE_ADD(NOW(), INTERVAL 35 DAY), 'Công nghệ thông tin'),
+ 'TP. Hồ Chí Minh', 28, 45, 'full-time', 1, 520, DATE_ADD(NOW(), INTERVAL 35 DAY), 'Công nghệ thông tin', 'Kotlin, Spring Boot, Kafka, Redis'),
 
 (6, 7, 'Content Marketing Specialist',
  'Xây dựng chiến lược và sản xuất nội dung cho các kênh mạng xã hội, blog và email marketing của MoMo.',
  '2+ năm content marketing, khả năng viết lách tốt, hiểu về SEO và social media analytics.',
- 'TP. Hồ Chí Minh', 14, 20, 'full-time', 0, 240, DATE_ADD(NOW(), INTERVAL 20 DAY), 'Marketing'),
+ 'TP. Hồ Chí Minh', 14, 20, 'full-time', 0, 240, DATE_ADD(NOW(), INTERVAL 20 DAY), 'Marketing', 'Facebook Ads, Google Ads, SEO, Content'),
 
 -- VNPT: 2 bài thêm
 (7, 8, 'Senior Network Engineer',
  'Thiết kế, triển khai và vận hành hạ tầng mạng backbone quốc gia của VNPT.',
  '5+ năm network engineering, CCNP/CCIE, kinh nghiệm với MPLS, BGP, hệ thống viễn thông lớn.',
- 'Hà Nội', 25, 40, 'full-time', 0, 220, DATE_ADD(NOW(), INTERVAL 25 DAY), 'Công nghệ thông tin'),
+ 'Hà Nội', 25, 40, 'full-time', 0, 220, DATE_ADD(NOW(), INTERVAL 25 DAY), 'Công nghệ thông tin', 'Docker, Kubernetes, AWS, CI/CD'),
 
 (7, 8, 'Sales Manager - Enterprise',
  'Phát triển và quản lý danh mục khách hàng doanh nghiệp lớn cho giải pháp CNTT và viễn thông VNPT.',
  '5+ năm B2B sales, kinh nghiệm bán giải pháp CNTT/telecom cho doanh nghiệp, có mạng lưới quan hệ tốt.',
- 'Hà Nội', 20, 40, 'full-time', 0, 175, DATE_ADD(NOW(), INTERVAL 18 DAY), 'Bán hàng'),
+ 'Hà Nội', 20, 40, 'full-time', 0, 175, DATE_ADD(NOW(), INTERVAL 18 DAY), 'Bán hàng', NULL),
 
 -- Viettel: 2 bài thêm
 (8, 9, 'Cybersecurity Engineer',
  'Bảo vệ hạ tầng mạng và hệ thống thông tin của Viettel trước các mối đe dọa an ninh mạng.',
  '3+ năm cybersecurity, kinh nghiệm penetration testing, hiểu về SIEM, SOC operations.',
- 'Hà Nội', 25, 40, 'full-time', 1, 440, DATE_ADD(NOW(), INTERVAL 50 DAY), 'Công nghệ thông tin'),
+ 'Hà Nội', 25, 40, 'full-time', 1, 440, DATE_ADD(NOW(), INTERVAL 50 DAY), 'Công nghệ thông tin', 'Docker, Kubernetes, AWS, CI/CD'),
 
 (8, 9, 'Technical Writer',
  'Viết tài liệu kỹ thuật, API documentation và hướng dẫn sử dụng cho các sản phẩm phần mềm của Viettel.',
  '2+ năm technical writing, kiến thức về lập trình cơ bản, thành thạo Markdown và Confluence.',
- 'Hà Nội', 12, 18, 'part-time', 0, 130, DATE_ADD(NOW(), INTERVAL 20 DAY), 'Khác'),
+ 'Hà Nội', 12, 18, 'part-time', 0, 130, DATE_ADD(NOW(), INTERVAL 20 DAY), 'Khác', NULL),
 
 -- Sacombank: 2 bài thêm
 (9, 10, 'Risk Management Analyst',
  'Phân tích và đánh giá rủi ro tín dụng, thị trường và vận hành cho hoạt động ngân hàng.',
  '3+ năm quản lý rủi ro ngân hàng, tốt nghiệp Tài chính/Kinh tế, thành thạo Excel/SAS.',
- 'TP. Hồ Chí Minh', 18, 30, 'full-time', 0, 280, DATE_ADD(NOW(), INTERVAL 15 DAY), 'Tài chính'),
+ 'TP. Hồ Chí Minh', 18, 30, 'full-time', 0, 280, DATE_ADD(NOW(), INTERVAL 15 DAY), 'Tài chính', NULL),
 
 (9, 10, 'IT Support Specialist',
  'Hỗ trợ kỹ thuật cho các chi nhánh Sacombank trên toàn quốc, đảm bảo hệ thống hoạt động ổn định.',
  '1+ năm IT support, kiến thức về Windows Server, networking cơ bản, sẵn sàng công tác.',
- 'TP. Hồ Chí Minh', 10, 15, 'full-time', 0, 160, DATE_ADD(NOW(), INTERVAL 10 DAY), 'Công nghệ thông tin'),
+ 'TP. Hồ Chí Minh', 10, 15, 'full-time', 0, 160, DATE_ADD(NOW(), INTERVAL 10 DAY), 'Công nghệ thông tin', NULL),
 
 -- Thêm 1 job intern đa dạng
 (5, 6, 'UX Research Intern',
  'Thực hiện nghiên cứu người dùng, phỏng vấn và usability testing cho các tính năng mới của Grab.',
  'Sinh viên năm 3-4 ngành Thiết kế/Tâm lý/Marketing, có kiến thức cơ bản về UX research.',
- 'TP. Hồ Chí Minh', 4, 7, 'intern', 0, 85, DATE_ADD(NOW(), INTERVAL 25 DAY), 'Thiết kế');
+ 'TP. Hồ Chí Minh', 4, 7, 'intern', 0, 85, DATE_ADD(NOW(), INTERVAL 25 DAY), 'Thiết kế', 'Figma, Adobe XD, UI/UX');
 
 -- ---------------------------------------------------------
 -- Bảng applications: đơn ứng tuyển của user vào job

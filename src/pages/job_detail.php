@@ -162,6 +162,19 @@ require __DIR__ . '/../layout/header.php';
                     </div>
                 </div>
 
+                <!-- Kỹ năng yêu cầu (tags): click vào tag → tìm kiếm theo keyword đó -->
+                <?php if (!empty($j['tags'])): ?>
+                  <div class="mb-4">
+                    <h6 class="fw-600 mb-2">Kỹ năng yêu cầu</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                      <?php foreach(explode(',', $j['tags']) as $tag): ?>
+                        <a href="<?= e(url('jobs', ['q' => trim($tag)])) ?>"
+                           class="badge-tag text-decoration-none"><?= e(trim($tag)) ?></a>
+                      <?php endforeach; ?>
+                    </div>
+                  </div>
+                <?php endif; ?>
+
                 <h5 class="fw-600 mb-2">Mô tả công việc</h5>
                 <div class="text-secondary mb-4" style="line-height:1.7">
                     <?= nl2br(e($j['description'])) ?>
@@ -243,7 +256,7 @@ require __DIR__ . '/../layout/header.php';
         </div>
     </div>
 
-    <!-- Cột phải: thông tin công ty -->
+    <!-- Cột phải: thông tin công ty + đã xem gần đây -->
     <div class="col-md-4">
         <div class="card border-0 shadow-sm rounded-3 sticky-top" style="top:20px">
             <div class="card-body p-3">
@@ -278,8 +291,52 @@ require __DIR__ . '/../layout/header.php';
                 <?php endif; ?>
             </div>
         </div>
+
+        <!-- Widget jobs đã xem gần đây (render từ localStorage bằng JS) -->
+        <div id="recent-jobs-widget" class="card border-0 shadow-sm rounded-3 mt-3" style="display:none">
+            <div class="card-body p-3">
+                <h6 class="fw-600 mb-3"><i class="bi bi-clock-history me-2 text-primary"></i>Đã xem gần đây</h6>
+                <div id="recent-jobs-list"></div>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- JS: lưu job hiện tại vào localStorage (danh sách đã xem) -->
+<script>
+(function() {
+    var KEY = 'recentJobs';
+    // Thông tin job hiện tại để lưu vào lịch sử
+    var job = { id: <?= $j['id'] ?>, title: <?= json_encode($j['title']) ?>, company: <?= json_encode($j['company_name']) ?> };
+    var list = JSON.parse(localStorage.getItem(KEY) || '[]');
+    // Loại bỏ job này nếu đã tồn tại để tránh trùng
+    list = list.filter(function(x) { return x.id !== job.id; });
+    list.unshift(job);
+    // Giữ tối đa 5 jobs gần nhất
+    if (list.length > 5) list = list.slice(0, 5);
+    localStorage.setItem(KEY, JSON.stringify(list));
+})();
+</script>
+
+<!-- JS: render widget "đã xem gần đây" sau khi trang load -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var list = JSON.parse(localStorage.getItem('recentJobs') || '[]')
+                 .filter(function(x) { return x.id !== <?= $j['id'] ?>; });
+    if (!list.length) return;
+    var widget = document.getElementById('recent-jobs-widget');
+    var container = document.getElementById('recent-jobs-list');
+    list.forEach(function(job) {
+        var a = document.createElement('a');
+        a.href = '<?= BASE_URL ?>?page=job_detail&id=' + job.id;
+        a.className = 'd-block text-decoration-none text-dark mb-2 small';
+        a.innerHTML = '<div class="fw-500">' + job.title + '</div>'
+                    + '<div class="text-muted" style="font-size:0.75rem">' + job.company + '</div>';
+        container.appendChild(a);
+    });
+    widget.style.display = '';
+});
+</script>
 
 <?php if ($relatedJobs): ?>
 <!-- Jobs khác từ cùng công ty -->
@@ -311,6 +368,33 @@ require __DIR__ . '/../layout/header.php';
         <?php endforeach; ?>
     </div>
 </div>
+<?php endif; ?>
+
+<!-- Sticky apply bar: xuất hiện cố định dưới màn hình khi scroll qua nút ứng tuyển chính -->
+<?php if ($u && $u['role'] === 'user' && !$hasApplied): ?>
+<div id="sticky-apply" style="position:fixed;bottom:0;left:0;right:0;z-index:990;
+     background:#fff;border-top:1px solid #e2e8f0;padding:0.75rem 1rem;
+     display:none;box-shadow:0 -4px 12px rgba(0,0,0,0.08)">
+  <div class="container d-flex align-items-center justify-content-between gap-3">
+    <div class="fw-600 text-truncate"><?= e($j['title']) ?> — <span class="text-muted fw-400"><?= e($j['company_name']) ?></span></div>
+    <a href="<?= e(url('user/apply', ['job_id' => $j['id']])) ?>" class="btn btn-primary btn-sm px-4 flex-shrink-0">
+      <i class="bi bi-send me-1"></i> Ứng tuyển ngay
+    </a>
+  </div>
+</div>
+<script>
+// Hiện sticky bar khi nút ứng tuyển chính đã scroll ra khỏi viewport
+(function() {
+    var mainApply = document.querySelector('.btn-primary.btn-lg');
+    var stickyBar = document.getElementById('sticky-apply');
+    if (mainApply && stickyBar) {
+        window.addEventListener('scroll', function() {
+            var rect = mainApply.getBoundingClientRect();
+            stickyBar.style.display = rect.bottom < 0 ? 'block' : 'none';
+        });
+    }
+})();
+</script>
 <?php endif; ?>
 
 <?php require __DIR__ . '/../layout/footer.php';

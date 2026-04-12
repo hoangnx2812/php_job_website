@@ -289,6 +289,31 @@ $currentPage = $_GET['page'] ?? 'home';
         .job-card.hot {
             border-left: 3px solid #1a56db !important;
         }
+        /* ===== Badge kỹ năng / Tags: màu tím nhạt ===== */
+        .badge-tag {
+            background: #f3f0ff; color: #6d28d9; border: 1px solid #ddd6fe;
+            font-size: 0.74rem; padding: 0.2em 0.6em; border-radius: 4px; font-weight: 500;
+            display: inline-block;
+        }
+        .badge-tag:hover { background: #ede9fe; color: #5b21b6; }
+        /* ===== Skeleton Loading animation ===== */
+        @keyframes skeleton-shimmer {
+            0%   { background-position: -400px 0; }
+            100% { background-position: 400px 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #f0f4f8 25%, #e2e8f0 50%, #f0f4f8 75%);
+            background-size: 800px 100%;
+            animation: skeleton-shimmer 1.4s infinite linear;
+            border-radius: 6px;
+        }
+        [data-theme="dark"] .skeleton {
+            background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+            background-size: 800px 100%;
+        }
+        /* ===== Toggle List View: mỗi job chiếm cả hàng ngang ===== */
+        .list-view .col-md-6 { flex: 0 0 100%; max-width: 100%; }
+        .list-view .job-card .card-body { padding: 0.75rem 1rem !important; }
         /* ===== Category card: hiển thị lĩnh vực trên trang chủ ===== */
         .category-card {
             background: var(--cat-bg, #eff6ff);
@@ -432,7 +457,13 @@ $currentPage = $_GET['page'] ?? 'home';
                     <li class="nav-item">
                         <a class="nav-link <?= in_array($currentPage, ['user/profile']) ? 'active' : '' ?>"
                            href="<?= e(url('user/profile')) ?>">
-                            <i class="bi bi-person-circle"></i>
+                            <!-- Hiển thị avatar nếu có, fallback về icon mặc định -->
+                            <?php if (!empty($u['avatar'])): ?>
+                                <img src="/uploads/avatars/<?= e($u['avatar']) ?>"
+                                     style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.4);vertical-align:middle">
+                            <?php else: ?>
+                                <i class="bi bi-person-circle"></i>
+                            <?php endif; ?>
                             <span class="d-none d-lg-inline"><?= e($u['full_name']) ?></span>
                             <span class="d-lg-none">Profile</span>
                         </a>

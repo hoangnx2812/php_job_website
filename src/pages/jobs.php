@@ -106,7 +106,18 @@ require __DIR__ . '/../layout/header.php';
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="fw-700 mb-0"><i class="bi bi-search me-2 text-primary"></i>Danh sách việc làm</h4>
-    <span class="text-muted small"><?= $total ?> kết quả</span>
+    <!-- Dòng kết quả + nút toggle grid/list view -->
+    <div class="d-flex align-items-center gap-2">
+        <span class="text-muted small"><?= $total ?> kết quả</span>
+        <div class="btn-group btn-group-sm ms-2" role="group">
+            <button type="button" class="btn btn-outline-secondary" id="btn-grid" title="Dạng lưới" onclick="setView('grid')">
+                <i class="bi bi-grid"></i>
+            </button>
+            <button type="button" class="btn btn-outline-secondary" id="btn-list" title="Dạng danh sách" onclick="setView('list')">
+                <i class="bi bi-list-ul"></i>
+            </button>
+        </div>
+    </div>
 </div>
 
 <!-- Filter bar -->
@@ -178,7 +189,26 @@ require __DIR__ . '/../layout/header.php';
     </div>
 <?php endif; ?>
 
-<div class="row g-3 mb-4">
+<!-- Skeleton cards hiện khi đang load (ẩn ngay sau DOMContentLoaded) -->
+<div id="skeleton-grid" class="row g-3 mb-4">
+    <?php for($i=0;$i<4;$i++): ?>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-3 p-3">
+            <div class="d-flex gap-3">
+                <div class="skeleton flex-shrink-0" style="width:56px;height:56px;border-radius:10px"></div>
+                <div class="flex-grow-1">
+                    <div class="skeleton mb-2" style="height:18px;width:70%"></div>
+                    <div class="skeleton mb-2" style="height:14px;width:50%"></div>
+                    <div class="skeleton" style="height:24px;width:40%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endfor; ?>
+</div>
+
+<!-- Real content (ẩn ban đầu, hiện sau DOMContentLoaded) -->
+<div id="jobs-grid" class="row g-3 mb-4" style="display:none">
 <?php foreach ($jobs as $j): ?>
     <?php $isSaved = in_array($j['id'], $savedJobIds); ?>
     <div class="col-md-6">
@@ -238,6 +268,14 @@ require __DIR__ . '/../layout/header.php';
                             <?php endif; ?>
                             <?= deadline_badge($j['expired_at'] ?? null) ?>
                         </div>
+                        <!-- Hiển thị tối đa 3 tags kỹ năng -->
+                        <?php if (!empty($j['tags'])): ?>
+                          <div class="d-flex flex-wrap gap-1 mt-1">
+                            <?php foreach(array_slice(explode(',', $j['tags']), 0, 3) as $tag): ?>
+                              <span class="badge-tag"><?= e(trim($tag)) ?></span>
+                            <?php endforeach; ?>
+                          </div>
+                        <?php endif; ?>
                         <div class="text-muted mt-2 d-flex gap-3" style="font-size:0.75rem">
                             <span><i class="bi bi-clock me-1"></i><?= time_ago($j['created_at']) ?></span>
                             <span><i class="bi bi-eye me-1"></i><?= format_views($j['views']) ?></span>
@@ -252,5 +290,30 @@ require __DIR__ . '/../layout/header.php';
 
 <!-- Phân trang -->
 <?= render_pagination($total, $perPage, $page, $baseUrl) ?>
+
+<script>
+// Chuyển đổi giữa dạng lưới và danh sách, lưu preference vào localStorage
+function setView(v) {
+    localStorage.setItem('jobsView', v);
+    var grid = document.getElementById('jobs-grid');
+    if (grid) {
+        grid.className = v === 'list' ? 'row g-2 mb-4 list-view' : 'row g-3 mb-4';
+    }
+    // Cập nhật trạng thái active cho 2 nút toggle
+    var btnGrid = document.getElementById('btn-grid');
+    var btnList = document.getElementById('btn-list');
+    if (btnGrid) btnGrid.classList.toggle('active', v === 'grid');
+    if (btnList) btnList.classList.toggle('active', v === 'list');
+}
+document.addEventListener('DOMContentLoaded', function() {
+    // Ẩn skeleton, hiện content thật
+    var skeleton = document.getElementById('skeleton-grid');
+    var grid = document.getElementById('jobs-grid');
+    if (skeleton) skeleton.style.display = 'none';
+    if (grid) grid.style.display = '';
+    // Áp dụng view đã lưu
+    setView(localStorage.getItem('jobsView') || 'grid');
+});
+</script>
 
 <?php require __DIR__ . '/../layout/footer.php';
