@@ -74,63 +74,38 @@ require __DIR__ . '/../../layout/header.php';
         <a href="<?= e(url('admin/employer_requests')) ?>" class="alert alert-warning d-flex align-items-center mb-0 text-decoration-none">
             <i class="bi bi-person-exclamation fs-4 me-3"></i>
             <div>
-                Có <strong><?= $stats['pending_employers'] ?> yêu cầu</strong> trở thành nhà tuyển dụng đang chờ bạn duyệt.
-                <span class="text-decoration-underline ms-1">Xem ngay →</span>
+                Co <strong><?= $stats['pending_employers'] ?> yeu cau</strong> tro thanh nha tuyen dung dang cho ban duyet.
+                <span class="text-decoration-underline ms-1">Xem ngay -></span>
             </div>
         </a>
     </div>
     <?php endif; ?>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-3 h-100"
-             style="border-left: 4px solid #1a56db !important; border-left-color:#1a56db!important">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="small text-muted fw-500">Tổng người dùng</div>
-                        <div class="fs-2 fw-700 text-primary"><?= $stats['users'] ?></div>
-                    </div>
-                    <div class="fs-1 text-primary opacity-25"><i class="bi bi-people"></i></div>
-                </div>
-            </div>
+        <div class="stat-card" style="--card-from:#0891b2;--card-to:#164e63">
+            <div class="stat-card-icon"><i class="bi bi-people-fill"></i></div>
+            <div class="stat-card-value"><?= $stats['users'] ?></div>
+            <div class="stat-card-label">Tong nguoi dung</div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-3 h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="small text-muted fw-500">Việc làm đang mở</div>
-                        <div class="fs-2 fw-700 text-success"><?= $stats['jobs'] ?></div>
-                    </div>
-                    <div class="fs-1 text-success opacity-25"><i class="bi bi-briefcase"></i></div>
-                </div>
-            </div>
+        <div class="stat-card" style="--card-from:#1a56db;--card-to:#0d3b8e">
+            <div class="stat-card-icon"><i class="bi bi-briefcase-fill"></i></div>
+            <div class="stat-card-value"><?= $stats['jobs'] ?></div>
+            <div class="stat-card-label">Viec lam dang mo</div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-3 h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="small text-muted fw-500">Công ty</div>
-                        <div class="fs-2 fw-700 text-warning"><?= $stats['companies'] ?></div>
-                    </div>
-                    <div class="fs-1 text-warning opacity-25"><i class="bi bi-building"></i></div>
-                </div>
-            </div>
+        <div class="stat-card" style="--card-from:#be185d;--card-to:#831843">
+            <div class="stat-card-icon"><i class="bi bi-building-fill"></i></div>
+            <div class="stat-card-value"><?= $stats['companies'] ?></div>
+            <div class="stat-card-label">Cong ty</div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-3 h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="small text-muted fw-500">Đơn ứng tuyển</div>
-                        <div class="fs-2 fw-700 text-info"><?= $stats['applications'] ?></div>
-                    </div>
-                    <div class="fs-1 text-info opacity-25"><i class="bi bi-file-earmark-text"></i></div>
-                </div>
-            </div>
+        <div class="stat-card" style="--card-from:#059669;--card-to:#065f46">
+            <div class="stat-card-icon"><i class="bi bi-file-earmark-text-fill"></i></div>
+            <div class="stat-card-value"><?= $stats['applications'] ?></div>
+            <div class="stat-card-label">Don ung tuyen</div>
         </div>
     </div>
 </div>

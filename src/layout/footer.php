@@ -1,78 +1,78 @@
 </main>
 
-<footer class="mt-5 pt-5 pb-4" style="background:#1e293b;color:#94a3b8">
+<footer class="site-footer">
     <div class="container">
         <div class="row g-4 mb-4">
             <!-- Brand -->
             <div class="col-md-4">
-                <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="d-flex align-items-center gap-2 mb-3">
                     <div class="d-flex align-items-center justify-content-center rounded-2"
-                         style="width:32px;height:32px;background:rgba(255,255,255,0.12)">
-                        <i class="bi bi-briefcase-fill text-white" style="font-size:0.9rem"></i>
+                         style="width:36px;height:36px;background:linear-gradient(135deg,#1a56db,#7c3aed)">
+                        <i class="bi bi-briefcase-fill text-white" style="font-size:1rem"></i>
                     </div>
                     <span class="text-white fw-700 fs-5">JobVN</span>
                 </div>
-                <p class="small mb-3" style="line-height:1.6">
-                    Nền tảng tuyển dụng kết nối ứng viên tài năng với các nhà tuyển dụng hàng đầu Việt Nam.
+                <p class="small mb-3" style="line-height:1.7;color:rgba(255,255,255,0.6)">
+                    Nen tang tuyen dung ket noi ung vien tai nang voi cac nha tuyen dung hang dau Viet Nam.
                 </p>
                 <div class="d-flex gap-2">
-                    <a href="#" class="d-flex align-items-center justify-content-center rounded-2 text-white"
-                       style="width:32px;height:32px;background:rgba(255,255,255,0.1);text-decoration:none">
-                        <i class="bi bi-facebook" style="font-size:0.85rem"></i>
+                    <a href="#" class="d-flex align-items-center justify-content-center rounded-2"
+                       style="width:34px;height:34px;background:rgba(255,255,255,0.1)">
+                        <i class="bi bi-facebook" style="font-size:0.9rem"></i>
                     </a>
-                    <a href="#" class="d-flex align-items-center justify-content-center rounded-2 text-white"
-                       style="width:32px;height:32px;background:rgba(255,255,255,0.1);text-decoration:none">
-                        <i class="bi bi-linkedin" style="font-size:0.85rem"></i>
+                    <a href="#" class="d-flex align-items-center justify-content-center rounded-2"
+                       style="width:34px;height:34px;background:rgba(255,255,255,0.1)">
+                        <i class="bi bi-linkedin" style="font-size:0.9rem"></i>
                     </a>
-                    <a href="#" class="d-flex align-items-center justify-content-center rounded-2 text-white"
-                       style="width:32px;height:32px;background:rgba(255,255,255,0.1);text-decoration:none">
-                        <i class="bi bi-twitter-x" style="font-size:0.85rem"></i>
+                    <a href="#" class="d-flex align-items-center justify-content-center rounded-2"
+                       style="width:34px;height:34px;background:rgba(255,255,255,0.1)">
+                        <i class="bi bi-twitter-x" style="font-size:0.9rem"></i>
                     </a>
                 </div>
             </div>
 
             <!-- Ứng viên -->
             <div class="col-md-2 col-6">
-                <h6 class="text-white fw-600 mb-3">Ứng viên</h6>
-                <ul class="list-unstyled small">
-                    <li class="mb-2"><a href="<?= e(url('jobs')) ?>" class="text-decoration-none" style="color:#94a3b8">Tìm việc làm</a></li>
-                    <li class="mb-2"><a href="<?= e(url('companies')) ?>" class="text-decoration-none" style="color:#94a3b8">Danh sách công ty</a></li>
-                    <li class="mb-2"><a href="<?= e(url('register')) ?>" class="text-decoration-none" style="color:#94a3b8">Đăng ký tài khoản</a></li>
-                    <li class="mb-2"><a href="<?= e(url('user/saved_jobs')) ?>" class="text-decoration-none" style="color:#94a3b8">Job đã lưu</a></li>
+                <p class="footer-title">Ung vien</p>
+                <ul class="list-unstyled small" style="line-height:2">
+                    <li><a href="<?= e(url('jobs')) ?>">Tim viec lam</a></li>
+                    <li><a href="<?= e(url('companies')) ?>">Danh sach cong ty</a></li>
+                    <li><a href="<?= e(url('register')) ?>">Dang ky tai khoan</a></li>
+                    <li><a href="<?= e(url('user/saved_jobs')) ?>">Job da luu</a></li>
                 </ul>
             </div>
 
             <!-- Nhà tuyển dụng -->
             <div class="col-md-2 col-6">
-                <h6 class="text-white fw-600 mb-3">Nhà tuyển dụng</h6>
-                <ul class="list-unstyled small">
-                    <li class="mb-2"><a href="<?= e(url('user/become_employer')) ?>" class="text-decoration-none" style="color:#94a3b8">Đăng ký tuyển dụng</a></li>
-                    <li class="mb-2"><a href="<?= e(url('employer/job_form')) ?>" class="text-decoration-none" style="color:#94a3b8">Đăng bài tuyển dụng</a></li>
-                    <li class="mb-2"><a href="<?= e(url('employer/applications')) ?>" class="text-decoration-none" style="color:#94a3b8">Quản lý ứng viên</a></li>
+                <p class="footer-title">Nha tuyen dung</p>
+                <ul class="list-unstyled small" style="line-height:2">
+                    <li><a href="<?= e(url('user/become_employer')) ?>">Dang ky tuyen dung</a></li>
+                    <li><a href="<?= e(url('employer/job_form')) ?>">Dang bai tuyen dung</a></li>
+                    <li><a href="<?= e(url('employer/applications')) ?>">Quan ly ung vien</a></li>
                 </ul>
             </div>
 
-            <!-- Loại công việc nhanh -->
+            <!-- Tìm kiếm nhanh -->
             <div class="col-md-4">
-                <h6 class="text-white fw-600 mb-3">Tìm kiếm nhanh</h6>
-                <div class="d-flex flex-wrap gap-2">
+                <p class="footer-title">Tim kiem nhanh</p>
+                <div class="d-flex flex-wrap gap-2 mb-3">
                     <?php foreach (['full-time','part-time','intern','contract'] as $t): ?>
                         <a href="<?= e(url('jobs', ['job_type' => $t])) ?>"
                            class="badge text-decoration-none"
-                           style="background:rgba(255,255,255,0.1);color:#cbd5e1;font-size:0.8rem;padding:0.4em 0.75em;border-radius:6px">
+                           style="background:rgba(255,255,255,0.1);color:#cbd5e1;font-size:0.8rem;padding:0.4em 0.75em;border-radius:6px;border:1px solid rgba(255,255,255,0.12)">
                             <?= $t ?>
                         </a>
                     <?php endforeach; ?>
                 </div>
-                <div class="mt-3 small" style="color:#64748b">
-                    <i class="bi bi-envelope me-1"></i> contact@jobvn.demo<br>
-                    <i class="bi bi-telephone me-1 mt-1"></i> 1900 xxxx
+                <div class="small" style="color:rgba(255,255,255,0.45);line-height:2">
+                    <div><i class="bi bi-envelope me-1"></i> contact@jobvn.demo</div>
+                    <div><i class="bi bi-telephone me-1"></i> 1900 xxxx</div>
                 </div>
             </div>
         </div>
 
-        <hr style="border-color:rgba(255,255,255,0.08);margin:0 0 1rem">
-        <div class="d-flex flex-wrap justify-content-between align-items-center small">
+        <hr class="footer-divider" style="margin:0 0 1rem">
+        <div class="d-flex flex-wrap justify-content-between align-items-center small" style="color:rgba(255,255,255,0.4)">
             <span>&copy; <?= date('Y') ?> JobVN — Demo PHP Job Website.</span>
             <span>Built with PHP + Bootstrap 5 + MySQL</span>
         </div>
@@ -189,6 +189,29 @@ document.addEventListener('DOMContentLoaded', function() {
     showToast(<?= json_encode($f['msg']) ?>, <?= json_encode($f['type']) ?>);
     <?php endforeach; ?>
 });
+</script>
+<script>
+// Scroll reveal: fade + slide up khi element vào viewport
+(function() {
+    var els = document.querySelectorAll('.job-card, .company-card, .stat-card, .category-card, .card');
+    if (!els.length || !window.IntersectionObserver) return;
+
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+            if (e.isIntersecting) {
+                e.target.classList.add('revealed');
+                observer.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+    els.forEach(function(el, i) {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.45s ease ' + (i % 4 * 0.07) + 's, transform 0.45s ease ' + (i % 4 * 0.07) + 's';
+        observer.observe(el);
+    });
+})();
 </script>
 </body>
 </html>

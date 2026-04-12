@@ -287,27 +287,7 @@ $currentPage = $_GET['page'] ?? 'home';
         }
         /* ===== Main content ===== */
         main.container { padding-top: 1.5rem; padding-bottom: 2rem; }
-        /* ===== Cards ===== */
-        .job-card {
-            border: none;
-            border-radius: 12px;
-            transition: transform 0.18s, box-shadow 0.18s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-        }
-        .job-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(26, 86, 219, 0.13);
-        }
-        .company-card {
-            border: none;
-            border-radius: 12px;
-            transition: transform 0.18s, box-shadow 0.18s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-        }
-        .company-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(26, 86, 219, 0.13);
-        }
+        /* ===== Cards: job-card và company-card được định nghĩa ở cuối file (TASK 2 & 6) ===== */
         /* ===== Badges ===== */
         .badge-salary {
             background: #ecfdf5;
@@ -439,10 +419,7 @@ $currentPage = $_GET['page'] ?? 'home';
             padding: 0.28em 0.65em;
             border-radius: 6px;
         }
-        /* ===== Job card HOT: thêm đường viền trái màu xanh ===== */
-        .job-card.hot {
-            border-left: 3px solid #1a56db !important;
-        }
+        /* job-card.hot: style được định nghĩa lại ở TASK 2 phía dưới */
         /* ===== Badge kỹ năng / Tags: màu tím nhạt ===== */
         .badge-tag {
             background: #f3f0ff; color: #6d28d9; border: 1px solid #ddd6fe;
@@ -499,6 +476,140 @@ $currentPage = $_GET['page'] ?? 'home';
             color: var(--text-muted);
             font-weight: 500;
         }
+
+        /* ===== TASK 2: Job card V2 — gradient border top khi hover ===== */
+        .job-card {
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            background: var(--bg-card);
+            position: relative;
+            overflow: hidden;
+        }
+        .job-card::before {
+            content:'';
+            position:absolute;top:0;left:0;right:0;height:3px;
+            background: linear-gradient(90deg, #1a56db, #7c3aed);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .job-card:hover::before { opacity: 1; }
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 32px rgba(26,86,219,0.15);
+            border-color: #bfdbfe;
+        }
+        /* Job hot: đường gradient đỏ luôn hiện */
+        .job-card.hot::before { opacity: 1; background: linear-gradient(90deg, #ef4444, #f97316); }
+        .job-card.hot { border-color: #fecaca; }
+
+        /* ===== TASK 3: Stat card gradient ===== */
+        .stat-card {
+            background: linear-gradient(135deg, var(--card-from,#1a56db) 0%, var(--card-to,#0d3b8e) 100%);
+            border-radius: 16px;
+            padding: 1.5rem;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.18s, box-shadow 0.18s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+        .stat-card::after {
+            content:'';position:absolute;top:-30px;right:-30px;
+            width:120px;height:120px;border-radius:50%;
+            background:rgba(255,255,255,0.08);
+        }
+        .stat-card-icon { font-size: 2rem; opacity: 0.85; margin-bottom: 0.75rem; }
+        .stat-card-value { font-size: 2.2rem; font-weight: 700; line-height: 1; margin-bottom: 0.3rem; }
+        .stat-card-label { font-size: 0.85rem; opacity: 0.8; font-weight: 500; }
+
+        /* ===== TASK 4: Scroll reveal ===== */
+        .revealed { opacity: 1 !important; transform: translateY(0) !important; }
+        /* Tắt animation nếu user prefer reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .job-card, .company-card, .stat-card, .category-card, .card {
+                opacity: 1 !important; transform: none !important; transition: none !important;
+            }
+        }
+
+        /* ===== TASK 5: Section title với gradient underline ===== */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.4rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-title::after {
+            content:'';
+            position:absolute;bottom:0;left:0;
+            width:40px;height:3px;
+            background:linear-gradient(90deg,#1a56db,#7c3aed);
+            border-radius:2px;
+        }
+        /* Page header: dải gradient bên trái */
+        .page-header {
+            background: linear-gradient(135deg, var(--bg-card) 0%, #eff6ff 100%);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #1a56db;
+        }
+        [data-theme="dark"] .page-header { background: linear-gradient(135deg, #1e293b 0%, #172554 100%); }
+
+        /* ===== TASK 6: Company card nâng cấp với banner + logo nổi ===== */
+        .company-card {
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            background: var(--bg-card);
+            overflow: hidden;
+        }
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(26,86,219,0.14);
+            border-color: #bfdbfe;
+        }
+        .company-card .company-banner {
+            height: 60px;
+            background: linear-gradient(135deg, #1a56db 0%, #7c3aed 100%);
+            position: relative;
+        }
+        .company-card .company-logo-wrap {
+            position: absolute;
+            bottom: -24px;
+            left: 1.25rem;
+            width: 52px; height: 52px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 2px solid var(--bg-card);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+
+        /* ===== TASK 7: Footer nâng cấp ===== */
+        .site-footer {
+            background: #0f172a;
+            color: rgba(255,255,255,0.75);
+            padding: 3rem 0 1.5rem;
+            margin-top: 3rem;
+            position: relative;
+        }
+        .site-footer::before {
+            content:'';
+            position:absolute;top:0;left:0;right:0;height:3px;
+            background:linear-gradient(90deg,#1a56db,#7c3aed,#0891b2);
+        }
+        .site-footer a { color:rgba(255,255,255,0.65); text-decoration:none; transition:color 0.15s; }
+        .site-footer a:hover { color:#60a5fa; }
+        .site-footer .footer-title { color:#fff; font-weight:700; font-size:0.95rem; margin-bottom:0.75rem; }
+        .site-footer .footer-divider { border-color:rgba(255,255,255,0.1); }
     </style>
 </head>
 <body>

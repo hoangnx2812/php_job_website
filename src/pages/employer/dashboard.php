@@ -88,58 +88,34 @@ require __DIR__ . '/../../layout/header.php';
     <?php endif; ?>
 </div>
 
-<!-- Stats: 5 ô thống kê -->
+<!-- Stats: 4 ô thống kê gradient -->
 <div class="row g-3 mb-4">
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-3 h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="small text-muted fw-500">Bài đăng</div>
-                        <div class="fs-2 fw-700 text-primary"><?= $jobCount ?></div>
-                    </div>
-                    <div class="fs-1 text-primary opacity-25"><i class="bi bi-megaphone"></i></div>
-                </div>
-            </div>
+        <div class="stat-card" style="--card-from:#1a56db;--card-to:#0d3b8e">
+            <div class="stat-card-icon"><i class="bi bi-megaphone-fill"></i></div>
+            <div class="stat-card-value"><?= $jobCount ?></div>
+            <div class="stat-card-label">Bai dang</div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-3 h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="small text-muted fw-500">Tổng đơn ứng tuyển</div>
-                        <div class="fs-2 fw-700 text-success"><?= $appCount ?></div>
-                    </div>
-                    <div class="fs-1 text-success opacity-25"><i class="bi bi-file-earmark-person"></i></div>
-                </div>
-            </div>
+        <div class="stat-card" style="--card-from:#059669;--card-to:#065f46">
+            <div class="stat-card-icon"><i class="bi bi-file-earmark-person-fill"></i></div>
+            <div class="stat-card-value"><?= $appCount ?></div>
+            <div class="stat-card-label">Tong don ung tuyen</div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-3 h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="small text-muted fw-500">Đơn chờ duyệt</div>
-                        <div class="fs-2 fw-700 text-warning"><?= $pendingCount ?></div>
-                    </div>
-                    <div class="fs-1 text-warning opacity-25"><i class="bi bi-hourglass-split"></i></div>
-                </div>
-            </div>
+        <div class="stat-card" style="--card-from:#d97706;--card-to:#92400e">
+            <div class="stat-card-icon"><i class="bi bi-hourglass-split"></i></div>
+            <div class="stat-card-value"><?= $pendingCount ?></div>
+            <div class="stat-card-label">Don cho duyet</div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm rounded-3 h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="small text-muted fw-500">Tổng lượt xem</div>
-                        <div class="fs-2 fw-700 text-info"><?= number_format($totalViews) ?></div>
-                    </div>
-                    <div class="fs-1 text-info opacity-25"><i class="bi bi-eye"></i></div>
-                </div>
-            </div>
+        <div class="stat-card" style="--card-from:#7c3aed;--card-to:#4c1d95">
+            <div class="stat-card-icon"><i class="bi bi-eye-fill"></i></div>
+            <div class="stat-card-value"><?= number_format($totalViews) ?></div>
+            <div class="stat-card-label">Tong luot xem</div>
         </div>
     </div>
 </div>

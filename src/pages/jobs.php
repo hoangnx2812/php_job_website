@@ -104,16 +104,16 @@ $pageTitle = 'Việc làm';
 require __DIR__ . '/../layout/header.php';
 ?>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="fw-700 mb-0"><i class="bi bi-search me-2 text-primary"></i>Danh sách việc làm</h4>
+<div class="page-header d-flex justify-content-between align-items-center">
+    <h4 class="fw-700 mb-0"><i class="bi bi-search me-2 text-primary"></i>Danh sach viec lam</h4>
     <!-- Dòng kết quả + nút toggle grid/list view -->
     <div class="d-flex align-items-center gap-2">
-        <span class="text-muted small"><?= $total ?> kết quả</span>
+        <span class="text-muted small"><?= $total ?> ket qua</span>
         <div class="btn-group btn-group-sm ms-2" role="group">
-            <button type="button" class="btn btn-outline-secondary" id="btn-grid" title="Dạng lưới" onclick="setView('grid')">
+            <button type="button" class="btn btn-outline-secondary" id="btn-grid" title="Dang luoi" onclick="setView('grid')">
                 <i class="bi bi-grid"></i>
             </button>
-            <button type="button" class="btn btn-outline-secondary" id="btn-list" title="Dạng danh sách" onclick="setView('list')">
+            <button type="button" class="btn btn-outline-secondary" id="btn-list" title="Dang danh sach" onclick="setView('list')">
                 <i class="bi bi-list-ul"></i>
             </button>
         </div>
@@ -276,9 +276,15 @@ require __DIR__ . '/../layout/header.php';
                             <?php endforeach; ?>
                           </div>
                         <?php endif; ?>
-                        <div class="text-muted mt-2 d-flex gap-3" style="font-size:0.75rem">
-                            <span><i class="bi bi-clock me-1"></i><?= time_ago($j['created_at']) ?></span>
-                            <span><i class="bi bi-eye me-1"></i><?= format_views($j['views']) ?></span>
+                        <!-- Footer card: thời gian + views -->
+                        <div class="d-flex justify-content-between align-items-center mt-2 pt-2"
+                             style="border-top: 1px solid var(--border-color);">
+                            <span class="text-muted" style="font-size:0.73rem">
+                                <i class="bi bi-clock me-1"></i><?= time_ago($j['created_at']) ?>
+                            </span>
+                            <div class="d-flex gap-2 text-muted" style="font-size:0.73rem">
+                                <span><i class="bi bi-eye me-1"></i><?= format_views($j['views']) ?></span>
+                            </div>
                         </div>
                     </div>
                 </div>

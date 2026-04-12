@@ -42,68 +42,100 @@ $pageTitle = 'Trang chủ';
 require __DIR__ . '/../layout/header.php';
 ?>
 
-<!-- Hero Section -->
-<div class="hero-section rounded-4 mb-5 p-5 text-white text-center position-relative overflow-hidden"
-     style="background: linear-gradient(135deg, #1a56db 0%, #0d3b8e 60%, #1e1b4b 100%); min-height: 340px;">
-    <!-- Decorative circles -->
-    <div style="position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,0.05);"></div>
-    <div style="position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.05);"></div>
+<!-- Hero Section: gradient mesh + floating blobs -->
+<div class="hero-section position-relative overflow-hidden" style="
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #1a56db 100%);
+    padding: 5rem 0 4rem;
+    margin: -1.5rem -12px 2rem;
+">
+    <!-- Decorative floating blobs -->
+    <div style="position:absolute;top:-80px;right:-80px;width:400px;height:400px;
+                background:rgba(96,165,250,0.12);border-radius:50%;filter:blur(60px);pointer-events:none"></div>
+    <div style="position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;
+                background:rgba(167,139,250,0.10);border-radius:50%;filter:blur(50px);pointer-events:none"></div>
 
-    <div class="position-relative">
-        <h1 class="display-5 fw-700 mb-2">Tìm công việc mơ ước</h1>
-        <p class="lead mb-4 opacity-85">Hàng ngàn việc làm IT, marketing, kinh doanh đang chờ bạn</p>
+    <div class="container position-relative">
+        <!-- Badge trên cùng -->
+        <div class="text-center mb-3">
+            <span style="background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.9);
+                         border:1px solid rgba(255,255,255,0.2);border-radius:999px;
+                         font-size:0.82rem;font-weight:600;padding:0.35em 1em;letter-spacing:0.03em">
+                Nen tang tuyen dung #1 Viet Nam
+            </span>
+        </div>
 
-        <!-- Search box nổi bật -->
-        <form action="<?= e(BASE_URL) ?>" method="get" class="row g-2 justify-content-center">
-            <input type="hidden" name="page" value="jobs">
-            <div class="col-md-5">
-                <input name="q" class="form-control form-control-lg"
-                       style="border-radius:10px;border:none;font-size:1rem;"
-                       placeholder="Tên công việc, kỹ năng...">
-            </div>
-            <div class="col-md-3">
-                <input name="location" class="form-control form-control-lg"
-                       style="border-radius:10px;border:none;font-size:1rem;"
-                       placeholder="Địa điểm">
-            </div>
-            <div class="col-auto">
-                <button class="btn btn-warning fw-600 btn-lg" style="border-radius:10px;padding:0.6rem 1.5rem;">
-                    <i class="bi bi-search me-1"></i> Tìm kiếm
-                </button>
-            </div>
-        </form>
+        <!-- Heading -->
+        <h1 class="text-white text-center fw-700 mb-2" style="font-size:clamp(1.8rem,4vw,3rem);line-height:1.2">
+            Tim Viec Lam <span style="background:linear-gradient(90deg,#60a5fa,#a78bfa);
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+            Mo Uoc</span> Cua Ban
+        </h1>
+        <p class="text-center mb-4" style="color:rgba(255,255,255,0.75);font-size:1.1rem;max-width:520px;margin:0 auto 1.75rem">
+            Ket noi voi hang nghin co hoi viec lam tu cac cong ty hang dau
+        </p>
 
-        <!-- Stats counter với animation đếm từ 0 -->
+        <!-- Search bar nổi bật -->
+        <div class="mx-auto" style="max-width:640px">
+            <form method="get" action="<?= e(BASE_URL) ?>">
+                <input type="hidden" name="page" value="jobs">
+                <div style="background:#fff;border-radius:16px;padding:6px;
+                            box-shadow:0 20px 60px rgba(0,0,0,0.3);display:flex;gap:6px">
+                    <div style="flex:1;position:relative">
+                        <i class="bi bi-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);
+                                                        color:#94a3b8;font-size:1rem"></i>
+                        <input name="q" class="form-control border-0 shadow-none"
+                               style="padding-left:2.5rem;border-radius:12px;font-size:0.95rem;background:transparent"
+                               placeholder="Vi tri, ky nang, cong ty...">
+                    </div>
+                    <button class="btn btn-primary px-4 fw-600" style="border-radius:12px;white-space:nowrap">
+                        <i class="bi bi-search me-1"></i>Tim kiem
+                    </button>
+                </div>
+                <!-- Quick tags gợi ý tìm kiếm -->
+                <div class="d-flex flex-wrap gap-2 justify-content-center mt-3">
+                    <?php foreach(['PHP Developer','Frontend React','Marketing','UI/UX Designer','Data Analyst'] as $kw): ?>
+                        <a href="<?= e(url('jobs',['q'=>$kw])) ?>"
+                           style="background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.85);
+                                  border:1px solid rgba(255,255,255,0.2);border-radius:999px;
+                                  font-size:0.78rem;padding:0.25em 0.85em;text-decoration:none;
+                                  transition:background 0.15s"
+                           onmouseover="this.style.background='rgba(255,255,255,0.22)'"
+                           onmouseout="this.style.background='rgba(255,255,255,0.12)'">
+                            <?= e($kw) ?>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            </form>
+        </div>
+
+        <!-- Stats counters dạng card đẹp hơn -->
         <div class="row justify-content-center mt-4 g-3">
+            <?php foreach([
+                ['icon'=>'bi-briefcase-fill','value'=>$statsJobs,'label'=>'Viec lam'],
+                ['icon'=>'bi-building-fill','value'=>$statsCompanies,'label'=>'Cong ty'],
+                ['icon'=>'bi-people-fill','value'=>$statsUsers,'label'=>'Ung vien'],
+            ] as $s): ?>
             <div class="col-auto">
-                <div class="px-3 py-2 rounded-3" style="background:rgba(255,255,255,0.12)">
-                    <span class="fw-700 fs-5 counter" data-target="<?= $statsJobs ?>">0</span><span class="fw-700 fs-5">+</span>
-                    <span class="ms-1 opacity-85 small">Việc làm</span>
+                <div style="background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);
+                            border:1px solid rgba(255,255,255,0.18);border-radius:16px;
+                            padding:0.9rem 1.5rem;text-align:center;min-width:110px">
+                    <i class="bi <?= $s['icon'] ?>" style="color:rgba(255,255,255,0.7);font-size:1.3rem"></i>
+                    <div class="fw-700 text-white" style="font-size:1.4rem;line-height:1.2">
+                        <span class="counter" data-target="<?= $s['value'] ?>">0</span>+
+                    </div>
+                    <div style="color:rgba(255,255,255,0.65);font-size:0.8rem"><?= $s['label'] ?></div>
                 </div>
             </div>
-            <div class="col-auto">
-                <div class="px-3 py-2 rounded-3" style="background:rgba(255,255,255,0.12)">
-                    <span class="fw-700 fs-5 counter" data-target="<?= $statsCompanies ?>">0</span><span class="fw-700 fs-5">+</span>
-                    <span class="ms-1 opacity-85 small">Công ty</span>
-                </div>
-            </div>
-            <div class="col-auto">
-                <div class="px-3 py-2 rounded-3" style="background:rgba(255,255,255,0.12)">
-                    <span class="fw-700 fs-5 counter" data-target="<?= $statsUsers ?>">0</span><span class="fw-700 fs-5">+</span>
-                    <span class="ms-1 opacity-85 small">Ứng viên</span>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </div>
 
 <!-- Section: Khám phá theo lĩnh vực -->
 <div class="mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="fw-700 mb-0">
-            <i class="bi bi-grid-3x3-gap-fill text-primary me-1"></i> Khám phá theo lĩnh vực
-        </h4>
-    </div>
+    <h2 class="section-title">
+        <i class="bi bi-grid-3x3-gap-fill text-primary me-1"></i> Kham pha theo linh vuc
+    </h2>
     <div class="row g-3">
         <?php foreach ($categoryConfig as $catName => $cfg): ?>
             <?php $count = $categoryStats[$catName] ?? 0; ?>
@@ -123,12 +155,12 @@ require __DIR__ . '/../layout/header.php';
 </div>
 
 <!-- Job mới nhất -->
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="fw-700 mb-0">
-        <i class="bi bi-lightning-fill text-warning me-1"></i> Việc làm mới nhất
-    </h4>
-    <a href="<?= e(url('jobs')) ?>" class="btn btn-outline-primary btn-sm">
-        Xem tất cả <i class="bi bi-arrow-right"></i>
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <h2 class="section-title">
+        <i class="bi bi-lightning-fill text-warning me-1"></i> Viec lam moi nhat
+    </h2>
+    <a href="<?= e(url('jobs')) ?>" class="btn btn-outline-primary btn-sm mt-1">
+        Xem tat ca <i class="bi bi-arrow-right"></i>
     </a>
 </div>
 
@@ -174,9 +206,15 @@ require __DIR__ . '/../layout/header.php';
                     <?php endif; ?>
                     <?= deadline_badge($j['expired_at'] ?? null) ?>
                 </div>
-                <div class="text-muted mt-2" style="font-size:0.74rem">
-                    <i class="bi bi-clock me-1"></i><?= time_ago($j['created_at']) ?>
-                    <span class="ms-2"><i class="bi bi-eye me-1"></i><?= format_views($j['views']) ?></span>
+                <!-- Footer card: thời gian + views -->
+                <div class="d-flex justify-content-between align-items-center mt-2 pt-2"
+                     style="border-top: 1px solid var(--border-color);">
+                    <span class="text-muted" style="font-size:0.73rem">
+                        <i class="bi bi-clock me-1"></i><?= time_ago($j['created_at']) ?>
+                    </span>
+                    <div class="d-flex gap-2 text-muted" style="font-size:0.73rem">
+                        <span><i class="bi bi-eye me-1"></i><?= format_views($j['views']) ?></span>
+                    </div>
                 </div>
             </div>
         </div>

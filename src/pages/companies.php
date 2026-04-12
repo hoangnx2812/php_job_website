@@ -58,44 +58,44 @@ require __DIR__ . '/../layout/header.php';
 <div class="row g-3 mb-4">
 <?php foreach ($rows as $c): ?>
     <div class="col-md-6 col-lg-4">
-        <div class="card company-card h-100 border-0">
-            <div class="card-body p-3">
-                <div class="d-flex gap-3 align-items-start">
-                    <?php if ($c['logo']): ?>
-                        <img src="/uploads/logos/<?= e($c['logo']) ?>"
-                             alt="<?= e($c['name']) ?>" class="company-logo flex-shrink-0">
-                    <?php else: ?>
-                        <div class="company-logo-placeholder flex-shrink-0">
-                            <i class="bi bi-building"></i>
-                        </div>
+        <!-- Company card nâng cấp: banner + logo nổi -->
+        <div class="company-card h-100 position-relative">
+            <!-- Dải màu gradient trên đầu card -->
+            <div class="company-banner"></div>
+            <!-- Logo nổi lên trên banner -->
+            <div class="company-logo-wrap">
+                <?php if ($c['logo']): ?>
+                    <img src="/uploads/logos/<?= e($c['logo']) ?>"
+                         alt="<?= e($c['name']) ?>"
+                         style="width:100%;height:100%;object-fit:contain;padding:4px">
+                <?php else: ?>
+                    <i class="bi bi-building text-primary" style="font-size:1.4rem"></i>
+                <?php endif; ?>
+            </div>
+            <div class="card-body" style="padding-top:2.5rem">
+                <h6 class="fw-700 mb-1">
+                    <a href="<?= e(url('company_detail', ['id' => $c['id']])) ?>"
+                       class="text-decoration-none stretched-link"
+                       style="color:var(--text-main)"><?= e($c['name']) ?></a>
+                </h6>
+                <div class="text-muted small mb-2">
+                    <i class="bi bi-geo-alt me-1"></i><?= e($c['location'] ?: 'Chua cap nhat') ?>
+                </div>
+                <?php if (!empty($c['description'])): ?>
+                    <p class="small text-secondary mb-2" style="line-height:1.4">
+                        <?= e(mb_strimwidth($c['description'], 0, 90, '...')) ?>
+                    </p>
+                <?php endif; ?>
+                <div class="d-flex gap-2 align-items-center">
+                    <span class="badge-type">
+                        <i class="bi bi-briefcase me-1"></i><?= (int)$c['job_count'] ?> viec lam
+                    </span>
+                    <?php if ($c['website']): ?>
+                        <a href="<?= e($c['website']) ?>" target="_blank"
+                           class="small text-muted text-decoration-none" style="position:relative;z-index:2">
+                            <i class="bi bi-globe"></i> Website
+                        </a>
                     <?php endif; ?>
-                    <div class="flex-grow-1">
-                        <h6 class="fw-600 mb-1">
-                            <a href="<?= e(url('company_detail', ['id' => $c['id']])) ?>"
-                               class="text-decoration-none text-dark stretched-link">
-                                <?= e($c['name']) ?>
-                            </a>
-                        </h6>
-                        <?php if ($c['location']): ?>
-                            <div class="text-muted small mb-2">
-                                <i class="bi bi-geo-alt me-1"></i><?= e($c['location']) ?>
-                            </div>
-                        <?php endif; ?>
-                        <p class="small text-secondary mb-2" style="line-height:1.4">
-                            <?= e(mb_strimwidth($c['description'] ?? '', 0, 100, '...')) ?>
-                        </p>
-                        <div class="d-flex gap-2 align-items-center">
-                            <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size:0.78rem">
-                                <i class="bi bi-briefcase me-1"></i><?= (int)$c['job_count'] ?> việc làm
-                            </span>
-                            <?php if ($c['website']): ?>
-                                <a href="<?= e($c['website']) ?>" target="_blank"
-                                   class="small text-muted text-decoration-none">
-                                    <i class="bi bi-globe"></i> Website
-                                </a>
-                            <?php endif; ?>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
