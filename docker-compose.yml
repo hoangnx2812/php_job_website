@@ -35,6 +35,7 @@ services:
       - ./public:/var/www/html
       - ./src:/var/www/src
       - ./uploads:/var/www/uploads
+      - ./uploads:/var/www/html/uploads   # để Apache serve /uploads/... trực tiếp
     working_dir: /var/www/html
     command: >
       bash -c "docker-php-ext-install mysqli pdo pdo_mysql &&
