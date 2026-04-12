@@ -1,5 +1,5 @@
 <?php
-// Trang chủ: hero + job mới nhất + stats
+// Trang chủ: hero + khám phá theo lĩnh vực + job mới nhất + stats
 $pdo = db();
 
 // Lấy 6 job mới nhất kèm logo công ty
@@ -16,15 +16,26 @@ $statsJobs = (int)$pdo->query('SELECT COUNT(*) FROM jobs WHERE is_active = 1')->
 $statsCompanies = (int)$pdo->query('SELECT COUNT(*) FROM companies')->fetchColumn();
 $statsUsers = (int)$pdo->query("SELECT COUNT(*) FROM users WHERE role = 'user'")->fetchColumn();
 
-// Top công ty: lấy 6 công ty có nhiều job đang hoạt động nhất
-$topCompanies = $pdo->query("
-    SELECT c.*, COUNT(j.id) AS job_count
-    FROM companies c
-    LEFT JOIN jobs j ON j.company_id = c.id AND j.is_active = 1
-    GROUP BY c.id
-    ORDER BY job_count DESC, c.name ASC
-    LIMIT 6
-")->fetchAll();
+// Đếm số jobs theo từng lĩnh vực để hiển thị section "Khám phá"
+$categoryStats = $pdo->query("
+    SELECT category, COUNT(*) AS job_count
+    FROM jobs
+    WHERE is_active = 1
+    GROUP BY category
+    ORDER BY job_count DESC
+")->fetchAll(PDO::FETCH_KEY_PAIR);
+
+// Cấu hình icon và màu cho từng lĩnh vực
+$categoryConfig = [
+    'Công nghệ thông tin' => ['icon' => 'bi-code-slash',   'color' => '#1a56db', 'bg' => '#eff6ff'],
+    'Marketing'           => ['icon' => 'bi-megaphone',    'color' => '#7c3aed', 'bg' => '#f5f3ff'],
+    'Thiết kế'            => ['icon' => 'bi-palette',      'color' => '#db2777', 'bg' => '#fdf2f8'],
+    'Tài chính'           => ['icon' => 'bi-graph-up',     'color' => '#059669', 'bg' => '#ecfdf5'],
+    'HR'                  => ['icon' => 'bi-people',       'color' => '#d97706', 'bg' => '#fffbeb'],
+    'Bán hàng'            => ['icon' => 'bi-cart',         'color' => '#dc2626', 'bg' => '#fef2f2'],
+    'Vận hành'            => ['icon' => 'bi-gear',         'color' => '#0891b2', 'bg' => '#ecfeff'],
+    'Khác'                => ['icon' => 'bi-briefcase',    'color' => '#64748b', 'bg' => '#f8fafc'],
+];
 
 $u = current_user();
 $pageTitle = 'Trang chủ';
@@ -86,6 +97,31 @@ require __DIR__ . '/../layout/header.php';
     </div>
 </div>
 
+<!-- Section: Khám phá theo lĩnh vực -->
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-700 mb-0">
+            <i class="bi bi-grid-3x3-gap-fill text-primary me-1"></i> Khám phá theo lĩnh vực
+        </h4>
+    </div>
+    <div class="row g-3">
+        <?php foreach ($categoryConfig as $catName => $cfg): ?>
+            <?php $count = $categoryStats[$catName] ?? 0; ?>
+            <div class="col-6 col-md-3">
+                <a href="<?= e(url('jobs', ['category' => $catName])) ?>"
+                   class="category-card text-decoration-none d-block"
+                   style="--cat-color: <?= $cfg['color'] ?>; --cat-bg: <?= $cfg['bg'] ?>;">
+                    <div class="category-card-icon">
+                        <i class="bi <?= $cfg['icon'] ?>"></i>
+                    </div>
+                    <div class="category-card-name"><?= e($catName) ?></div>
+                    <div class="category-card-count"><?= $count ?> việc làm</div>
+                </a>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+
 <!-- Job mới nhất -->
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="fw-700 mb-0">
@@ -99,7 +135,7 @@ require __DIR__ . '/../layout/header.php';
 <div class="row g-3 mb-5">
 <?php foreach ($latest as $j): ?>
     <div class="col-md-6 col-lg-4">
-        <div class="card job-card h-100">
+        <div class="card job-card h-100 <?= $j['is_hot'] ? 'hot' : '' ?>">
             <div class="card-body p-3">
                 <!-- Logo + tên công ty -->
                 <div class="d-flex align-items-center gap-2 mb-3">
@@ -133,6 +169,9 @@ require __DIR__ . '/../layout/header.php';
                 <div class="d-flex flex-wrap gap-1 align-items-center">
                     <span class="badge-salary"><?= e(format_salary($j['salary_min'], $j['salary_max'])) ?></span>
                     <span class="badge-type"><?= e($j['job_type']) ?></span>
+                    <?php if (!empty($j['category'])): ?>
+                        <span class="badge-category"><?= e($j['category']) ?></span>
+                    <?php endif; ?>
                     <?= deadline_badge($j['expired_at'] ?? null) ?>
                 </div>
                 <div class="text-muted mt-2" style="font-size:0.74rem">
@@ -144,44 +183,6 @@ require __DIR__ . '/../layout/header.php';
     </div>
 <?php endforeach; ?>
 </div>
-
-<!-- Top công ty -->
-<?php if ($topCompanies): ?>
-<div class="mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="fw-700 mb-0">
-            <i class="bi bi-building-fill text-primary me-1"></i> Top công ty tuyển dụng
-        </h4>
-        <a href="<?= e(url('companies')) ?>" class="btn btn-outline-primary btn-sm">
-            Xem tất cả <i class="bi bi-arrow-right"></i>
-        </a>
-    </div>
-    <div class="row g-3">
-        <?php foreach ($topCompanies as $tc): ?>
-            <div class="col-md-4 col-lg-2">
-                <a href="<?= e(url('company_detail', ['id' => $tc['id']])) ?>"
-                   class="card company-card border-0 h-100 text-decoration-none text-dark text-center p-3 d-flex flex-column align-items-center justify-content-center">
-                    <?php if ($tc['logo']): ?>
-                        <img src="/uploads/logos/<?= e($tc['logo']) ?>"
-                             alt="<?= e($tc['name']) ?>"
-                             style="width:56px;height:56px;object-fit:contain;border-radius:10px;border:1px solid #e2e8f0;padding:4px;background:#fff;margin-bottom:0.5rem">
-                    <?php else: ?>
-                        <div style="width:56px;height:56px;border-radius:10px;border:1px solid #e2e8f0;
-                                    background:#f1f5f9;display:flex;align-items:center;justify-content:center;
-                                    color:#94a3b8;font-size:1.5rem;margin-bottom:0.5rem">
-                            <i class="bi bi-building"></i>
-                        </div>
-                    <?php endif; ?>
-                    <div class="fw-600 small text-center" style="line-height:1.3"><?= e($tc['name']) ?></div>
-                    <div class="text-muted mt-1" style="font-size:0.75rem">
-                        <?= (int)$tc['job_count'] ?> việc làm
-                    </div>
-                </a>
-            </div>
-        <?php endforeach; ?>
-    </div>
-</div>
-<?php endif; ?>
 
 <!-- CTA section -->
 <?php if (!$u): ?>
