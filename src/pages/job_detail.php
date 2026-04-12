@@ -118,39 +118,39 @@ require __DIR__ . '/../layout/header.php';
                 <!-- Info grid: thông tin nhanh -->
                 <div class="row g-2 mb-4">
                     <div class="col-6 col-md-4">
-                        <div class="rounded-3 p-2 text-center" style="background:#f8fafc;border:1px solid #e2e8f0">
+                        <div class="rounded-3 p-2 text-center info-box" style="background:#f8fafc;border:1px solid #e2e8f0">
                             <div class="text-muted small mb-1"><i class="bi bi-geo-alt me-1"></i>Địa điểm</div>
                             <div class="fw-600 small"><?= e($j['location'] ?: 'Không rõ') ?></div>
                         </div>
                     </div>
                     <div class="col-6 col-md-4">
-                        <div class="rounded-3 p-2 text-center" style="background:#f8fafc;border:1px solid #e2e8f0">
+                        <div class="rounded-3 p-2 text-center info-box" style="background:#f8fafc;border:1px solid #e2e8f0">
                             <div class="text-muted small mb-1"><i class="bi bi-calendar3 me-1"></i>Đăng ngày</div>
                             <div class="fw-600 small"><?= time_ago($j['created_at']) ?></div>
                         </div>
                     </div>
                     <div class="col-6 col-md-4">
-                        <div class="rounded-3 p-2 text-center" style="background:#f8fafc;border:1px solid #e2e8f0">
+                        <div class="rounded-3 p-2 text-center info-box" style="background:#f8fafc;border:1px solid #e2e8f0">
                             <div class="text-muted small mb-1"><i class="bi bi-people me-1"></i>Ứng tuyển</div>
                             <div class="fw-600 small"><?= $appCount ?> người</div>
                         </div>
                     </div>
                     <div class="col-6 col-md-4">
-                        <div class="rounded-3 p-2 text-center" style="background:#f8fafc;border:1px solid #e2e8f0">
+                        <div class="rounded-3 p-2 text-center info-box" style="background:#f8fafc;border:1px solid #e2e8f0">
                             <div class="text-muted small mb-1"><i class="bi bi-eye me-1"></i>Lượt xem</div>
                             <div class="fw-600 small"><?= format_views($j['views']) ?></div>
                         </div>
                     </div>
                     <?php if ($j['expired_at']): ?>
                     <div class="col-6 col-md-4">
-                        <div class="rounded-3 p-2 text-center" style="background:#f8fafc;border:1px solid #e2e8f0">
+                        <div class="rounded-3 p-2 text-center info-box" style="background:#f8fafc;border:1px solid #e2e8f0">
                             <div class="text-muted small mb-1"><i class="bi bi-hourglass-split me-1"></i>Hạn nộp</div>
                             <div class="fw-600 small"><?= date('d/m/Y', strtotime($j['expired_at'])) ?></div>
                         </div>
                     </div>
                     <?php endif; ?>
                     <div class="col-6 col-md-4">
-                        <div class="rounded-3 p-2 text-center" style="background:#f8fafc;border:1px solid #e2e8f0">
+                        <div class="rounded-3 p-2 text-center info-box" style="background:#f8fafc;border:1px solid #e2e8f0">
                             <div class="text-muted small mb-1"><i class="bi bi-building me-1"></i>Công ty</div>
                             <div class="fw-600 small">
                                 <a href="<?= e(url('company_detail', ['id' => $j['company_id']])) ?>"
@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function() {
     list.forEach(function(job) {
         var a = document.createElement('a');
         a.href = '<?= BASE_URL ?>?page=job_detail&id=' + job.id;
-        a.className = 'd-block text-decoration-none text-dark mb-2 small';
+        a.className = 'd-block text-decoration-none mb-2 small';
         a.innerHTML = '<div class="fw-500">' + job.title + '</div>'
                     + '<div class="text-muted" style="font-size:0.75rem">' + job.company + '</div>';
         container.appendChild(a);

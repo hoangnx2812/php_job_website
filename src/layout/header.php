@@ -72,6 +72,160 @@ $currentPage = $_GET['page'] ?? 'home';
         [data-theme="dark"] .dropdown-menu { background: var(--bg-card); border-color: var(--border-color); }
         [data-theme="dark"] .dropdown-item { color: var(--text-main); }
         [data-theme="dark"] .dropdown-item:hover { background: #334155; }
+
+        /* ===== Dark mode: fix Bootstrap classes + hardcoded colors ===== */
+
+        /* .text-dark của Bootstrap dùng #212529 — ghi đè lại */
+        [data-theme="dark"] .text-dark { color: var(--text-main) !important; }
+        /* Links trong card/content — đổi sang xanh nhạt cho dễ đọc */
+        [data-theme="dark"] a.text-dark,
+        [data-theme="dark"] a.text-decoration-none.text-dark { color: var(--text-main) !important; }
+        [data-theme="dark"] a.stretched-link { color: var(--text-main) !important; }
+
+        /* List group items (notifications, applications...) */
+        [data-theme="dark"] .list-group-item {
+            background: var(--bg-card) !important;
+            color: var(--text-main) !important;
+            border-color: var(--border-color) !important;
+        }
+        [data-theme="dark"] .list-group-item:hover { background: #263350 !important; }
+
+        /* Alert boxes */
+        [data-theme="dark"] .alert-info    { background:#172554; color:#bfdbfe; border-color:#1e40af; }
+        [data-theme="dark"] .alert-success { background:#052e16; color:#bbf7d0; border-color:#166534; }
+        [data-theme="dark"] .alert-warning { background:#422006; color:#fde68a; border-color:#92400e; }
+        [data-theme="dark"] .alert-danger  { background:#450a0a; color:#fecaca; border-color:#b91c1c; }
+        [data-theme="dark"] .alert-primary { background:#172554; color:#bfdbfe; border-color:#1e40af; }
+        [data-theme="dark"] .alert-secondary{ background:#1e293b; color:#94a3b8; border-color:#334155; }
+
+        /* Breadcrumb */
+        [data-theme="dark"] .breadcrumb-item a { color: #60a5fa; }
+        [data-theme="dark"] .breadcrumb-item.active,
+        [data-theme="dark"] .breadcrumb-item + .breadcrumb-item::before { color: var(--text-muted); }
+
+        /* Input group text (label trong input nhóm như "Min", "Max") */
+        [data-theme="dark"] .input-group-text {
+            background: #334155 !important;
+            color: var(--text-main) !important;
+            border-color: var(--border-color) !important;
+        }
+
+        /* Buttons outline */
+        [data-theme="dark"] .btn-outline-secondary {
+            color: #94a3b8; border-color: #475569;
+        }
+        [data-theme="dark"] .btn-outline-secondary:hover,
+        [data-theme="dark"] .btn-outline-secondary:focus {
+            background: #334155; color: #e2e8f0; border-color: #475569;
+        }
+        [data-theme="dark"] .btn-outline-primary {
+            color: #60a5fa; border-color: #3b82f6;
+        }
+        [data-theme="dark"] .btn-outline-primary:hover {
+            background: #1e40af; color: #fff; border-color: #1e40af;
+        }
+        [data-theme="dark"] .btn-outline-danger {
+            color: #f87171; border-color: #ef4444;
+        }
+        [data-theme="dark"] .btn-outline-danger:hover {
+            background: #7f1d1d; color: #fecaca; border-color: #ef4444;
+        }
+        [data-theme="dark"] .btn-secondary {
+            background: #334155; border-color: #475569; color: #e2e8f0;
+        }
+        [data-theme="dark"] .btn-light {
+            background: #334155; border-color: #475569; color: #e2e8f0;
+        }
+
+        /* Pagination */
+        [data-theme="dark"] .page-link {
+            background: var(--bg-card); color: var(--text-main);
+            border-color: var(--border-color);
+        }
+        [data-theme="dark"] .page-link:hover { background: #334155; color: #e2e8f0; }
+        [data-theme="dark"] .page-item.active .page-link {
+            background: #1a56db; border-color: #1a56db; color: #fff;
+        }
+        [data-theme="dark"] .page-item.disabled .page-link {
+            background: var(--bg-card); color: var(--text-muted);
+        }
+
+        /* Form check (checkbox/radio label) */
+        [data-theme="dark"] .form-check-label { color: var(--text-main); }
+        [data-theme="dark"] .form-check-input { background-color: #334155; border-color: #475569; }
+
+        /* Select option bg (trình duyệt hỗ trợ hạn chế nhưng có tác dụng trên Firefox/Chrome) */
+        [data-theme="dark"] option { background: #1e293b; color: #e2e8f0; }
+
+        /* Badge bg-light trong dark mode */
+        [data-theme="dark"] .badge.bg-light { background: #334155 !important; color: #e2e8f0 !important; }
+        [data-theme="dark"] .badge.bg-secondary { background: #475569 !important; }
+
+        /* HR divider */
+        [data-theme="dark"] hr { border-color: var(--border-color); }
+
+        /* Small info grid (ô thông tin: địa điểm, lượt xem... trong job_detail) */
+        [data-theme="dark"] .info-box {
+            background: #263350 !important;
+            border-color: #334155 !important;
+        }
+
+        /* Company logo placeholder */
+        [data-theme="dark"] .company-logo-placeholder {
+            background: #1e293b; border-color: #334155;
+        }
+        [data-theme="dark"] .company-logo {
+            background: #1e293b; border-color: #334155;
+        }
+
+        /* Sticky apply bar */
+        [data-theme="dark"] #sticky-apply {
+            background: var(--bg-card) !important;
+            border-top-color: var(--border-color) !important;
+        }
+
+        /* Heading tags bên trong card (kế thừa từ body nhưng đôi khi bị Bootstrap override) */
+        [data-theme="dark"] h1,[data-theme="dark"] h2,
+        [data-theme="dark"] h3,[data-theme="dark"] h4,
+        [data-theme="dark"] h5,[data-theme="dark"] h6 { color: var(--text-main); }
+
+        /* small tags, strong tags */
+        [data-theme="dark"] small { color: var(--text-muted); }
+
+        /* Logo công ty có background trắng cứng → đổi sang xám tối */
+        [data-theme="dark"] img[style*="background:#fff"],
+        [data-theme="dark"] img[style*="background: #fff"] {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+        }
+
+        /* Inline border màu sáng */
+        [data-theme="dark"] [style*="border:1px solid #e2e8f0"],
+        [data-theme="dark"] [style*="border: 1px solid #e2e8f0"] {
+            border-color: #334155 !important;
+        }
+
+        /* Các div inline background sáng thường gặp (hero stat, info box...) */
+        [data-theme="dark"] [style*="background:rgba(255,255,255"] {
+            background: rgba(255,255,255,0.08) !important;
+        }
+
+        /* Tab, pill active states */
+        [data-theme="dark"] .nav-tabs .nav-link { color: var(--text-muted); border-color: transparent; }
+        [data-theme="dark"] .nav-tabs .nav-link.active {
+            background: var(--bg-card); color: var(--text-main); border-color: var(--border-color);
+        }
+        [data-theme="dark"] .nav-tabs { border-color: var(--border-color); }
+        [data-theme="dark"] .nav-pills .nav-link { color: var(--text-muted); }
+        [data-theme="dark"] .nav-pills .nav-link.active { background: #1a56db; color: #fff; }
+
+        /* bg-light trong dark mode */
+        [data-theme="dark"] .bg-light { background: #1e293b !important; }
+        [data-theme="dark"] .bg-white { background: var(--bg-card) !important; }
+        [data-theme="dark"] .border { border-color: var(--border-color) !important; }
+
+        /* footer bg */
+        [data-theme="dark"] footer, [data-theme="dark"] .site-footer { background: var(--footer-bg); }
         /* Dark mode navbar */
         .navbar-main { background: var(--navbar-bg); }
         /* Font-weight utilities (Bootstrap chỉ có fw-bold, thiếu các mức trung gian) */
@@ -337,12 +491,12 @@ $currentPage = $_GET['page'] ?? 'home';
         .category-card-name {
             font-size: 0.88rem;
             font-weight: 700;
-            color: #1a202c;
+            color: var(--text-main);
             margin-bottom: 0.2rem;
         }
         .category-card-count {
             font-size: 0.78rem;
-            color: #64748b;
+            color: var(--text-muted);
             font-weight: 500;
         }
     </style>
