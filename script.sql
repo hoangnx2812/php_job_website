@@ -81,17 +81,21 @@ CREATE TABLE jobs (
     salary_max INT NULL,                        -- lương tối đa (triệu VND)
     job_type ENUM('full-time','part-time','intern','contract') NOT NULL DEFAULT 'full-time',
     is_active TINYINT(1) NOT NULL DEFAULT 1,
+    is_hot TINYINT(1) NOT NULL DEFAULT 0,         -- job hot/urgent, hiện badge đặc biệt
+    views INT NOT NULL DEFAULT 0,                 -- đếm lượt xem job detail
+    expired_at DATETIME NULL,                     -- hạn nộp hồ sơ, NULL = không giới hạn
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,
     FOREIGN KEY (employer_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO jobs (company_id, employer_id, title, description, requirements, location, salary_min, salary_max, job_type) VALUES
-(1, 2, 'PHP Backend Developer',    'Phát triển backend cho các dự án thương mại điện tử.',   'Thành thạo PHP, MySQL, có kinh nghiệm Laravel là lợi thế.', 'Hà Nội',          15, 25, 'full-time'),
-(1, 2, 'Java Fresher',              'Tham gia phát triển dự án ngân hàng cho khách hàng Nhật.','Tốt nghiệp CNTT, biết Java cơ bản, tiếng Anh đọc hiểu.',    'Hà Nội',          8,  12, 'full-time'),
-(2, 3, 'Frontend ReactJS',          'Xây dựng giao diện sản phẩm Zalo Mini App.',              '2+ năm kinh nghiệm React, hiểu TypeScript.',                'TP. Hồ Chí Minh', 20, 35, 'full-time'),
-(3, 4, 'Mobile Developer iOS',      'Phát triển ứng dụng Tiki trên nền tảng iOS.',             '2+ năm Swift/SwiftUI, có app trên AppStore là lợi thế.',    'TP. Hồ Chí Minh', 18, 30, 'full-time'),
-(3, 4, 'Data Analyst Intern',       'Phân tích dữ liệu bán hàng, lập báo cáo tuần.',           'Sinh viên năm 3-4 CNTT/Kinh tế, biết SQL và Excel.',        'TP. Hồ Chí Minh', 4,  7,  'intern');
+-- is_hot=1: job được đánh dấu hot/urgent | expired_at: hạn nộp | views: seed = 0 (tự tăng khi xem)
+INSERT INTO jobs (company_id, employer_id, title, description, requirements, location, salary_min, salary_max, job_type, is_hot, views, expired_at) VALUES
+(1, 2, 'PHP Backend Developer',    'Phát triển backend cho các dự án thương mại điện tử.',    'Thành thạo PHP, MySQL, có kinh nghiệm Laravel là lợi thế.', 'Hà Nội',          15, 25, 'full-time', 1, 342, DATE_ADD(NOW(), INTERVAL 14 DAY)),
+(1, 2, 'Java Fresher',              'Tham gia phát triển dự án ngân hàng cho khách hàng Nhật.','Tốt nghiệp CNTT, biết Java cơ bản, tiếng Anh đọc hiểu.',    'Hà Nội',          8,  12, 'full-time', 0, 187, DATE_ADD(NOW(), INTERVAL 7 DAY)),
+(2, 3, 'Frontend ReactJS',          'Xây dựng giao diện sản phẩm Zalo Mini App.',              '2+ năm kinh nghiệm React, hiểu TypeScript.',                'TP. Hồ Chí Minh', 20, 35, 'full-time', 1, 521, DATE_ADD(NOW(), INTERVAL 21 DAY)),
+(3, 4, 'Mobile Developer iOS',      'Phát triển ứng dụng Tiki trên nền tảng iOS.',             '2+ năm Swift/SwiftUI, có app trên AppStore là lợi thế.',    'TP. Hồ Chí Minh', 18, 30, 'full-time', 0, 93,  DATE_ADD(NOW(), INTERVAL 3 DAY)),
+(3, 4, 'Data Analyst Intern',       'Phân tích dữ liệu bán hàng, lập báo cáo tuần.',           'Sinh viên năm 3-4 CNTT/Kinh tế, biết SQL và Excel.',        'TP. Hồ Chí Minh', 4,  7,  'intern',    0, 256, NULL);
 
 -- ---------------------------------------------------------
 -- Bảng applications: đơn ứng tuyển của user vào job

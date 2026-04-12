@@ -195,6 +195,35 @@ $currentPage = $_GET['page'] ?? 'home';
             border-color: #fca5a5;
             background: #fff1f2;
         }
+        /* ===== Font weight utilities ===== */
+        .fw-500 { font-weight: 500 !important; }
+        .fw-600 { font-weight: 600 !important; }
+        .fw-700 { font-weight: 700 !important; }
+        /* ===== Badge HOT ===== */
+        .badge-hot {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2em 0.55em;
+            border-radius: 5px;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+        /* ===== Badge hạn nộp hồ sơ ===== */
+        .badge-deadline {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.76rem;
+            font-weight: 600;
+            padding: 0.28em 0.65em;
+            border-radius: 6px;
+        }
+        .badge-deadline.expired { background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; }
+        .badge-deadline.urgent  { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
+        .badge-deadline.warning { background: #fef9c3; color: #b45309; border: 1px solid #fde68a; }
+        .badge-deadline.normal  { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
     </style>
 </head>
 <body>

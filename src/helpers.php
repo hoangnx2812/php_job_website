@@ -111,3 +111,35 @@ function render_pagination(int $total, int $perPage, int $currentPage, string $b
     $html .= '</ul></nav>';
     return $html;
 }
+
+// Chuyển datetime sang dạng "X ngày trước" / "X giờ trước" / "vừa xong"
+function time_ago(string $datetime): string
+{
+    $diff = time() - strtotime($datetime);
+    if ($diff < 60)        return 'vừa xong';
+    if ($diff < 3600)      return (int)($diff / 60) . ' phút trước';
+    if ($diff < 86400)     return (int)($diff / 3600) . ' giờ trước';
+    if ($diff < 2592000)   return (int)($diff / 86400) . ' ngày trước';
+    if ($diff < 31104000)  return (int)($diff / 2592000) . ' tháng trước';
+    return date('d/m/Y', strtotime($datetime));
+}
+
+// Render badge hạn nộp hồ sơ
+// Trả về HTML badge: "Còn X ngày" (xanh/cam/đỏ) hoặc "Hết hạn" (xám) hoặc "" nếu không có deadline
+function deadline_badge(?string $expiredAt): string
+{
+    if (!$expiredAt) return '';
+    $diff = (int)ceil((strtotime($expiredAt) - time()) / 86400);
+    if ($diff < 0)  return '<span class="badge-deadline expired"><i class="bi bi-clock me-1"></i>Hết hạn</span>';
+    if ($diff === 0) return '<span class="badge-deadline urgent"><i class="bi bi-clock me-1"></i>Hết hạn hôm nay</span>';
+    if ($diff <= 3) return '<span class="badge-deadline urgent"><i class="bi bi-clock me-1"></i>Còn ' . $diff . ' ngày</span>';
+    if ($diff <= 7) return '<span class="badge-deadline warning"><i class="bi bi-clock me-1"></i>Còn ' . $diff . ' ngày</span>';
+    return '<span class="badge-deadline normal"><i class="bi bi-clock me-1"></i>Còn ' . $diff . ' ngày</span>';
+}
+
+// Format số lượt xem: 1234 → "1.2k", 500 → "500"
+function format_views(int $views): string
+{
+    if ($views >= 1000) return round($views / 1000, 1) . 'k';
+    return (string)$views;
+}

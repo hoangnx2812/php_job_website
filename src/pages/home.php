@@ -62,23 +62,23 @@ require __DIR__ . '/../layout/header.php';
             </div>
         </form>
 
-        <!-- Stats counter -->
+        <!-- Stats counter với animation đếm từ 0 -->
         <div class="row justify-content-center mt-4 g-3">
             <div class="col-auto">
                 <div class="px-3 py-2 rounded-3" style="background:rgba(255,255,255,0.12)">
-                    <span class="fw-700 fs-5"><?= $statsJobs ?>+</span>
+                    <span class="fw-700 fs-5 counter" data-target="<?= $statsJobs ?>">0</span><span class="fw-700 fs-5">+</span>
                     <span class="ms-1 opacity-85 small">Việc làm</span>
                 </div>
             </div>
             <div class="col-auto">
                 <div class="px-3 py-2 rounded-3" style="background:rgba(255,255,255,0.12)">
-                    <span class="fw-700 fs-5"><?= $statsCompanies ?>+</span>
+                    <span class="fw-700 fs-5 counter" data-target="<?= $statsCompanies ?>">0</span><span class="fw-700 fs-5">+</span>
                     <span class="ms-1 opacity-85 small">Công ty</span>
                 </div>
             </div>
             <div class="col-auto">
                 <div class="px-3 py-2 rounded-3" style="background:rgba(255,255,255,0.12)">
-                    <span class="fw-700 fs-5"><?= $statsUsers ?>+</span>
+                    <span class="fw-700 fs-5 counter" data-target="<?= $statsUsers ?>">0</span><span class="fw-700 fs-5">+</span>
                     <span class="ms-1 opacity-85 small">Ứng viên</span>
                 </div>
             </div>
@@ -125,11 +125,19 @@ require __DIR__ . '/../layout/header.php';
                        class="text-decoration-none text-dark stretched-link">
                         <?= e($j['title']) ?>
                     </a>
+                    <?php if ($j['is_hot']): ?>
+                        <span class="badge-hot ms-1">HOT</span>
+                    <?php endif; ?>
                 </h6>
                 <!-- Badges -->
-                <div class="d-flex flex-wrap gap-1 mt-auto">
+                <div class="d-flex flex-wrap gap-1 align-items-center">
                     <span class="badge-salary"><?= e(format_salary($j['salary_min'], $j['salary_max'])) ?></span>
                     <span class="badge-type"><?= e($j['job_type']) ?></span>
+                    <?= deadline_badge($j['expired_at'] ?? null) ?>
+                </div>
+                <div class="text-muted mt-2" style="font-size:0.74rem">
+                    <i class="bi bi-clock me-1"></i><?= time_ago($j['created_at']) ?>
+                    <span class="ms-2"><i class="bi bi-eye me-1"></i><?= format_views($j['views']) ?></span>
                 </div>
             </div>
         </div>
@@ -191,5 +199,26 @@ require __DIR__ . '/../layout/header.php';
     </div>
 </div>
 <?php endif; ?>
+
+<script>
+// Animated counter: đếm từ 0 đến target khi trang load
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.counter').forEach(function (el) {
+        var target = parseInt(el.dataset.target, 10);
+        if (!target) return;
+        var duration = 1200; // ms
+        var step = Math.ceil(target / (duration / 30));
+        var current = 0;
+        var timer = setInterval(function () {
+            current += step;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            el.textContent = current;
+        }, 30);
+    });
+});
+</script>
 
 <?php require __DIR__ . '/../layout/footer.php';
