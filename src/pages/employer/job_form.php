@@ -17,6 +17,8 @@ $job = [
     'salary_max'   => '',
     'job_type'     => 'full-time',
     'company_id'   => $company ? $company['id'] : 0,
+    'expired_at'   => '',
+    'is_hot'       => 0,
 ];
 
 if ($id) {
@@ -41,18 +43,20 @@ if (is_post()) {
             'salary_max'   => $_POST['salary_max'] !== '' ? (int)$_POST['salary_max'] : null,
             'job_type'     => $_POST['job_type'] ?? 'full-time',
             'company_id'   => $company['id'],
+            'is_hot'       => isset($_POST['is_hot']) ? 1 : 0,
+            'expired_at'   => trim($_POST['expired_at'] ?? '') ?: null,
         ];
 
         if (!$data['title'] || !$data['description']) {
             $error = 'Vui lòng điền đủ tiêu đề và mô tả.';
         } else {
             if ($id) {
-                $stmt = db()->prepare("UPDATE jobs SET title=?, description=?, requirements=?, location=?, salary_min=?, salary_max=?, job_type=?, company_id=? WHERE id=? AND employer_id=?");
-                $stmt->execute([$data['title'], $data['description'], $data['requirements'], $data['location'], $data['salary_min'], $data['salary_max'], $data['job_type'], $data['company_id'], $id, $u['id']]);
+                $stmt = db()->prepare("UPDATE jobs SET title=?, description=?, requirements=?, location=?, salary_min=?, salary_max=?, job_type=?, company_id=?, is_hot=?, expired_at=? WHERE id=? AND employer_id=?");
+                $stmt->execute([$data['title'], $data['description'], $data['requirements'], $data['location'], $data['salary_min'], $data['salary_max'], $data['job_type'], $data['company_id'], $data['is_hot'], $data['expired_at'], $id, $u['id']]);
                 flash_set('success', 'Đã cập nhật bài đăng.');
             } else {
-                $stmt = db()->prepare("INSERT INTO jobs (company_id, employer_id, title, description, requirements, location, salary_min, salary_max, job_type) VALUES (?,?,?,?,?,?,?,?,?)");
-                $stmt->execute([$data['company_id'], $u['id'], $data['title'], $data['description'], $data['requirements'], $data['location'], $data['salary_min'], $data['salary_max'], $data['job_type']]);
+                $stmt = db()->prepare("INSERT INTO jobs (company_id, employer_id, title, description, requirements, location, salary_min, salary_max, job_type, is_hot, expired_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+                $stmt->execute([$data['company_id'], $u['id'], $data['title'], $data['description'], $data['requirements'], $data['location'], $data['salary_min'], $data['salary_max'], $data['job_type'], $data['is_hot'], $data['expired_at']]);
                 flash_set('success', 'Đã tạo bài đăng mới.');
             }
             redirect('employer/jobs');
@@ -111,7 +115,7 @@ require __DIR__ . '/../../layout/header.php';
                               placeholder="Kỹ năng, kinh nghiệm yêu cầu..."><?= e($job['requirements']) ?></textarea>
                 </div>
                 <div class="row g-3 mb-3">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label fw-500">Địa điểm</label>
                         <input name="location" value="<?= e($job['location']) ?>" class="form-control"
                                placeholder="Hà Nội, TP.HCM...">
@@ -126,7 +130,7 @@ require __DIR__ . '/../../layout/header.php';
                         <input type="number" name="salary_max" value="<?= e($job['salary_max']) ?>"
                                class="form-control" placeholder="25" min="0">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label fw-500">Loại hình</label>
                         <select name="job_type" class="form-select">
                             <?php foreach (['full-time','part-time','intern','contract'] as $t): ?>
@@ -135,6 +139,21 @@ require __DIR__ . '/../../layout/header.php';
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-500">Hạn nộp hồ sơ</label>
+                        <input type="date" name="expired_at"
+                               value="<?= e($job['expired_at'] ? date('Y-m-d', strtotime($job['expired_at'])) : '') ?>"
+                               class="form-control">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="is_hot" id="isHot"
+                               <?= $job['is_hot'] ? 'checked' : '' ?>>
+                        <label class="form-check-label fw-500" for="isHot">
+                            <span class="badge-hot ms-1">HOT</span> Đánh dấu là việc làm nổi bật
+                        </label>
                     </div>
                 </div>
                 <button class="btn btn-primary px-4">

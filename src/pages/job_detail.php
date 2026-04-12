@@ -42,6 +42,15 @@ if ($u && $u['role'] === 'user') {
     $hasApplied = (bool)$stmt->fetch();
 }
 
+// Lấy số lượng đơn ứng tuyển cho job này
+$appCountStmt = db()->prepare('SELECT COUNT(*) FROM applications WHERE job_id = ?');
+$appCountStmt->execute([$id]);
+$appCount = (int)$appCountStmt->fetchColumn();
+
+// Tăng lượt xem mỗi lần vào trang chi tiết
+db()->prepare("UPDATE jobs SET views = views + 1 WHERE id = ?")->execute([$id]);
+$j['views'] = ($j['views'] ?? 0) + 1;
+
 $pageTitle = $j['title'];
 require __DIR__ . '/../layout/header.php';
 ?>
@@ -82,19 +91,66 @@ require __DIR__ . '/../layout/header.php';
                     </div>
                 </div>
 
-                <!-- Badges -->
-                <div class="d-flex flex-wrap gap-2 mb-4">
+                <!-- Badges + HOT -->
+                <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+                    <?php if ($j['is_hot']): ?>
+                        <span class="badge-hot">HOT</span>
+                    <?php endif; ?>
                     <span class="badge-salary fs-6 px-3 py-2">
                         <i class="bi bi-cash-stack me-1"></i>
                         <?= e(format_salary($j['salary_min'], $j['salary_max'])) ?>
                     </span>
                     <span class="badge-type px-3 py-2">
-                        <i class="bi bi-clock me-1"></i><?= e($j['job_type']) ?>
+                        <i class="bi bi-briefcase me-1"></i><?= e($j['job_type']) ?>
                     </span>
-                    <span class="badge bg-light text-dark border px-3 py-2" style="font-size:0.82rem;">
-                        <i class="bi bi-calendar3 me-1"></i>
-                        <?= date('d/m/Y', strtotime($j['created_at'])) ?>
-                    </span>
+                    <?= deadline_badge($j['expired_at'] ?? null) ?>
+                </div>
+
+                <!-- Info grid: thông tin nhanh -->
+                <div class="row g-2 mb-4">
+                    <div class="col-6 col-md-4">
+                        <div class="rounded-3 p-2 text-center" style="background:#f8fafc;border:1px solid #e2e8f0">
+                            <div class="text-muted small mb-1"><i class="bi bi-geo-alt me-1"></i>Địa điểm</div>
+                            <div class="fw-600 small"><?= e($j['location'] ?: 'Không rõ') ?></div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <div class="rounded-3 p-2 text-center" style="background:#f8fafc;border:1px solid #e2e8f0">
+                            <div class="text-muted small mb-1"><i class="bi bi-calendar3 me-1"></i>Đăng ngày</div>
+                            <div class="fw-600 small"><?= time_ago($j['created_at']) ?></div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <div class="rounded-3 p-2 text-center" style="background:#f8fafc;border:1px solid #e2e8f0">
+                            <div class="text-muted small mb-1"><i class="bi bi-people me-1"></i>Ứng tuyển</div>
+                            <div class="fw-600 small"><?= $appCount ?> người</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <div class="rounded-3 p-2 text-center" style="background:#f8fafc;border:1px solid #e2e8f0">
+                            <div class="text-muted small mb-1"><i class="bi bi-eye me-1"></i>Lượt xem</div>
+                            <div class="fw-600 small"><?= format_views($j['views']) ?></div>
+                        </div>
+                    </div>
+                    <?php if ($j['expired_at']): ?>
+                    <div class="col-6 col-md-4">
+                        <div class="rounded-3 p-2 text-center" style="background:#f8fafc;border:1px solid #e2e8f0">
+                            <div class="text-muted small mb-1"><i class="bi bi-hourglass-split me-1"></i>Hạn nộp</div>
+                            <div class="fw-600 small"><?= date('d/m/Y', strtotime($j['expired_at'])) ?></div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    <div class="col-6 col-md-4">
+                        <div class="rounded-3 p-2 text-center" style="background:#f8fafc;border:1px solid #e2e8f0">
+                            <div class="text-muted small mb-1"><i class="bi bi-building me-1"></i>Công ty</div>
+                            <div class="fw-600 small">
+                                <a href="<?= e(url('company_detail', ['id' => $j['company_id']])) ?>"
+                                   class="text-decoration-none text-primary">
+                                    <?= e(mb_strimwidth($j['company_name'], 0, 20, '...')) ?>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <h5 class="fw-600 mb-2">Mô tả công việc</h5>

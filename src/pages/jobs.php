@@ -5,6 +5,7 @@ $location = trim($_GET['location'] ?? '');
 $jobType  = $_GET['job_type'] ?? '';
 $salMin   = (int)($_GET['salary_min'] ?? 0);
 $salMax   = (int)($_GET['salary_max'] ?? 0);
+$sort     = $_GET['sort'] ?? 'newest';
 $page     = max(1, (int)($_GET['p'] ?? 1));
 $perPage  = 10;
 
@@ -23,7 +24,7 @@ if ($u && $u['role'] === 'user' && is_post() && isset($_POST['job_id'])) {
         db()->prepare('INSERT IGNORE INTO saved_jobs (user_id, job_id) VALUES (?,?)')->execute([$u['id'], $saveJobId]);
     }
     // Redirect lại trang hiện tại để tránh resubmit form
-    $params = array_filter(compact('q', 'location', 'jobType', 'salMin', 'salMax'));
+    $params = array_filter(compact('q', 'location', 'jobType', 'salMin', 'salMax', 'sort'));
     if ($page > 1) $params['p'] = $page;
     redirect('jobs', $params);
 }
@@ -62,8 +63,15 @@ $countStmt = db()->prepare($countSql);
 $countStmt->execute($params);
 $total = (int)$countStmt->fetchColumn();
 
+// Ánh xạ sort param sang ORDER BY
+$orderBy = match($sort) {
+    'salary_desc' => 'j.salary_max DESC, j.salary_min DESC',
+    'views_desc'  => 'j.views DESC',
+    default       => 'j.is_hot DESC, j.created_at DESC',  // newest: hot jobs nổi lên đầu
+};
+
 // Query lấy dữ liệu trang hiện tại
-$sql .= " ORDER BY j.created_at DESC LIMIT $perPage OFFSET " . (($page - 1) * $perPage);
+$sql .= " ORDER BY $orderBy LIMIT $perPage OFFSET " . (($page - 1) * $perPage);
 $stmt = db()->prepare($sql);
 $stmt->execute($params);
 $jobs = $stmt->fetchAll();
@@ -77,7 +85,7 @@ if ($u && $u['role'] === 'user') {
 }
 
 // Build base URL cho pagination (không có p=)
-$baseParams = array_filter(compact('q', 'location', 'jobType', 'salMin', 'salMax'), fn($v) => $v !== '' && $v !== 0);
+$baseParams = array_filter(compact('q', 'location', 'jobType', 'salMin', 'salMax', 'sort'), fn($v) => $v !== '' && $v !== 0 && $v !== 'newest');
 $baseUrl    = BASE_URL . '?' . http_build_query(array_merge(['page' => 'jobs'], $baseParams));
 
 $pageTitle = 'Việc làm';
@@ -125,8 +133,15 @@ require __DIR__ . '/../layout/header.php';
                                class="form-control" placeholder="tr/tháng" min="0">
                     </div>
                 </div>
-                <div class="col-md-1 d-flex gap-1">
-                    <button class="btn btn-primary flex-grow-1">
+                <div class="col-md-2">
+                    <select name="sort" class="form-select">
+                        <option value="newest" <?= $sort === 'newest' ? 'selected' : '' ?>>Mới nhất</option>
+                        <option value="salary_desc" <?= $sort === 'salary_desc' ? 'selected' : '' ?>>Lương cao nhất</option>
+                        <option value="views_desc" <?= $sort === 'views_desc' ? 'selected' : '' ?>>Nhiều lượt xem</option>
+                    </select>
+                </div>
+                <div class="col-auto d-flex gap-1">
+                    <button class="btn btn-primary">
                         <i class="bi bi-search"></i>
                     </button>
                     <?php if ($q || $location || $jobType || $salMin || $salMax): ?>
@@ -170,6 +185,9 @@ require __DIR__ . '/../layout/header.php';
                                    class="text-decoration-none text-dark stretched-link">
                                     <?= e($j['title']) ?>
                                 </a>
+                                <?php if ($j['is_hot']): ?>
+                                    <span class="badge-hot ms-1">HOT</span>
+                                <?php endif; ?>
                             </h6>
                             <!-- Nút tim (chỉ hiện khi đã login + role=user) -->
                             <?php if ($u && $u['role'] === 'user'): ?>
@@ -195,9 +213,14 @@ require __DIR__ . '/../layout/header.php';
                             <span class="mx-1">•</span>
                             <i class="bi bi-geo-alt me-1"></i><?= e($j['location']) ?>
                         </div>
-                        <div class="d-flex flex-wrap gap-1">
+                        <div class="d-flex flex-wrap gap-1 align-items-center">
                             <span class="badge-salary"><?= e(format_salary($j['salary_min'], $j['salary_max'])) ?></span>
                             <span class="badge-type"><?= e($j['job_type']) ?></span>
+                            <?= deadline_badge($j['expired_at'] ?? null) ?>
+                        </div>
+                        <div class="text-muted mt-2 d-flex gap-3" style="font-size:0.75rem">
+                            <span><i class="bi bi-clock me-1"></i><?= time_ago($j['created_at']) ?></span>
+                            <span><i class="bi bi-eye me-1"></i><?= format_views($j['views']) ?></span>
                         </div>
                     </div>
                 </div>
