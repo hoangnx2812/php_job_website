@@ -1,7 +1,7 @@
 <?php
-// Trang thông báo in-app của ứng viên
-// Hiển thị danh sách notifications, mark as read khi vào trang
-$u       = require_role('user');
+// Trang thông báo in-app — dùng chung cho user, employer và admin
+$u = current_user();
+if (!$u) { redirect('login'); exit; }
 $perPage = 15;
 $page    = max(1, (int)($_GET['p'] ?? 1));
 $offset  = ($page - 1) * $perPage;
