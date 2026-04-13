@@ -93,7 +93,7 @@ CREATE TABLE companies (
 INSERT INTO companies (owner_id, name, description, location, website, logo) VALUES
 -- Công ty gốc (3 công ty)
 (2, 'FPT Software',       'Công ty phần mềm hàng đầu Việt Nam, chuyên outsource cho thị trường Nhật và Mỹ.',    'Hà Nội',          'https://fptsoftware.com',  'logo_1_1700000000.png'),
-(3, 'VNG Corporation',    'Công ty công nghệ với các sản phẩm Zalo, ZaloPay, game online.',                     'TP. Hồ Chí Minh', 'https://vng.com.vn',       NULL),
+(3, 'VNG Corporation',    'Công ty công nghệ với các sản phẩm Zalo, ZaloPay, game online.',                     'TP. Hồ Chí Minh', 'https://vng.com.vn',       'logo_2_1700000000.png'),
 (4, 'Tiki',               'Sàn thương mại điện tử hàng đầu Việt Nam.',                                          'TP. Hồ Chí Minh', 'https://tiki.vn',          'logo_3_1700000000.png'),
 -- Công ty mới (6 công ty nổi tiếng VN)
 (5, 'Shopee Vietnam',     'Nền tảng thương mại điện tử hàng đầu Đông Nam Á, vận hành tại Việt Nam.',            'TP. Hồ Chí Minh', 'https://shopee.vn',        'logo_4_1700000000.png'),
@@ -101,7 +101,7 @@ INSERT INTO companies (owner_id, name, description, location, website, logo) VAL
 (7, 'MoMo',               'Ví điện tử MoMo - nền tảng thanh toán di động phổ biến nhất Việt Nam.',              'TP. Hồ Chí Minh', 'https://momo.vn',          'logo_6_1700000000.png'),
 (8, 'VNPT',               'Tập đoàn Bưu chính Viễn thông Việt Nam, cung cấp dịch vụ CNTT và viễn thông.',       'Hà Nội',          'https://vnpt.vn',          'logo_7_1700000000.png'),
 (9, 'Viettel',            'Tập đoàn Công nghiệp Viễn thông Quân đội, mạng di động lớn nhất Việt Nam.',          'Hà Nội',          'https://viettel.vn',       'logo_8_1700000000.png'),
-(10, 'Sacombank',         'Ngân hàng thương mại cổ phần Sài Gòn Thương Tín, TOP 5 ngân hàng tư nhân VN.',       'TP. Hồ Chí Minh', 'https://sacombank.com.vn', NULL);
+(10, 'Sacombank',         'Ngân hàng thương mại cổ phần Sài Gòn Thương Tín, TOP 5 ngân hàng tư nhân VN.',       'TP. Hồ Chí Minh', 'https://sacombank.com.vn', 'logo_9_1700000000.png');
 
 -- ---------------------------------------------------------
 -- Bảng jobs: bài đăng tuyển dụng
