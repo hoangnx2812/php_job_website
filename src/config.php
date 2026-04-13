@@ -3,18 +3,22 @@
 // Cấu hình chung của dự án
 // ======================================================
 
-// Kết nối MySQL (trùng thông tin trong docker-compose.yml)
-define('DB_HOST', 'mysql');      // tên service trong docker-compose
+// -------------------------------------------------------
+// Cấu hình kết nối MySQL
+// Docker  → DB_HOST = 'mysql', USER = 'app', PASS = 'app'
+// XAMPP   → DB_HOST = 'localhost', USER = 'root', PASS = ''
+// -------------------------------------------------------
+define('DB_HOST', 'localhost');   // XAMPP: localhost | Docker: mysql
 define('DB_PORT', 3306);
 define('DB_NAME', 'job_website');
-define('DB_USER', 'app');
-define('DB_PASS', 'app');
+define('DB_USER', 'root');        // XAMPP: root      | Docker: app
+define('DB_PASS', '');            // XAMPP: ''        | Docker: app
 
-// Thư mục lưu file CV (mount từ host qua docker-compose)
-define('UPLOAD_DIR', '/var/www/uploads/cv');
+// Thư mục lưu file CV — dùng __DIR__ để tự động khớp cả Docker lẫn XAMPP
+define('UPLOAD_DIR',      realpath(__DIR__ . '/../uploads/cv')      ?: __DIR__ . '/../uploads/cv');
 
 // Thư mục lưu logo công ty
-define('LOGO_UPLOAD_DIR', '/var/www/uploads/logos');
+define('LOGO_UPLOAD_DIR', realpath(__DIR__ . '/../uploads/logos')   ?: __DIR__ . '/../uploads/logos');
 
 // URL gốc của app (để build link)
 define('BASE_URL', '/index.php');
