@@ -110,7 +110,7 @@ require __DIR__ . '/../layout/header.php';
                         <?= e(format_salary($j['salary_min'], $j['salary_max'])) ?>
                     </span>
                     <span class="badge-type px-3 py-2">
-                        <i class="bi bi-briefcase me-1"></i><?= e($j['job_type']) ?>
+                        <i class="bi bi-briefcase me-1"></i><?= e(job_type_label($j['job_type'])) ?>
                     </span>
                     <?= deadline_badge($j['expired_at'] ?? null) ?>
                 </div>
@@ -360,7 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                         <div class="d-flex flex-wrap gap-1">
                             <span class="badge-salary"><?= e(format_salary($r['salary_min'], $r['salary_max'])) ?></span>
-                            <span class="badge-type"><?= e($r['job_type']) ?></span>
+                            <span class="badge-type"><?= e(job_type_label($r['job_type'])) ?></span>
                         </div>
                     </div>
                 </div>

@@ -67,7 +67,7 @@ require __DIR__ . '/../../layout/header.php';
                     <td>
                         <span class="badge-salary"><?= e(format_salary($j['salary_min'], $j['salary_max'])) ?></span>
                     </td>
-                    <td><span class="badge-type"><?= e($j['job_type']) ?></span></td>
+                    <td><span class="badge-type"><?= e(job_type_label($j['job_type'])) ?></span></td>
                     <td class="text-center">
                         <?php if ($j['is_active']): ?>
                             <span class="badge bg-success">Đang hiện</span>
