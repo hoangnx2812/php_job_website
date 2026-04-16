@@ -74,8 +74,8 @@ require __DIR__ . '/../../layout/header.php';
         <a href="<?= e(url('admin/employer_requests')) ?>" class="alert alert-warning d-flex align-items-center mb-0 text-decoration-none">
             <i class="bi bi-person-exclamation fs-4 me-3"></i>
             <div>
-                Co <strong><?= $stats['pending_employers'] ?> yeu cau</strong> tro thanh nha tuyen dung dang cho ban duyet.
-                <span class="text-decoration-underline ms-1">Xem ngay -></span>
+                Có <strong><?= $stats['pending_employers'] ?> yêu cầu</strong> trở thành nhà tuyển dụng đang chờ bạn duyệt.
+                <span class="text-decoration-underline ms-1">Xem ngay →</span>
             </div>
         </a>
     </div>
@@ -84,28 +84,28 @@ require __DIR__ . '/../../layout/header.php';
         <div class="stat-card" style="--card-from:#0891b2;--card-to:#164e63">
             <div class="stat-card-icon"><i class="bi bi-people-fill"></i></div>
             <div class="stat-card-value"><?= $stats['users'] ?></div>
-            <div class="stat-card-label">Tong nguoi dung</div>
+            <div class="stat-card-label">Tổng người dùng</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-card" style="--card-from:#1a56db;--card-to:#0d3b8e">
             <div class="stat-card-icon"><i class="bi bi-briefcase-fill"></i></div>
             <div class="stat-card-value"><?= $stats['jobs'] ?></div>
-            <div class="stat-card-label">Viec lam dang mo</div>
+            <div class="stat-card-label">Việc làm đang mở</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-card" style="--card-from:#be185d;--card-to:#831843">
             <div class="stat-card-icon"><i class="bi bi-building-fill"></i></div>
             <div class="stat-card-value"><?= $stats['companies'] ?></div>
-            <div class="stat-card-label">Cong ty</div>
+            <div class="stat-card-label">Công ty</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-card" style="--card-from:#059669;--card-to:#065f46">
             <div class="stat-card-icon"><i class="bi bi-file-earmark-text-fill"></i></div>
             <div class="stat-card-value"><?= $stats['applications'] ?></div>
-            <div class="stat-card-label">Don ung tuyen</div>
+            <div class="stat-card-label">Đơn ứng tuyển</div>
         </div>
     </div>
 </div>

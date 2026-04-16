@@ -60,18 +60,18 @@ require __DIR__ . '/../layout/header.php';
             <span style="background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.9);
                          border:1px solid rgba(255,255,255,0.2);border-radius:999px;
                          font-size:0.82rem;font-weight:600;padding:0.35em 1em;letter-spacing:0.03em">
-                Nen tang tuyen dung #1 Viet Nam
+                Nền tảng tuyển dụng #1 Việt Nam
             </span>
         </div>
 
         <!-- Heading -->
         <h1 class="text-white text-center fw-700 mb-2" style="font-size:clamp(1.8rem,4vw,3rem);line-height:1.2">
-            Tim Viec Lam <span style="background:linear-gradient(90deg,#60a5fa,#a78bfa);
+            Tìm Việc Làm <span style="background:linear-gradient(90deg,#60a5fa,#a78bfa);
             -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
-            Mo Uoc</span> Cua Ban
+            Mơ Ước</span> Của Bạn
         </h1>
         <p class="text-center mb-4" style="color:rgba(255,255,255,0.75);font-size:1.1rem;max-width:520px;margin:0 auto 1.75rem">
-            Ket noi voi hang nghin co hoi viec lam tu cac cong ty hang dau
+            Kết nối với hàng nghìn cơ hội việc làm từ các công ty hàng đầu
         </p>
 
         <!-- Search bar nổi bật -->
@@ -85,10 +85,10 @@ require __DIR__ . '/../layout/header.php';
                                                         color:#94a3b8;font-size:1rem"></i>
                         <input name="q" class="form-control border-0 shadow-none"
                                style="padding-left:2.5rem;border-radius:12px;font-size:0.95rem;background:transparent"
-                               placeholder="Vi tri, ky nang, cong ty...">
+                               placeholder="Vị trí, kỹ năng, công ty...">
                     </div>
                     <button class="btn btn-primary px-4 fw-600" style="border-radius:12px;white-space:nowrap">
-                        <i class="bi bi-search me-1"></i>Tim kiem
+                        <i class="bi bi-search me-1"></i>Tìm kiếm
                     </button>
                 </div>
                 <!-- Quick tags gợi ý tìm kiếm -->
@@ -111,9 +111,9 @@ require __DIR__ . '/../layout/header.php';
         <!-- Stats counters dạng card đẹp hơn -->
         <div class="row justify-content-center mt-4 g-3">
             <?php foreach([
-                ['icon'=>'bi-briefcase-fill','value'=>$statsJobs,'label'=>'Viec lam'],
-                ['icon'=>'bi-building-fill','value'=>$statsCompanies,'label'=>'Cong ty'],
-                ['icon'=>'bi-people-fill','value'=>$statsUsers,'label'=>'Ung vien'],
+                ['icon'=>'bi-briefcase-fill','value'=>$statsJobs,'label'=>'Việc làm'],
+                ['icon'=>'bi-building-fill','value'=>$statsCompanies,'label'=>'Công ty'],
+                ['icon'=>'bi-people-fill','value'=>$statsUsers,'label'=>'Ứng viên'],
             ] as $s): ?>
             <div class="col-auto">
                 <div style="background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);
@@ -134,7 +134,7 @@ require __DIR__ . '/../layout/header.php';
 <!-- Section: Khám phá theo lĩnh vực -->
 <div class="mb-5">
     <h2 class="section-title">
-        <i class="bi bi-grid-3x3-gap-fill text-primary me-1"></i> Kham pha theo linh vuc
+        <i class="bi bi-grid-3x3-gap-fill text-primary me-1"></i> Khám phá theo lĩnh vực
     </h2>
     <div class="row g-3">
         <?php foreach ($categoryConfig as $catName => $cfg): ?>
@@ -157,10 +157,10 @@ require __DIR__ . '/../layout/header.php';
 <!-- Job mới nhất -->
 <div class="d-flex justify-content-between align-items-start mb-3">
     <h2 class="section-title">
-        <i class="bi bi-lightning-fill text-warning me-1"></i> Viec lam moi nhat
+        <i class="bi bi-lightning-fill text-warning me-1"></i> Việc làm mới nhất
     </h2>
     <a href="<?= e(url('jobs')) ?>" class="btn btn-outline-primary btn-sm mt-1">
-        Xem tat ca <i class="bi bi-arrow-right"></i>
+        Xem tất cả <i class="bi bi-arrow-right"></i>
     </a>
 </div>
 
@@ -200,7 +200,7 @@ require __DIR__ . '/../layout/header.php';
                 <!-- Badges -->
                 <div class="d-flex flex-wrap gap-1 align-items-center">
                     <span class="badge-salary"><?= e(format_salary($j['salary_min'], $j['salary_max'])) ?></span>
-                    <span class="badge-type"><?= e($j['job_type']) ?></span>
+                    <span class="badge-type"><?= e(job_type_label($j['job_type'])) ?></span>
                     <?php if (!empty($j['category'])): ?>
                         <span class="badge-category"><?= e($j['category']) ?></span>
                     <?php endif; ?>

@@ -135,9 +135,14 @@ require __DIR__ . '/../../layout/header.php';
                     <div class="col-md-3">
                         <label class="form-label fw-500">Loại hình</label>
                         <select name="job_type" class="form-select">
-                            <?php foreach (['full-time','part-time','intern','contract'] as $t): ?>
-                                <option value="<?= $t ?>" <?= $t == $job['job_type'] ? 'selected' : '' ?>>
-                                    <?= $t ?>
+                            <?php foreach ([
+                                'full-time' => 'Toàn thời gian',
+                                'part-time' => 'Bán thời gian',
+                                'intern'    => 'Thực tập',
+                                'contract'  => 'Hợp đồng',
+                            ] as $val => $label): ?>
+                                <option value="<?= $val ?>" <?= $val == $job['job_type'] ? 'selected' : '' ?>>
+                                    <?= $label ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>

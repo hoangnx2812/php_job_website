@@ -105,15 +105,15 @@ require __DIR__ . '/../layout/header.php';
 ?>
 
 <div class="page-header d-flex justify-content-between align-items-center">
-    <h4 class="fw-700 mb-0"><i class="bi bi-search me-2 text-primary"></i>Danh sach viec lam</h4>
+    <h4 class="fw-700 mb-0"><i class="bi bi-search me-2 text-primary"></i>Danh sách việc làm</h4>
     <!-- Dòng kết quả + nút toggle grid/list view -->
     <div class="d-flex align-items-center gap-2">
-        <span class="text-muted small"><?= $total ?> ket qua</span>
+        <span class="text-muted small"><?= $total ?> kết quả</span>
         <div class="btn-group btn-group-sm ms-2" role="group">
-            <button type="button" class="btn btn-outline-secondary" id="btn-grid" title="Dang luoi" onclick="setView('grid')">
+            <button type="button" class="btn btn-outline-secondary" id="btn-grid" title="Dạng lưới" onclick="setView('grid')">
                 <i class="bi bi-grid"></i>
             </button>
-            <button type="button" class="btn btn-outline-secondary" id="btn-list" title="Dang danh sach" onclick="setView('list')">
+            <button type="button" class="btn btn-outline-secondary" id="btn-list" title="Dạng danh sách" onclick="setView('list')">
                 <i class="bi bi-list-ul"></i>
             </button>
         </div>
@@ -145,10 +145,15 @@ require __DIR__ . '/../layout/header.php';
                 </div>
                 <div class="col-md-2">
                     <select name="job_type" class="form-select">
-                        <option value="">-- Loại --</option>
-                        <?php foreach (['full-time','part-time','intern','contract'] as $t): ?>
-                            <option value="<?= $t ?>" <?= $jobType === $t ? 'selected' : '' ?>>
-                                <?= $t ?>
+                        <option value="">-- Loại hình --</option>
+                        <?php foreach ([
+                            'full-time' => 'Toàn thời gian',
+                            'part-time' => 'Bán thời gian',
+                            'intern'    => 'Thực tập',
+                            'contract'  => 'Hợp đồng',
+                        ] as $val => $label): ?>
+                            <option value="<?= $val ?>" <?= $jobType === $val ? 'selected' : '' ?>>
+                                <?= $label ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -262,7 +267,7 @@ require __DIR__ . '/../layout/header.php';
                         </div>
                         <div class="d-flex flex-wrap gap-1 align-items-center">
                             <span class="badge-salary"><?= e(format_salary($j['salary_min'], $j['salary_max'])) ?></span>
-                            <span class="badge-type"><?= e($j['job_type']) ?></span>
+                            <span class="badge-type"><?= e(job_type_label($j['job_type'])) ?></span>
                             <?php if (!empty($j['category'])): ?>
                                 <span class="badge-category"><?= e($j['category']) ?></span>
                             <?php endif; ?>
