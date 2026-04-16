@@ -126,7 +126,7 @@ require __DIR__ . '/../layout/header.php';
         <form method="get">
             <input type="hidden" name="page" value="jobs">
             <div class="row g-2">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <input name="q" value="<?= e($q) ?>" class="form-control" placeholder="Từ khoá...">
                 </div>
                 <div class="col-md-2">
@@ -166,7 +166,7 @@ require __DIR__ . '/../layout/header.php';
                     <input type="number" name="salary_max" value="<?= $salMax ?: '' ?>"
                            class="form-control" placeholder="Lmax" min="0" title="Lương tối đa (tr/tháng)">
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <select name="sort" class="form-select">
                         <option value="newest" <?= $sort === 'newest' ? 'selected' : '' ?>>Mới nhất</option>
                         <option value="salary_desc" <?= $sort === 'salary_desc' ? 'selected' : '' ?>>Lương cao</option>

@@ -394,65 +394,65 @@ CREATE TABLE applications (
 -- Applications: 40+ đơn đa dạng
 INSERT INTO applications (job_id, user_id, cv_file, cover_letter, status) VALUES
 -- Đơn vào FPT (jobs 1,2,19,20,21,22)
-(1,  11, 'cv_levan.pdf',    'Em rất quan tâm vị trí PHP Backend tại FPT, có 2 năm kinh nghiệm Laravel.',       'pending'),
-(1,  13, 'cv_khoa.pdf',     'Tôi đã làm PHP được 3 năm, muốn thử sức tại FPT Software.',                       'rejected'),
-(2,  11, 'cv_levan_2.pdf',  'Em là sinh viên mới ra trường, mong được học hỏi môi trường FPT.',                 'accepted'),
-(2,  15, 'cv_thanh.pdf',    'Tôi biết Java cơ bản và muốn phát triển sự nghiệp tại đây.',                       'pending'),
-(19, 17, 'cv_bao.pdf',      'Tôi có chứng chỉ CSM và 4 năm làm Scrum Master trong môi trường outsource.',      'accepted'),
-(20, 14, 'cv_lan.pdf',      'Tôi muốn viết content cho FPT, có kinh nghiệm 2 năm viết blog công nghệ.',         'pending'),
+(1,  11, 'cv-test.webp',    'Em rất quan tâm vị trí PHP Backend tại FPT, có 2 năm kinh nghiệm Laravel.',       'pending'),
+(1,  13, 'cv-test.webp',     'Tôi đã làm PHP được 3 năm, muốn thử sức tại FPT Software.',                       'rejected'),
+(2,  11, 'cv-test.webp',  'Em là sinh viên mới ra trường, mong được học hỏi môi trường FPT.',                 'accepted'),
+(2,  15, 'cv-test.webp',    'Tôi biết Java cơ bản và muốn phát triển sự nghiệp tại đây.',                       'pending'),
+(19, 17, 'cv-test.webp',      'Tôi có chứng chỉ CSM và 4 năm làm Scrum Master trong môi trường outsource.',      'accepted'),
+(20, 14, 'cv-test.webp',      'Tôi muốn viết content cho FPT, có kinh nghiệm 2 năm viết blog công nghệ.',         'pending'),
 
 -- Đơn vào VNG (jobs 3,20,23,24,25)
-(3,  12, 'cv_phamb.pdf',    'Tôi có 3 năm kinh nghiệm React và muốn thử sức tại VNG.',                          'pending'),
-(3,  16, 'cv_huong.pdf',    'Tôi thành thạo React TypeScript, đã làm dự án Zalo API cá nhân.',                  'accepted'),
-(23, 13, 'cv_khoa_2.pdf',   'Với 5 năm Go, tôi tự tin đáp ứng yêu cầu của vị trí Senior Go Developer.',        'accepted'),
-(24, 18, 'cv_tuyet.pdf',    'Tôi có 4 năm PM fintech, rất quan tâm cơ hội tại ZaloPay.',                        'pending'),
-(25, 20, 'cv_thu.pdf',      'Tôi đam mê cộng đồng game và muốn phát triển kênh social cho VNG.',                'pending'),
+(3,  12, 'cv-test.webp',    'Tôi có 3 năm kinh nghiệm React và muốn thử sức tại VNG.',                          'pending'),
+(3,  16, 'cv-test.webp',    'Tôi thành thạo React TypeScript, đã làm dự án Zalo API cá nhân.',                  'accepted'),
+(23, 13, 'cv-test.webp',   'Với 5 năm Go, tôi tự tin đáp ứng yêu cầu của vị trí Senior Go Developer.',        'accepted'),
+(24, 18, 'cv-test.webp',    'Tôi có 4 năm PM fintech, rất quan tâm cơ hội tại ZaloPay.',                        'pending'),
+(25, 20, 'cv-test.webp',      'Tôi đam mê cộng đồng game và muốn phát triển kênh social cho VNG.',                'pending'),
 
 -- Đơn vào Tiki (jobs 4,5,27,28,29)
-(4,  11, 'cv_levan.pdf',    'Tôi muốn ứng tuyển vị trí iOS Developer tại Tiki, có 2 năm Swift.',                'rejected'),
-(5,  19, 'cv_dung.pdf',     'Tôi là sinh viên năm 4 muốn thực tập phân tích dữ liệu tại Tiki.',                 'rejected'),
-(27, 14, 'cv_lan_2.pdf',    'Tôi có kinh nghiệm 4 năm Data Science, đã xây dựng recommendation system.',        'accepted'),
-(28, 17, 'cv_bao_2.pdf',    'Tôi có 3 năm supply chain, muốn ứng tuyển vị trí analyst tại Tiki.',               'pending'),
-(29, 16, 'cv_huong_2.pdf',  'Tôi có kỹ năng bán hàng và mong muốn phát triển mảng seller management tại Tiki.','pending'),
+(4,  11, 'cv-test.webp',    'Tôi muốn ứng tuyển vị trí iOS Developer tại Tiki, có 2 năm Swift.',                'rejected'),
+(5,  19, 'cv-test.webp',     'Tôi là sinh viên năm 4 muốn thực tập phân tích dữ liệu tại Tiki.',                 'rejected'),
+(27, 14, 'cv-test.webp',    'Tôi có kinh nghiệm 4 năm Data Science, đã xây dựng recommendation system.',        'accepted'),
+(28, 17, 'cv-test.webp',    'Tôi có 3 năm supply chain, muốn ứng tuyển vị trí analyst tại Tiki.',               'pending'),
+(29, 16, 'cv-test.webp',  'Tôi có kỹ năng bán hàng và mong muốn phát triển mảng seller management tại Tiki.','pending'),
 
 -- Đơn vào Shopee (jobs 6,7,30,31,32)
-(6,  13, 'cv_khoa.pdf',     'Tôi có 5 năm Java Spring Boot, từng xây dựng hệ thống cho 1 triệu user.',          'accepted'),
-(7,  14, 'cv_lan.pdf',      'Tôi rất đam mê digital marketing, đã chạy Facebook Ads hiệu quả 2 năm.',           'pending'),
-(30, 15, 'cv_thanh_2.pdf',  'Tôi có nền tảng ML mạnh, thành thạo PyTorch và đã deploy model production.',       'accepted'),
-(31, 20, 'cv_thu_2.pdf',    'Tôi có 3 năm CSKH và 1 năm team lead, muốn thử thách tại Shopee.',                 'pending'),
-(32, 18, 'cv_tuyet_2.pdf',  'Tôi có kinh nghiệm brand marketing 5 năm trong ngành FMCG.',                       'rejected'),
+(6,  13, 'cv-test.webp',     'Tôi có 5 năm Java Spring Boot, từng xây dựng hệ thống cho 1 triệu user.',          'accepted'),
+(7,  14, 'cv-test.webp',      'Tôi rất đam mê digital marketing, đã chạy Facebook Ads hiệu quả 2 năm.',           'pending'),
+(30, 15, 'cv-test.webp',  'Tôi có nền tảng ML mạnh, thành thạo PyTorch và đã deploy model production.',       'accepted'),
+(31, 20, 'cv-test.webp',    'Tôi có 3 năm CSKH và 1 năm team lead, muốn thử thách tại Shopee.',                 'pending'),
+(32, 18, 'cv-test.webp',  'Tôi có kinh nghiệm brand marketing 5 năm trong ngành FMCG.',                       'rejected'),
 
 -- Đơn vào Grab (jobs 8,9,33,34,35)
-(8,  15, 'cv_thanh.pdf',    'Với 3 năm Android Kotlin, tôi tự tin có thể đóng góp cho Grab.',                   'accepted'),
-(9,  19, 'cv_dung_2.pdf',   'Tôi quan tâm vị trí vận hành đối tác tài xế, có kinh nghiệm operations.',         'pending'),
-(33, 21, 'cv_truong.pdf',   'Tôi có 3 năm data science và kinh nghiệm xây dựng pricing model.',                 'accepted'),
-(34, 22, 'cv_phuong.pdf',   'Tôi muốn ứng tuyển growth marketing, đã tăng 200% user cho một app bằng referral.','pending'),
-(35, 13, 'cv_khoa_3.pdf',   'Tôi có 2 năm Flutter, đã publish 3 app trên Store.',                               'pending'),
+(8,  15, 'cv-test.webp',    'Với 3 năm Android Kotlin, tôi tự tin có thể đóng góp cho Grab.',                   'accepted'),
+(9,  19, 'cv-test.webp',   'Tôi quan tâm vị trí vận hành đối tác tài xế, có kinh nghiệm operations.',         'pending'),
+(33, 21, 'cv-test.webp',   'Tôi có 3 năm data science và kinh nghiệm xây dựng pricing model.',                 'accepted'),
+(34, 22, 'cv-test.webp',   'Tôi muốn ứng tuyển growth marketing, đã tăng 200% user cho một app bằng referral.','pending'),
+(35, 13, 'cv-test.webp',   'Tôi có 2 năm Flutter, đã publish 3 app trên Store.',                               'pending'),
 
 -- Đơn vào MoMo (jobs 10,11,36,37)
-(10, 16, 'cv_huong.pdf',    'Tôi muốn đóng góp kỹ năng UI/UX cho sản phẩm MoMo.',                              'pending'),
-(11, 17, 'cv_bao.pdf',      'Tôi có kinh nghiệm BA fintech 4 năm, thành thạo viết BRS/SRS.',                    'rejected'),
-(36, 23, 'cv_dung2.pdf',    'Tôi có 3 năm Kotlin Spring, muốn phát triển hệ thống payment tại MoMo.',           'accepted'),
-(37, 24, 'cv_ngoc.pdf',     'Tôi có 2 năm content marketing, muốn xây dựng brand voice cho MoMo.',              'pending'),
+(10, 16, 'cv-test.webp',    'Tôi muốn đóng góp kỹ năng UI/UX cho sản phẩm MoMo.',                              'pending'),
+(11, 17, 'cv-test.webp',      'Tôi có kinh nghiệm BA fintech 4 năm, thành thạo viết BRS/SRS.',                    'rejected'),
+(36, 23, 'cv-test.webp',    'Tôi có 3 năm Kotlin Spring, muốn phát triển hệ thống payment tại MoMo.',           'accepted'),
+(37, 24, 'cv-test.webp',     'Tôi có 2 năm content marketing, muốn xây dựng brand voice cho MoMo.',              'pending'),
 
 -- Đơn vào VNPT (jobs 12,13,38,39)
-(12, 18, 'cv_tuyet.pdf',    'Tôi quan tâm vị trí DevOps VNPT, có kinh nghiệm AWS và Kubernetes.',               'pending'),
-(13, 20, 'cv_thu.pdf',      'Tôi là HR chuyên IT recruiting, đã tuyển 50+ kỹ sư phần mềm.',                     'accepted'),
-(38, 25, 'cv_truong2.pdf',  'Tôi có CCNP và 5 năm network engineering cho hệ thống lớn.',                       'pending'),
-(39, 26, 'cv_ha.pdf',       'Tôi có 5 năm B2B sales telecom, muốn thách thức tại VNPT.',                        'pending'),
+(12, 18, 'cv-test.webp',    'Tôi quan tâm vị trí DevOps VNPT, có kinh nghiệm AWS và Kubernetes.',               'pending'),
+(13, 20, 'cv-test.webp',      'Tôi là HR chuyên IT recruiting, đã tuyển 50+ kỹ sư phần mềm.',                     'accepted'),
+(38, 25, 'cv-test.webp',  'Tôi có CCNP và 5 năm network engineering cho hệ thống lớn.',                       'pending'),
+(39, 26, 'cv-test.webp',       'Tôi có 5 năm B2B sales telecom, muốn thách thức tại VNPT.',                        'pending'),
 
 -- Đơn vào Viettel (jobs 14,15,40,41)
-(14, 13, 'cv_khoa_2.pdf',   'Với kinh nghiệm data pipeline, tôi muốn đóng góp tại Viettel.',                    'accepted'),
-(15, 19, 'cv_dung.pdf',     'Tôi muốn ứng tuyển kinh doanh B2B tại Viettel.',                                   'pending'),
-(40, 27, 'cv_long.pdf',     'Tôi có 3 năm cybersecurity, kinh nghiệm pentest và SOC operations.',               'accepted'),
-(41, 28, 'cv_yen.pdf',      'Tôi viết tài liệu kỹ thuật 2 năm, thành thạo Confluence và Markdown.',            'pending'),
+(14, 13, 'cv-test.webp',   'Với kinh nghiệm data pipeline, tôi muốn đóng góp tại Viettel.',                    'accepted'),
+(15, 19, 'cv-test.webp',     'Tôi muốn ứng tuyển kinh doanh B2B tại Viettel.',                                   'pending'),
+(40, 27, 'cv-test.webp',     'Tôi có 3 năm cybersecurity, kinh nghiệm pentest và SOC operations.',               'accepted'),
+(41, 28, 'cv-test.webp',      'Tôi viết tài liệu kỹ thuật 2 năm, thành thạo Confluence và Markdown.',            'pending'),
 
 -- Đơn vào Sacombank (jobs 16,17,18,42,43)
-(16, 21, 'cv_truong_3.pdf', 'Tôi có 3 năm tín dụng cá nhân tại một ngân hàng khác, muốn chuyển sang Sacombank.','accepted'),
-(17, 22, 'cv_phuong_2.pdf', 'Tôi có 2 năm thiết kế đồ họa, portfolio đính kèm CV.',                             'pending'),
-(18, 24, 'cv_ngoc_2.pdf',   'Tôi là sinh viên năm cuối Quản trị Nhân lực, muốn thực tập tại Sacombank.',        'accepted'),
-(42, 29, 'cv_tuan.pdf',     'Tôi có 3 năm risk management ngân hàng, thành thạo phân tích rủi ro tín dụng.',    'pending'),
-(43, 11, 'cv_levan_3.pdf',  'Tôi muốn ứng tuyển IT Support tại Sacombank, có 1 năm kinh nghiệm helpdesk.',      'rejected');
+(16, 21, 'cv-test.webp', 'Tôi có 3 năm tín dụng cá nhân tại một ngân hàng khác, muốn chuyển sang Sacombank.','accepted'),
+(17, 22, 'cv-test.webp', 'Tôi có 2 năm thiết kế đồ họa, portfolio đính kèm CV.',                             'pending'),
+(18, 24, 'cv-test.webp',   'Tôi là sinh viên năm cuối Quản trị Nhân lực, muốn thực tập tại Sacombank.',        'accepted'),
+(42, 29, 'cv-test.webp',     'Tôi có 3 năm risk management ngân hàng, thành thạo phân tích rủi ro tín dụng.',    'pending'),
+(43, 11, 'cv-test.webp',  'Tôi muốn ứng tuyển IT Support tại Sacombank, có 1 năm kinh nghiệm helpdesk.',      'rejected');
 
 -- ---------------------------------------------------------
 -- Bảng saved_jobs: lưu job yêu thích của user
