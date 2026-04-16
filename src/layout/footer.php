@@ -13,7 +13,7 @@
                     <span class="text-white fw-700 fs-5">JobVN</span>
                 </div>
                 <p class="small mb-3" style="line-height:1.7;color:rgba(255,255,255,0.6)">
-                    Nen tang tuyen dung ket noi ung vien tai nang voi cac nha tuyen dung hang dau Viet Nam.
+                    Nền tảng tuyển dụng kết nối ứng viên tài năng với các nhà tuyển dụng hàng đầu Việt Nam.
                 </p>
                 <div class="d-flex gap-2">
                     <a href="#" class="d-flex align-items-center justify-content-center rounded-2"
@@ -33,34 +33,39 @@
 
             <!-- Ứng viên -->
             <div class="col-md-2 col-6">
-                <p class="footer-title">Ung vien</p>
+                <p class="footer-title">Ứng viên</p>
                 <ul class="list-unstyled small" style="line-height:2">
-                    <li><a href="<?= e(url('jobs')) ?>">Tim viec lam</a></li>
-                    <li><a href="<?= e(url('companies')) ?>">Danh sach cong ty</a></li>
-                    <li><a href="<?= e(url('register')) ?>">Dang ky tai khoan</a></li>
-                    <li><a href="<?= e(url('user/saved_jobs')) ?>">Job da luu</a></li>
+                    <li><a href="<?= e(url('jobs')) ?>">Tìm việc làm</a></li>
+                    <li><a href="<?= e(url('companies')) ?>">Danh sách công ty</a></li>
+                    <li><a href="<?= e(url('register')) ?>">Đăng ký tài khoản</a></li>
+                    <li><a href="<?= e(url('user/saved_jobs')) ?>">Việc làm đã lưu</a></li>
                 </ul>
             </div>
 
             <!-- Nhà tuyển dụng -->
             <div class="col-md-2 col-6">
-                <p class="footer-title">Nha tuyen dung</p>
+                <p class="footer-title">Nhà tuyển dụng</p>
                 <ul class="list-unstyled small" style="line-height:2">
-                    <li><a href="<?= e(url('user/become_employer')) ?>">Dang ky tuyen dung</a></li>
-                    <li><a href="<?= e(url('employer/job_form')) ?>">Dang bai tuyen dung</a></li>
-                    <li><a href="<?= e(url('employer/applications')) ?>">Quan ly ung vien</a></li>
+                    <li><a href="<?= e(url('user/become_employer')) ?>">Đăng ký tuyển dụng</a></li>
+                    <li><a href="<?= e(url('employer/job_form')) ?>">Đăng bài tuyển dụng</a></li>
+                    <li><a href="<?= e(url('employer/applications')) ?>">Quản lý ứng viên</a></li>
                 </ul>
             </div>
 
             <!-- Tìm kiếm nhanh -->
             <div class="col-md-4">
-                <p class="footer-title">Tim kiem nhanh</p>
+                <p class="footer-title">Tìm kiếm nhanh</p>
                 <div class="d-flex flex-wrap gap-2 mb-3">
-                    <?php foreach (['full-time','part-time','intern','contract'] as $t): ?>
-                        <a href="<?= e(url('jobs', ['job_type' => $t])) ?>"
+                    <?php foreach ([
+                        'full-time' => 'Toàn thời gian',
+                        'part-time' => 'Bán thời gian',
+                        'intern'    => 'Thực tập',
+                        'contract'  => 'Hợp đồng',
+                    ] as $val => $label): ?>
+                        <a href="<?= e(url('jobs', ['job_type' => $val])) ?>"
                            class="badge text-decoration-none"
                            style="background:rgba(255,255,255,0.1);color:#cbd5e1;font-size:0.8rem;padding:0.4em 0.75em;border-radius:6px;border:1px solid rgba(255,255,255,0.12)">
-                            <?= $t ?>
+                            <?= $label ?>
                         </a>
                     <?php endforeach; ?>
                 </div>

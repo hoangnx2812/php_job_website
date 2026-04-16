@@ -76,7 +76,7 @@ require __DIR__ . '/../../layout/header.php';
                     <td class="small">
                         <span class="badge-salary"><?= e(format_salary($j['salary_min'], $j['salary_max'])) ?></span>
                     </td>
-                    <td><span class="badge-type"><?= e($j['job_type']) ?></span></td>
+                    <td><span class="badge-type"><?= e(job_type_label($j['job_type'])) ?></span></td>
                     <td class="text-center">
                         <span class="badge bg-primary bg-opacity-10 text-primary fw-600">
                             <?= (int)$j['app_count'] ?>

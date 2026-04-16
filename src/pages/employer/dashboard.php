@@ -94,28 +94,28 @@ require __DIR__ . '/../../layout/header.php';
         <div class="stat-card" style="--card-from:#1a56db;--card-to:#0d3b8e">
             <div class="stat-card-icon"><i class="bi bi-megaphone-fill"></i></div>
             <div class="stat-card-value"><?= $jobCount ?></div>
-            <div class="stat-card-label">Bai dang</div>
+            <div class="stat-card-label">Bài đăng</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-card" style="--card-from:#059669;--card-to:#065f46">
             <div class="stat-card-icon"><i class="bi bi-file-earmark-person-fill"></i></div>
             <div class="stat-card-value"><?= $appCount ?></div>
-            <div class="stat-card-label">Tong don ung tuyen</div>
+            <div class="stat-card-label">Tổng đơn ứng tuyển</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-card" style="--card-from:#d97706;--card-to:#92400e">
             <div class="stat-card-icon"><i class="bi bi-hourglass-split"></i></div>
             <div class="stat-card-value"><?= $pendingCount ?></div>
-            <div class="stat-card-label">Don cho duyet</div>
+            <div class="stat-card-label">Đơn chờ duyệt</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-card" style="--card-from:#7c3aed;--card-to:#4c1d95">
             <div class="stat-card-icon"><i class="bi bi-eye-fill"></i></div>
             <div class="stat-card-value"><?= number_format($totalViews) ?></div>
-            <div class="stat-card-label">Tong luot xem</div>
+            <div class="stat-card-label">Tổng lượt xem</div>
         </div>
     </div>
 </div>
