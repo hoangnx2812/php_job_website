@@ -99,7 +99,7 @@ require __DIR__ . '/../../layout/header.php';
                         </div>
                         <div class="d-flex flex-wrap gap-1 mb-2">
                             <span class="badge-salary"><?= e(format_salary($j['salary_min'], $j['salary_max'])) ?></span>
-                            <span class="badge-type"><?= e($j['job_type']) ?></span>
+                            <span class="badge-type"><?= e(job_type_label($j['job_type'])) ?></span>
                         </div>
                         <div class="text-muted" style="font-size:0.75rem">
                             <i class="bi bi-bookmark me-1"></i>Đã lưu <?= date('d/m/Y', strtotime($j['saved_at'])) ?>

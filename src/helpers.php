@@ -152,6 +152,18 @@ function notify(int $userId, string $type, string $message, ?string $link = null
     $stmt->execute([$userId, $type, $message, $link]);
 }
 
+// Chuyển job_type (full-time, part-time...) sang nhãn tiếng Việt
+function job_type_label(string $type): string
+{
+    return match($type) {
+        'full-time' => 'Toàn thời gian',
+        'part-time' => 'Bán thời gian',
+        'intern'    => 'Thực tập',
+        'contract'  => 'Hợp đồng',
+        default     => $type,
+    };
+}
+
 // Lấy số thông báo chưa đọc của user
 function unread_notif_count(int $userId): int
 {
