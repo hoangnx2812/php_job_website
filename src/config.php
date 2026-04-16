@@ -21,7 +21,7 @@ define('UPLOAD_DIR',      realpath(__DIR__ . '/../uploads/cv')      ?: __DIR__ .
 define('LOGO_UPLOAD_DIR', realpath(__DIR__ . '/../uploads/logos')   ?: __DIR__ . '/../uploads/logos');
 
 // URL gốc của app (để build link)
-define('BASE_URL', '/index.php');
+define('BASE_URL', '/public/index.php');
 
 // Bật hiển thị lỗi cho môi trường dev
 ini_set('display_errors', '1');
