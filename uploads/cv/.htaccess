@@ -1,0 +1,9 @@
+# Chặn truy cập trực tiếp vào file CV.
+# Mọi download CV phải đi qua public/index.php?page=download_cv (check quyền)
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

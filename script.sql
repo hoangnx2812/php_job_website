@@ -7,8 +7,10 @@
 SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 SET CHARACTER SET utf8mb4;
 
-ALTER DATABASE job_website CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE job_website;
+-- Branch UAT: 2 lệnh dưới đã bỏ vì InfinityFree không cho ALTER DATABASE
+-- và DB context đã được phpMyAdmin set sẵn khi import.
+-- ALTER DATABASE job_website CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- USE job_website;
 
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS saved_jobs;

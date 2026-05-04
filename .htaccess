@@ -1,0 +1,38 @@
+# ======================================================
+# .htaccess root — dùng khi deploy lên InfinityFree (htdocs/)
+# ======================================================
+
+DirectoryIndex index.php
+Options -Indexes
+
+# Bật rewrite (InfinityFree đã enable mod_rewrite mặc định)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Chặn truy cập trực tiếp vào thư mục source code PHP
+    RewriteRule ^src/        - [F,L]
+    RewriteRule ^docker/     - [F,L]
+    RewriteRule ^reports/    - [F,L]
+    RewriteRule ^documents/  - [F,L]
+
+    # Chặn các file nhạy cảm / không phải web (không lộ ra ngoài)
+    RewriteRule \.(sql|md|yml|yaml|env|log|sh|bat|ini|lock|gitignore)$ - [F,L]
+    RewriteRule (^|/)\.(git|idea|vscode|claude)(/|$) - [F,L]
+
+    # Chặn truy cập trực tiếp file CV (bắt buộc đi qua download_cv.php để check quyền)
+    RewriteRule ^uploads/cv/ - [F,L]
+</IfModule>
+
+# Chặn list directory cho mọi sub-folder
+<IfModule mod_autoindex.c>
+    IndexIgnore *
+</IfModule>
+
+# Cho phép cache asset tĩnh (logo, avatar)
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 7 days"
+    ExpiresByType image/png  "access plus 7 days"
+    ExpiresByType image/webp "access plus 7 days"
+    ExpiresByType image/svg+xml "access plus 7 days"
+</IfModule>
