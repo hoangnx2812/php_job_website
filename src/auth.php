@@ -23,8 +23,8 @@ function require_role(string ...$roles): array
 {
     $u = current_user();
     if (!$u) {
-        header('Location: ' . BASE_URL . '?page=login');
-        exit;
+        // Dùng redirect() helper để url() encode đúng query param
+        redirect('login');
     }
     if ($roles && !in_array($u['role'], $roles, true)) {
         http_response_code(403);
@@ -51,18 +51,20 @@ function verify_and_upgrade_password(array $user, string $plain): bool
     return password_verify($plain, $stored);
 }
 
-// Sau khi login thành công, redirect theo role
+// Sau khi login thành công, redirect theo role.
+// QUAN TRỌNG: dùng redirect() helper thay vì header() trực tiếp để url()
+// tự encode dấu "/" thành "%2F" trong query string — tránh LiteSpeed (InfinityFree)
+// misparse "/?page=employer/dashboard" thành path thay vì query param.
 function redirect_by_role(string $role): void
 {
     switch ($role) {
         case 'admin':
-            header('Location: ' . BASE_URL . '?page=admin/dashboard');
+            redirect('admin/dashboard');
             break;
         case 'employer':
-            header('Location: ' . BASE_URL . '?page=employer/dashboard');
+            redirect('employer/dashboard');
             break;
         default:
-            header('Location: ' . BASE_URL . '?page=jobs');
+            redirect('jobs');
     }
-    exit;
 }
