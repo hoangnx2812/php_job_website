@@ -11,7 +11,7 @@
 // -------------------------------------------------------
 define('DB_HOST', 'sql204.infinityfree.com');
 define('DB_PORT', 3306);
-define('DB_NAME', 'if0_41829346_jobs');   // ⚠️ TẠO DB này trên control panel trước khi chạy
+define('DB_NAME', 'if0_41829346_job_vietnam');   // ⚠️ TẠO DB này trên control panel trước khi chạy
 define('DB_USER', 'if0_41829346');
 define('DB_PASS', 'NSkFtyKO5xMU');
 
